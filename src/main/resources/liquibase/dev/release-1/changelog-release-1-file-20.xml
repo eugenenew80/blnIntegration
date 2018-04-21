@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<author>ruslan</author>
+<comment>Изменения полей в основных таблицах на нулевые</comment>
+-->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+
+    <changeSet id="media-rus-73" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_directions">
+            <column name="code" type="varchar" value="IMPORT"/>
+            <column name="name" type="varchar" value="прием"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-74" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_directions">
+            <column name="code" type="varchar" value="EXPORT"/>
+            <column name="name" type="varchar" value="передача"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-75" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_param_types">
+            <column name="code" type="varchar" value="AT"/>
+            <column name="name" type="varchar" value="мгновенные значение"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-76" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_param_types">
+            <column name="code" type="varchar" value="PT"/>
+            <column name="name" type="varchar" value="измерения за период"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-77" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_batch_statuses">
+            <column name="code" type="varchar" value="P"/>
+            <column name="name" type="varchar" value="выполняется"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-78" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_batch_statuses">
+            <column name="code" type="varchar" value="C"/>
+            <column name="name" type="varchar" value="завершен"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-79" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_batch_statuses">
+            <column name="code" type="varchar" value="E"/>
+            <column name="name" type="varchar" value="ошибка"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-80" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_batch_statuses">
+            <column name="code" type="varchar" value="W"/>
+            <column name="name" type="varchar" value="ожидает обработки"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-81" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_batch_statuses">
+            <column name="code" type="varchar" value="U"/>
+            <column name="name" type="varchar" value="идет настройка"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-82" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_receiving_method">
+            <column name="code" type="varchar" value="SERVICE"/>
+            <column name="name" type="varchar" value="автоматический сервис"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-83" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_receiving_method">
+            <column name="code" type="varchar" value="PHONE"/>
+            <column name="name" type="varchar" value="по телефону"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-84" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_receiving_method">
+            <column name="code" type="varchar" value="EMAIL"/>
+            <column name="name" type="varchar" value="по эл.почте"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-85" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_receiving_method">
+            <column name="code" type="varchar" value="FORMULA"/>
+            <column name="name" type="varchar" value="по формуле"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-86" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_receiving_method">
+            <column name="code" type="varchar" value="OTHER"/>
+            <column name="name" type="varchar" value="другой"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-87" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_input_methods">
+            <column name="code" type="varchar" value="AUTO"/>
+            <column name="name" type="varchar" value="автоматический"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-88" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_input_methods">
+            <column name="code" type="varchar" value="MANUAL"/>
+            <column name="name" type="varchar" value="вручную с экранной формы"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-89" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_input_methods">
+            <column name="code" type="varchar" value="FILE"/>
+            <column name="name" type="varchar" value="из файла"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-90" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_processing_statuses">
+            <column name="code" type="varchar" value="NEW"/>
+            <column name="name" type="varchar" value="не обработана"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-91" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_processing_statuses">
+            <column name="code" type="varchar" value="OK"/>
+            <column name="name" type="varchar" value="обработано"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-92" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_processing_statuses">
+            <column name="code" type="varchar" value="ERROR"/>
+            <column name="name" type="varchar" value="ошибка"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

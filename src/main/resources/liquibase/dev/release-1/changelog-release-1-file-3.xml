@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    
+    <changeSet id="media-eug-7" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: media_last_load_info</comment>
+        <createTable tableName="media_last_load_info" schemaName="apps" remarks="Последние поступления данных из внешних систем">
+            <column name="id" type="number" remarks="Идентификатор записи">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source_system_code" type="varchar(20)" remarks="Код внешней системы">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source_metering_point_code" type="varchar(18)" remarks="Код точки учета во внешней системе">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source_param_code" type="varchar(4)" remarks="Код параметра во внешней системе">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="last_load_date" type="TIMESTAMP" remarks="Метка времени последних поступивших данных">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_batch_id" type="number" remarks="Идентификатор порции данных, в рамках которого были получены данные">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+	<changeSet id="media-eug-8" logicalFilePath="path-independent" author="eugene">
+	    <comment>Creating primary key for table: media_last_load_info</comment>
+	    <addPrimaryKey 
+	            columnNames="id"
+	            constraintName="pk_media_last_load_info"
+	            schemaName="apps"
+	            tableName="media_last_load_info"/>
+	</changeSet>
+	
+	<changeSet id="media-eug-9" logicalFilePath="path-independent" author="eugene">
+	    <comment>Creating sequence for table: media_last_load_info</comment>
+	    <createSequence 
+	            incrementBy="1"
+	            schemaName="apps"
+	            sequenceName="media_last_load_info_s"
+	            startValue="1"/>
+	</changeSet>		
+</databaseChangeLog>

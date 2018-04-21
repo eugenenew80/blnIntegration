@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="media-eug-13" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: media_at_time_values_raw</comment>
+        <createTable tableName="media_at_time_values_raw" schemaName="apps" remarks="Таблица необработанных данных для мгновенных значений">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source_system_code" type="varchar(20)" remarks="Код внешней системы">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source_metering_point_code" type="varchar(18)" remarks="Код точки учета во внешней системе">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="source_param_code" type="varchar(4)" remarks="Код параметра во внешней системе">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source_unit_code" type="varchar(10)" remarks="Единица измерения во внешней системе">
+                <constraints nullable="false"/>
+            </column>
+                        
+            <column name="metering_date" type="TIMESTAMP" remarks="Дата и время измерения">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="val" type="number" remarks="Измереное значение">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="status" type="varchar(20)" remarks="Статус обработки">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="err_msg" type="varchar(300)" remarks="Комментарий к статусу обработки">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="input_method" type="varchar(20)" remarks="Метод ввода">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="receiving_method" type="varchar(20)" remarks="Способ получения">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="batch_id" type="number" remarks="Идентификатор порции данных">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_date" type="TIMESTAMP" remarks="Дата создания">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата изменения">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_by" type="number" remarks="Автор">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_by" type="number" remarks="Автор изменения">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+	<changeSet id="media-eug-14" logicalFilePath="path-independent" author="eugene">
+	    <comment>Creating primary key for table: media_at_time_values_raw</comment>
+	    <addPrimaryKey 
+	            columnNames="id"
+	            constraintName="pk_media_at_time_values_raw"
+	            schemaName="apps"
+	            tableName="media_at_time_values_raw"/>
+	</changeSet>
+	
+	<changeSet id="media-eug-15" logicalFilePath="path-independent" author="eugene">
+	    <comment>Creating sequence for table: media_at_time_values_raw</comment>
+	    <createSequence 
+	            incrementBy="1"
+	            schemaName="apps"
+	            sequenceName="media_at_time_values_raw_s"
+	            startValue="1"/>
+	</changeSet>	
+</databaseChangeLog>

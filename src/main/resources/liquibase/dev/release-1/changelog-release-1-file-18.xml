@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="media-rus-27" logicalFilePath="path-independent" author="ruslan">
+        <comment>Creating table: media_batch_statuses</comment>
+        <createTable tableName="media_batch_statuses" schemaName="apps" remarks="Справочник статусов выполнения задач">
+            <column name="code" type="varchar2(20)" remarks="Код">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar2(50)" remarks="Наименование">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="create_date" type="TIMESTAMP" remarks="Дата и время создания записи">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата и время последнего изменения">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_by" type="number" remarks="Автор" >
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_by" type="number" remarks="Автор последнего обновления" >
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+	<changeSet id="media-rus-28" logicalFilePath="path-independent" author="ruslan">
+	    <comment>Creating primary key for table: media_batch_statuses</comment>
+	    <addPrimaryKey 
+	            columnNames="code"
+	            constraintName="pk_media_batch_statuses"
+	            schemaName="apps"
+	            tableName="media_batch_statuses"/>
+	</changeSet>
+
+    <changeSet id="media-rus-29" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating table: media_batch_statuses_tl</comment>
+        <createTable tableName="media_batch_statuses_tl" schemaName="apps" remarks="Справочник статусов выполнения задач перевод">
+            <column name="code" type="varchar(20)" remarks="Ссылка на родительскую запись">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="lang" type="varchar(10)" remarks="Язык">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(50)" remarks="Наименование">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="create_date" type="TIMESTAMP" remarks="Дата и время создания записи">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата и время последнего изменения">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_by" type="number" remarks="Автор" >
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_by" type="number" remarks="Автор последнего обновления" >
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="media-rus-30" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating primary key for table: media_batch_statuses_tl</comment>
+        <addPrimaryKey
+                columnNames="code, lang"
+                constraintName="pk_media_batch_statuses_tl"
+                schemaName="apps"
+                tableName="media_batch_statuses_tl"/>
+    </changeSet>
+
+    <changeSet id="media-rus-31" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating foreign constraint: media_batch_statuses_tl to media_batch_statuses</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_batch_statuses_tl"
+                baseColumnNames="code"
+                constraintName="fk_media_batch_statuses_tl_1"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_batch_statuses"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+</databaseChangeLog>

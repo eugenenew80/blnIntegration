@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<author>ruslan</author>
+<comment>Изменения полей в основных таблицах на нулевые</comment>
+-->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="media-eug-100" logicalFilePath="path-independent" author="eugene">
+        <insert schemaName="apps"  tableName="media_parameters">
+            <column name="id"           type="number"       value="1" />
+            <column name="code"         type="varchar(10)"  value="A+" />
+            <column name="name"         type="varchar(300)" value="Актив приём" />
+            <column name="short_name"   type="varchar(100)" value="Актив приём" />
+            <column name="unit_id"      type="number"       value="9" />
+            <column name="param_type"   type="number"       value="PT"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameters">
+            <column name="id"           type="number"       value="2" />
+            <column name="code"         type="varchar(10)"  value="A-" />
+            <column name="name"         type="varchar(300)" value="Актив отдача" />
+            <column name="short_name"   type="varchar(100)" value="Актив отдача" />
+            <column name="unit_id"      type="number"       value="9" />
+            <column name="param_type"   type="number"       value="PT"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameters">
+            <column name="id"           type="number"       value="3" />
+            <column name="code"         type="varchar(10)"  value="R+" />
+            <column name="name"         type="varchar(300)" value="Реактив приём" />
+            <column name="short_name"   type="varchar(100)" value="Реактив приём" />
+            <column name="unit_id"      type="number"       value="14" />
+            <column name="param_type"   type="number"       value="PT"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameters">
+            <column name="id"           type="number"       value="4" />
+            <column name="code"         type="varchar(10)"  value="R-" />
+            <column name="name"         type="varchar(100)" value="Реактив отдача" />
+            <column name="short_name"   type="varchar(100)" value="Реактив отдача" />
+            <column name="unit_id"      type="number"       value="14" />
+            <column name="param_type"   type="number"       value="PT"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameters">
+            <column name="id"           type="number"       value="5" />
+            <column name="code"         type="varchar(10)"  value="A+" />
+            <column name="name"         type="varchar(300)" value="Актив приём" />
+            <column name="short_name"   type="varchar(100)" value="Актив приём" />
+            <column name="unit_id"      type="number"       value="9" />
+            <column name="param_type"   type="number"       value="AT"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameters">
+            <column name="id"           type="number"       value="6" />
+            <column name="code"         type="varchar(10)"  value="A-" />
+            <column name="name"         type="varchar(300)" value="Актив отдача" />
+            <column name="short_name"   type="varchar(100)" value="Актив отдача" />
+            <column name="unit_id"      type="number"       value="9" />
+            <column name="param_type"   type="number"       value="AT"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameters">
+            <column name="id"           type="number"       value="7" />
+            <column name="code"         type="varchar(10)"  value="R+" />
+            <column name="name"         type="varchar(300)" value="Реактив приём" />
+            <column name="short_name"   type="varchar(100)" value="Реактив приём" />
+            <column name="unit_id"      type="number"       value="14" />
+            <column name="param_type"   type="number"       value="AT"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameters">
+            <column name="id"           type="number"       value="8" />
+            <column name="code"         type="varchar(10)"  value="R-" />
+            <column name="name"         type="varchar(300)" value="Реактив отдача" />
+            <column name="short_name"   type="varchar(100)" value="Реактив отдача" />
+            <column name="unit_id"      type="number"       value="14" />
+            <column name="param_type"   type="number"       value="AT"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameters">
+            <column name="id"           type="number"       value="9" />
+            <column name="code"         type="varchar(10)"  value="L1" />
+            <column name="name"         type="varchar(300)" value="Среднее напряжение на фазе L1" />
+            <column name="short_name"   type="varchar(100)" value="Среднее напряжение на фазе L1" />
+            <column name="unit_id"      type="number"       value="4" />
+            <column name="param_type"   type="number"       value="PT"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameters">
+            <column name="id"           type="number"       value="10" />
+            <column name="code"         type="varchar(10)"  value="L2" />
+            <column name="name"         type="varchar(300)" value="Среднее напряжение на фазе L2" />
+            <column name="short_name"   type="varchar(100)" value="Среднее напряжение на фазе L2" />
+            <column name="unit_id"      type="number"       value="4" />
+            <column name="param_type"   type="number"       value="PT"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameters">
+            <column name="id"           type="number"       value="11" />
+            <column name="code"         type="varchar(10)"  value="L3" />
+            <column name="name"         type="varchar(300)" value="Среднее напряжение на фазе L3" />
+            <column name="short_name"   type="varchar(100)" value="Среднее напряжение на фазе L3" />
+            <column name="unit_id"      type="number"       value="4" />
+            <column name="param_type"   type="number"       value="PT"/>
+        </insert>
+
+        <rollback/>
+    </changeSet>
+
+
+    <changeSet id="media-eug-101" logicalFilePath="path-independent" author="eugene">
+        <insert schemaName="apps"  tableName="media_connection_config">
+            <column name="id"                   type="number"           value="1" />
+            <column name="name"                 type="varchar(100)"     value="Сервер EMCOS Юж. МЭС" />
+            <column name="source_system_code"   type="varchar(20)"      value="EMCOS" />
+            <column name="protocol"             type="varchar(20)"      value="SOAP" />
+            <column name="name"                 type="varchar(100)"     value="Сервер EMCOS Юж. МЭС" />
+            <column name="url"                  type="varchar(300)"     value="http://10.8.144.11/STWS2/STExchangeWS2.dll/soap/IST_ExchWebService2" />
+            <column name="user_name"            type="varchar(20)"      value="yug" />
+            <column name="pwd"                  type="varchar(20)"      value="" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_connection_config">
+            <column name="id"                   type="number"       value="2" />
+            <column name="name"                 type="varchar(100)" value="Сервер EMCOS Акмол. МЭС" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="protocol"             type="varchar(20)"  value="SOAP" />
+            <column name="url"                  type="varchar(300)" value="http://10.9.44.13/STWS2/STExchangeWS2.dll/soap/IST_ExchWebService2" />
+            <column name="user_name"            type="varchar(20)"  value="akmol" />
+            <column name="pwd"                  type="varchar(20)"  value="" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_connection_config">
+            <column name="id"                   type="number"       value="3" />
+            <column name="name"                 type="varchar(100)" value="Сервер EMCOS Алм. МЭС" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="protocol"             type="varchar(20)"  value="SOAP" />
+            <column name="url"                  type="varchar(300)" value="http://10.0.144.11/STWS2/STExchangeWS2.dll/soap/IST_ExchWebService2" />
+            <column name="user_name"            type="varchar(20)"  value="almaty" />
+            <column name="pwd"                  type="varchar(20)"  value="" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_connection_config">
+            <column name="id"                   type="number"       value="4" />
+            <column name="name"                 type="varchar(100)" value="Сервер EMCOS Акт. МЭС" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="protocol"             type="varchar(20)"  value="SOAP" />
+            <column name="url"                  type="varchar(300)" value="http://10.1.144.11/STWS2/STExchangeWS2.dll/soap/IST_ExchWebService2" />
+            <column name="user_name"            type="varchar(20)"  value="aktobe" />
+            <column name="pwd"                  type="varchar(20)"  value="" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_connection_config">
+            <column name="id"                   type="number"       value="5" />
+            <column name="name"                 type="varchar(100)" value="Сервер EMCOS Вост. МЭС" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="protocol"             type="varchar(20)"  value="SOAP" />
+            <column name="url"                  type="varchar(300)" value="http://10.3.144.11/STWS2/STExchangeWS2.dll/soap/IST_ExchWebService2" />
+            <column name="user_name"            type="varchar(20)"  value="vostok" />
+            <column name="pwd"                  type="varchar(20)"  value="" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_connection_config">
+            <column name="id"                   type="number"       value="6" />
+            <column name="name"                 type="varchar(100)" value="Сервер EMCOS Сарб. МЭС" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="protocol"             type="varchar(20)"  value="SOAP" />
+            <column name="url"                  type="varchar(300)" value="http://10.4.144.11/STWS2/STExchangeWS2.dll/soap/IST_ExchWebService2" />
+            <column name="user_name"            type="varchar(20)"  value="sarbay" />
+            <column name="pwd"                  type="varchar(20)"  value="" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_connection_config">
+            <column name="id"                   type="number"       value="7" />
+            <column name="name"                 type="varchar(100)" value="Сервер EMCOS Центр. МЭС" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="protocol"             type="varchar(20)"  value="SOAP" />
+            <column name="url"                  type="varchar(300)" value="http://10.5.144.11/STWS2/STExchangeWS2.dll/soap/IST_ExchWebService2" />
+            <column name="user_name"            type="varchar(20)"  value="central" />
+            <column name="pwd"                  type="varchar(20)"  value="" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_connection_config">
+            <column name="id"                   type="number"       value="8" />
+            <column name="name"                 type="varchar(100)" value="Сервер EMCOS Сев. МЭС" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="protocol"             type="varchar(20)"  value="SOAP" />
+            <column name="url"                  type="varchar(300)" value="http://10.6.144.11/STWS2/STExchangeWS2.dll/soap/IST_ExchWebService2" />
+            <column name="user_name"            type="varchar(20)"  value="sever" />
+            <column name="pwd"                  type="varchar(20)"  value="" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_connection_config">
+            <column name="id"                   type="number"       value="9" />
+            <column name="name"                 type="varchar(100)" value="Сервер EMCOS Зап. МЭС" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="protocol"             type="varchar(20)"  value="SOAP" />
+            <column name="url"                  type="varchar(300)" value="http://10.7.144.11/STWS2/STExchangeWS2.dll/soap/IST_ExchWebService2" />
+            <column name="user_name"            type="varchar(20)"  value="zapad" />
+            <column name="pwd"                  type="varchar(20)"  value="" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_connection_config">
+            <column name="id"                   type="number"       value="10" />
+            <column name="name"                 type="varchar(100)" value="Сервер FTP Акм. МЭС" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="protocol"             type="varchar(20)"  value="FTP" />
+            <column name="url"                  type="varchar(300)" value="10.9.44.10" />
+            <column name="user_name"            type="varchar(20)"  value="ftpuser" />
+            <column name="pwd"                  type="varchar(20)"  value="ft2015er" />
+        </insert>
+
+        <rollback/>
+    </changeSet>
+
+
+
+    <changeSet id="media-eug-102" logicalFilePath="path-independent" author="eugene">
+        <insert schemaName="apps"  tableName="media_work_list_headers">
+            <column name="id"                   type="number"       value="1" />
+            <column name="name"                 type="varchar(100)" value="Список точек учёта Юж. МЭС для импорта данных из EMCOS" />
+            <column name="work_list_type"       type="varchar(20)"  value="SYS" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="direction"            type="varchar(100)" value="IMPORT" />
+            <column name="config_id"            type="number"       value="1" />
+            <column name="is_active"            type="number"       value="1" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_work_list_headers">
+            <column name="id"                   type="number"       value="2" />
+            <column name="name"                 type="varchar(100)" value="Список точек учёта Акмол. МЭС для импорта данных из EMCOS" />
+            <column name="work_list_type"       type="varchar(20)"  value="SYS" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="direction"            type="varchar(100)" value="IMPORT" />
+            <column name="config_id"            type="number"       value="2" />
+            <column name="is_active"            type="number"       value="0" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_work_list_headers">
+            <column name="id"                   type="number"       value="3" />
+            <column name="name"                 type="varchar(100)" value="Список точек учёта Алм. МЭС для импорта данных из EMCOS" />
+            <column name="work_list_type"       type="varchar(20)"  value="SYS" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="direction"            type="varchar(100)" value="IMPORT" />
+            <column name="config_id"            type="number"       value="3" />
+            <column name="is_active"            type="number"       value="0" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_work_list_headers">
+            <column name="id"                   type="number"       value="4" />
+            <column name="name"                 type="varchar(100)" value="Список точек учёта Акт. МЭС для импорта данных из EMCOS" />
+            <column name="work_list_type"       type="varchar(20)"  value="SYS" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="direction"            type="varchar(100)" value="IMPORT" />
+            <column name="config_id"            type="number"       value="4" />
+            <column name="is_active"            type="number"       value="0" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_work_list_headers">
+            <column name="id"                   type="number"       value="5" />
+            <column name="name"                 type="varchar(100)" value="Список точек учёта Вост. МЭС для импорта данных из EMCOS" />
+            <column name="work_list_type"       type="varchar(20)"  value="SYS" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="direction"            type="varchar(100)" value="IMPORT" />
+            <column name="config_id"            type="number"       value="5" />
+            <column name="is_active"            type="number"       value="0" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_work_list_headers">
+            <column name="id"                   type="number"       value="6" />
+            <column name="name"                 type="varchar(100)" value="Список точек учёта Сарб. МЭС для импорта данных из EMCOS" />
+            <column name="work_list_type"       type="varchar(20)"  value="SYS" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="direction"            type="varchar(100)" value="IMPORT" />
+            <column name="config_id"            type="number"       value="6" />
+            <column name="is_active"            type="number"       value="0" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_work_list_headers">
+            <column name="id"                   type="number"       value="7" />
+            <column name="name"                 type="varchar(100)" value="Список точек учёта Центр. МЭС для импорта данных из EMCOS" />
+            <column name="work_list_type"       type="varchar(20)"  value="SYS" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="direction"            type="varchar(100)" value="IMPORT" />
+            <column name="config_id"            type="number"       value="7" />
+            <column name="is_active"            type="number"       value="0" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_work_list_headers">
+            <column name="id"                   type="number"       value="8" />
+            <column name="name"                 type="varchar(100)" value="Список точек учёта Сев. МЭС для импорта данных из EMCOS" />
+            <column name="work_list_type"       type="varchar(20)"  value="SYS" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="direction"            type="varchar(100)" value="IMPORT" />
+            <column name="config_id"            type="number"       value="8" />
+            <column name="is_active"            type="number"       value="0" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_work_list_headers">
+            <column name="id"                   type="number"       value="9" />
+            <column name="name"                 type="varchar(100)" value="Список точек учёта Зап. МЭС для импорта данных из EMCOS" />
+            <column name="work_list_type"       type="varchar(20)"  value="SYS" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="direction"            type="varchar(100)" value="IMPORT" />
+            <column name="config_id"            type="number"       value="9" />
+            <column name="is_active"            type="number"       value="0" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_work_list_headers">
+            <column name="id"                   type="number" value="10" />
+            <column name="name"                 type="varchar(100)" value="Список точек учёта Акм. МЭС для экспорта данных в EMCOS" />
+            <column name="work_list_type"       type="varchar(20)"  value="SYS" />
+            <column name="source_system_code"   type="varchar(20)" value="EMCOS" />
+            <column name="direction"            type="varchar(100)" value="EXPORT" />
+            <column name="config_id"            type="number" value="10" />
+            <column name="is_active"            type="number" value="1" />
+        </insert>
+
+        <rollback/>
+    </changeSet>
+
+
+    <changeSet id="media-eug-103" logicalFilePath="path-independent" author="eugene">
+        <insert schemaName="apps"  tableName="media_parameter_conf">
+            <column name="id"                   type="number"       value="1" />
+            <column name="param_id"             type="number"       value="1" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="source_param_code"    type="varchar(10)"  value="1040" />
+            <column name="source_unit_code"     type="varchar(10)"  value="kWh" />
+            <column name="source_unit_id"       type="number"       value="9" />
+            <column name="interval"             type="number"       value="900" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_conf">
+            <column name="id"                   type="number"       value="2" />
+            <column name="param_id"             type="number"       value="2" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="source_param_code"    type="varchar(10)"  value="1041" />
+            <column name="source_unit_code"     type="varchar(10)"  value="kWh" />
+            <column name="source_unit_id"       type="number"       value="9" />
+            <column name="interval"             type="number"       value="900" />
+
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_conf">
+            <column name="id"                   type="number"       value="3" />
+            <column name="param_id"             type="number"       value="3" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="source_param_code"    type="varchar(10)"  value="1042" />
+            <column name="source_unit_code"     type="varchar(10)"  value="kVarh" />
+            <column name="source_unit_id"       type="number"       value="14" />
+            <column name="interval"             type="number"       value="900" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_conf">
+            <column name="id"                   type="number"       value="4" />
+            <column name="param_id"             type="number"       value="4" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="source_param_code"    type="varchar(10)"  value="1043" />
+            <column name="source_unit_code"     type="varchar(10)"  value="kVarh" />
+            <column name="source_unit_id"       type="number"       value="14" />
+            <column name="interval"             type="number"       value="900" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_conf">
+            <column name="id"                   type="number"       value="5" />
+            <column name="param_id"             type="number"       value="5" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="source_param_code"    type="varchar(10)"  value="1498" />
+            <column name="source_unit_code"     type="varchar(10)"  value="kWh" />
+            <column name="source_unit_id"       type="number"       value="9" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_conf">
+            <column name="id"                   type="number"       value="6" />
+            <column name="param_id"             type="number"       value="6" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="source_param_code"    type="varchar(10)"  value="1499" />
+            <column name="source_unit_code"     type="varchar(10)"  value="kWh" />
+            <column name="source_unit_id"       type="number"       value="9" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_conf">
+            <column name="id"                   type="number"       value="7" />
+            <column name="param_id"             type="number"       value="7" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="source_param_code"    type="varchar(10)"  value="1500" />
+            <column name="source_unit_code"     type="varchar(10)"  value="kVarh" />
+            <column name="source_unit_id"       type="number"       value="14" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_conf">
+            <column name="id"                   type="number"       value="8" />
+            <column name="param_id"             type="number"       value="8" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="source_param_code"    type="varchar(10)"  value="1501" />
+            <column name="source_unit_code"     type="varchar(10)"  value="kVarh" />
+            <column name="source_unit_id"       type="number"       value="14" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_conf">
+            <column name="id"                   type="number"       value="9" />
+            <column name="param_id"             type="number"       value="9" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="source_param_code"    type="varchar(10)"  value="5330" />
+            <column name="source_unit_code"     type="varchar(10)"  value="kV" />
+            <column name="source_unit_id"       type="number"       value="4" />
+            <column name="interval"             type="number"       value="180" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_conf">
+            <column name="id"                   type="number"       value="10" />
+            <column name="param_id"             type="number"       value="10" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="source_param_code"    type="varchar(10)"  value="5341" />
+            <column name="source_unit_code"     type="varchar(10)"  value="kV" />
+            <column name="source_unit_id"       type="number"       value="4" />
+            <column name="interval"             type="number"       value="180" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_conf">
+            <column name="id"                   type="number"       value="11" />
+            <column name="param_id"             type="number"       value="11" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="source_param_code"    type="varchar(10)"  value="5352" />
+            <column name="source_unit_code"     type="varchar(10)"  value="kV" />
+            <column name="source_unit_id"       type="number"       value="4" />
+            <column name="interval"             type="number"       value="180" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_conf">
+            <column name="id"                   type="number"       value="12" />
+            <column name="param_id"             type="number"       value="1" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="source_param_code"    type="varchar(10)"  value="709" />
+            <column name="source_unit_code"     type="varchar(10)"  value="kWh" />
+            <column name="source_unit_id"       type="number"       value="9" />
+            <column name="interval"             type="number"       value="3600" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_conf">
+            <column name="id"                   type="number"       value="13" />
+            <column name="param_id"             type="number"       value="2" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="source_param_code"    type="varchar(10)" value="710" />
+            <column name="source_unit_code"     type="varchar(10)" value="kWh" />
+            <column name="source_unit_id"       type="number"       value="9" />
+            <column name="interval"             type="number"       value="3600" />
+        </insert>
+
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

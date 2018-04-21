@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="media-eug-24" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: media_work_list_headers</comment>
+        <createTable tableName="media_work_list_headers" schemaName="apps" remarks="Список точек учета для автоматического обмена данными">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(100)" remarks="Наименование">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="work_list_type" type="varchar(20)" remarks="Тип списка">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source_system_code" type="varchar(20)" remarks="Код внешней точки учета">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="direction" type="varchar(20)" remarks="Направление обмена данными">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="config_id" type="number" remarks="Идентификатор порции данных">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="is_active" type="number" remarks="Активно">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="at_batch_id" type="number" remarks="Идентификатор порции мгновенных значений">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="pt_batch_id" type="number" remarks="Идентификатор порции интервальных значений">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="at_status" type="varchar(20)" remarks="Статус обработки мгновенных значений">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="pt_status" type="varchar(20)" remarks="Статус обработки интервальных значений">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="start_date" type="TIMESTAMP" remarks="Дата и время начала обмена">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="end_date" type="TIMESTAMP" remarks="Дата и время окончания обмена">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_date" type="TIMESTAMP" remarks="Дата создания">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата последнего изменения">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_by" type="number" remarks="Автор">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_by" type="number" remarks="Автор изменения">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+	<changeSet id="media-eug-25" logicalFilePath="path-independent" author="eugene">
+	    <comment>Creating primary key for table: media_work_list_headers</comment>
+	    <addPrimaryKey 
+	            columnNames="id"
+	            constraintName="pk_media_work_list_headers"
+	            schemaName="apps"
+	            tableName="media_work_list_headers"/>
+	</changeSet>
+	
+	<changeSet id="media-eug-26" logicalFilePath="path-independent" author="eugene">
+	    <comment>Creating sequence for table: media_work_list_headers</comment>
+	    <createSequence 
+	            incrementBy="1"
+	            schemaName="apps"
+	            sequenceName="media_work_list_headers_s"
+	            startValue="11"/>
+	</changeSet>
+</databaseChangeLog>

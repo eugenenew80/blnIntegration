@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="media-eug-20" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: media_connection_config</comment>
+        <createTable tableName="media_connection_config" schemaName="apps" remarks="Справочник Конфигурации соединений с внешними системами">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(100)" remarks="Наименование">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source_system_code" type="varchar(20)" remarks="Код внешней точки учета">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="protocol" type="varchar(20)" remarks="Протокол">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="url" type="varchar(300)" remarks="Адрес">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="user_name" type="varchar(20)" remarks="Пользователь">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="pwd" type="varchar(20)" remarks="Пароль">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_date" type="TIMESTAMP" remarks="Дата создания">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата изменения">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_by" type="number" remarks="Автор">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_by" type="number" remarks="Автор изменения">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+	<changeSet id="media-eug-21" logicalFilePath="path-independent" author="eugene">
+	    <comment>Creating primary key for table: media_connection_config</comment>
+	    <addPrimaryKey 
+	            columnNames="id"
+	            constraintName="pk_media_connection_config"
+	            schemaName="apps"
+	            tableName="media_connection_config"/>
+	</changeSet>
+	
+	<changeSet id="media-eug-22" logicalFilePath="path-independent" author="eugene">
+	    <comment>Creating sequence for table: media_connection_config</comment>
+	    <createSequence 
+	            incrementBy="10"
+	            schemaName="apps"
+	            sequenceName="media_connection_config_s"
+	            startValue="11"/>
+	</changeSet>
+
+</databaseChangeLog>

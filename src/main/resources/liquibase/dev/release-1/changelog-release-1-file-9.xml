@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="media-eug-28" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: media_work_list_lines</comment>
+        <createTable tableName="media_work_list_lines" schemaName="apps" remarks="Справочник список точек учета и измеряемых параметров для автоматического обмена данными">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="work_list_header_id" type="number" remarks="Идентификатор рабочего списка">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="metering_point_id" type="number" remarks="Идентификатор точки учета">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="param_id" type="number" remarks="Идентификатор измеряемого параметра">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="start_date" type="TIMESTAMP" remarks="Дата и время начала обмена">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="end_date" type="TIMESTAMP" remarks="Дата и время окончания обмена">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_date" type="TIMESTAMP" remarks="Дата создания">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата последнего обновления">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_by" type="number" remarks="Автор">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_by" type="number" remarks="Автор изменения">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+	<changeSet id="media-eug-29" logicalFilePath="path-independent" author="eugene">
+	    <comment>Creating primary key for table: media_work_list_lines</comment>
+	    <addPrimaryKey 
+	            columnNames="id"
+	            constraintName="pk_media_work_list_lines"
+	            schemaName="apps"
+	            tableName="media_work_list_lines"/>
+	</changeSet>
+	
+	<changeSet id="media-eug-30" logicalFilePath="path-independent" author="eugene">
+	    <comment>Creating sequence for table: media_work_list_lines</comment>
+	    <createSequence 
+	            incrementBy="1"
+	            schemaName="apps"
+	            sequenceName="media_work_list_lines_s"
+	            startValue="1"/>
+	</changeSet>
+</databaseChangeLog>

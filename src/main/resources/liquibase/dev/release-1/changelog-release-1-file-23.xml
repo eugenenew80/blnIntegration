@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="media-rus-95" logicalFilePath="path-independent" author="ruslan">
+        <comment>Creating table: media_ways_to_start</comment>
+        <createTable tableName="media_ways_to_start" schemaName="apps" remarks="Справочник способ запуска">
+            <column name="code" type="varchar2(20)" remarks="Код">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar2(50)" remarks="Наименование">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+	<changeSet id="media-rus-96" logicalFilePath="path-independent" author="ruslan">
+	    <comment>Creating primary key for table: media_ways_to_start</comment>
+	    <addPrimaryKey 
+	            columnNames="code"
+	            constraintName="pk_media_ways_to_start"
+	            schemaName="apps"
+	            tableName="media_ways_to_start"/>
+	</changeSet>
+
+    <changeSet id="media-rus-97" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating table: media_ways_to_start_tl</comment>
+        <createTable tableName="media_ways_to_start_tl" schemaName="apps" remarks="Справочник способ запуска перевод">
+            <column name="code" type="varchar(20)" remarks="Ссылка на родительскую запись">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="lang" type="varchar(10)" remarks="Язык">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(50)" remarks="Наименование">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="media-rus-98" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating primary key for table: media_ways_to_start_tl</comment>
+        <addPrimaryKey
+                columnNames="code, lang"
+                constraintName="pk_media_ways_to_start_tl"
+                schemaName="apps"
+                tableName="media_ways_to_start_tl"/>
+    </changeSet>
+
+    <changeSet id="media-rus-99" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating foreign constraint: media_ways_to_start_tl to media_ways_to_start</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_ways_to_start_tl"
+                baseColumnNames="code"
+                constraintName="fk_media_ways_to_start_tl_1"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_ways_to_start"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+
+    <changeSet id="media-rus-100" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_ways_to_start">
+            <column name="code" type="varchar" value="AUTO"/>
+            <column name="name" type="varchar" value="автоматически"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-101" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_ways_to_start">
+            <column name="code" type="varchar" value="MANUAL"/>
+            <column name="name" type="varchar" value="вручную"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-102" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_ways_to_start_tl">
+            <column name="code" type="varchar" value="AUTO"/>
+            <column name="lang" type="varchar" value="RU"/>
+            <column name="name" type="varchar" value="автоматический"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-103" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_ways_to_start_tl">
+            <column name="code" type="varchar" value="MANUAL"/>
+            <column name="lang" type="varchar" value="RU"/>
+            <column name="name" type="varchar" value="вручную"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-104" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_ways_to_start_tl">
+            <column name="code" type="varchar" value="AUTO"/>
+            <column name="lang" type="varchar" value="KZ"/>
+            <column name="name" type="varchar" value="автоматический"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-105" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <insert schemaName="apps" tableName="media_ways_to_start_tl">
+            <column name="code" type="varchar" value="MANUAL"/>
+            <column name="lang" type="varchar" value="KZ"/>
+            <column name="name" type="varchar" value="вручную"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

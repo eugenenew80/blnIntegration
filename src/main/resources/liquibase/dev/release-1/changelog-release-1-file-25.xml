@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    
+    <changeSet id="media-eug-104" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: media_source_types</comment>
+        <createTable tableName="media_source_types" schemaName="apps" remarks="Источники данных">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source_system_code" type="varchar(20)" remarks="Код внешней точки учета">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="input_method" type="varchar(20)" remarks="Метод ввода">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="receiving_method" type="varchar(20)" remarks="Способ получения">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="is_active" type="number" remarks="Активно">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="create_date" type="TIMESTAMP" remarks="Дата создания">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата изменения">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_by" type="number" remarks="Автор">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_by" type="number" remarks="Автор изменения">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+	<changeSet id="media-eug-105" logicalFilePath="path-independent" author="eugene">
+	    <comment>Creating primary key for table: media_source_types</comment>
+	    <addPrimaryKey 
+	            columnNames="id"
+	            constraintName="pk_media_source_types"
+	            schemaName="apps"
+	            tableName="media_source_types"/>
+	</changeSet>
+
+	<changeSet id="media-eug-106" logicalFilePath="path-independent" author="eugene">
+	    <comment>Creating sequence for table: media_source_types</comment>
+	    <createSequence 
+	            incrementBy="1"
+	            schemaName="apps"
+	            sequenceName="media_source_types_s"
+	            startValue="4"/>
+	</changeSet>
+
+	<changeSet id="media-eug-107" logicalFilePath="path-independent" author="eugene">
+	    <comment>inserting records into table: media_source_types</comment>
+        <insert schemaName="apps"  tableName="media_source_types">
+            <column name="id"                   type="number"       value="1" />
+            <column name="source_system_code"   type="varchar(20)"  value="EMCOS" />
+            <column name="input_method"         type="varchar(20)"  value="AUTO" />
+            <column name="receiving_method"     type="varchar(20)"  value="SERVICE" />
+            <column name="is_active"            type="number"       value="1" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_source_types">
+            <column name="id"                   type="number"       value="2" />
+            <column name="source_system_code"   type="varchar(20)"  value="OIC" />
+            <column name="input_method"         type="varchar(20)"  value="AUTO" />
+            <column name="receiving_method"     type="varchar(20)"  value="SERVICE" />
+            <column name="is_active"            type="number"       value="1" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_source_types">
+            <column name="id"                   type="number"       value="3" />
+            <column name="source_system_code"   type="varchar(20)"  value="SCADA" />
+            <column name="input_method"         type="varchar(20)"  value="AUTO" />
+            <column name="receiving_method"     type="varchar(20)"  value="SERVICE" />
+            <column name="is_active"            type="number"       value="1" />
+        </insert>
+    </changeSet>
+
+    <changeSet id="media-eug-108" logicalFilePath="path-independent" author="eugene">
+        <comment>creating unique constraint for table: media_source_types</comment>
+        <addUniqueConstraint
+            constraintName="un_media_source_types_1"
+            schemaName="apps"
+            tableName="media_source_types"
+            columnNames="source_system_code, input_method, receiving_method"
+            deferrable="true"
+            initiallyDeferred="true"
+     />
+    </changeSet>
+
+    <changeSet id="media-eug-109" logicalFilePath="path-independent" author="eugene">
+        <addColumn schemaName="apps" tableName="media_at_time_values">
+            <column name="source_type_id" type="number" remarks="Идентификатор типа источника данных">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-110" logicalFilePath="path-independent"  author="eugene">
+        <addColumn schemaName="apps" tableName="media_period_time_values">
+            <column name="source_type_id" type="number" remarks="Идентификатор типа источника данных">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-111" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Creating foreign constraint: media_at_time_values to media_source_types</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_at_time_values"
+                baseColumnNames="source_type_id"
+                constraintName="fk_media_at_time_values_9"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_source_types"
+                referencedColumnNames="id"
+        />
+    </changeSet>
+
+    <changeSet id="media-eug-112" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating foreign constraint: media_period_time_values to media_source_types</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_period_time_values"
+                baseColumnNames="source_type_id"
+                constraintName="fk_media_period_time_values_9"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_source_types"
+                referencedColumnNames="id"
+        />
+    </changeSet>
+
+    <changeSet id="media-eug-113" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating foreign constraint: media_source_types to dict_data_sources</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_source_types"
+                baseColumnNames="source_system_code"
+                constraintName="fk_media_source_types_1"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="dict_data_sources"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+
+    <changeSet id="media-eug-114" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating foreign constraint: media_source_types to media_input_methods</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_source_types"
+                baseColumnNames="input_method"
+                constraintName="fk_media_source_types_2"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_input_methods"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+
+    <changeSet id="media-eug-115" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating foreign constraint: media_source_types to media_receiving_methods</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_source_types"
+                baseColumnNames="receiving_method"
+                constraintName="fk_media_source_types_3"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_receiving_method"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+
+    <changeSet id="media-eug-116" logicalFilePath="path-independent" author="eugene">
+        <preConditions>
+            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_at_time_values" foreignKeyName="fk_media_at_time_values_1" />
+        </preConditions>
+
+        <dropForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_at_time_values"
+                constraintName="fk_media_at_time_values_1" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-117" logicalFilePath="path-independent" author="eugene">
+        <preConditions>
+            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_at_time_values" foreignKeyName="fk_media_at_time_values_3" />
+        </preConditions>
+
+        <dropForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_at_time_values"
+                constraintName="fk_media_at_time_values_3" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-118" logicalFilePath="path-independent" author="eugene">
+        <preConditions>
+            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_at_time_values" foreignKeyName="fk_media_at_time_values_5" />
+        </preConditions>
+
+        <dropForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_at_time_values"
+                constraintName="fk_media_at_time_values_5" />
+        <rollback/>
+    </changeSet>
+
+
+    <changeSet id="media-eug-119" logicalFilePath="path-independent" author="eugene">
+        <preConditions>
+            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_period_time_values" foreignKeyName="fk_media_period_time_values_1" />
+        </preConditions>
+
+        <dropForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_period_time_values"
+                constraintName="fk_media_period_time_values_1" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-120" logicalFilePath="path-independent" author="eugene">
+        <preConditions>
+            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_period_time_values" foreignKeyName="fk_media_period_time_values_3" />
+        </preConditions>
+
+        <dropForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_period_time_values"
+                constraintName="fk_media_period_time_values_3" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-121" logicalFilePath="path-independent" author="eugene">
+        <preConditions>
+            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_period_time_values" foreignKeyName="fk_media_period_time_values_5" />
+        </preConditions>
+
+        <dropForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_period_time_values"
+                constraintName="fk_media_period_time_values_5" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-122" logicalFilePath="path-independent" author="eugene">
+        <comment>Update column source_type_id in table: media_period_time_values</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            update apps.media_period_time_values t set t.source_type_id = ( select t1.id from apps.media_source_types t1 where t1.source_system_code=t.source_system_code and  t1.receiving_method=t.receiving_method  and  t1.input_method=t.input_method);
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-123" logicalFilePath="path-independent" author="eugene">
+        <comment>Update column source_type_id in table: media_at_time_values</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            update apps.media_at_time_values t set t.source_type_id = ( select t1.id from apps.media_source_types t1 where t1.source_system_code=t.source_system_code and  t1.receiving_method=t.receiving_method  and  t1.input_method=t.input_method);
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-124" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating index for column source_type_id in table: media_at_time_values</comment>
+        <createIndex indexName="idx_media_at_time_values_2" schemaName="apps" tableName="media_at_time_values">
+            <column name="source_type_id" type="number" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="media-eug-125" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating index for column source_type_id in table: media_period_time_values</comment>
+        <createIndex indexName="idx_media_period_time_values_2" schemaName="apps" tableName="media_period_time_values">
+            <column name="source_type_id" type="number" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="media-eug-126" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding not null constraint for column source_type_id in table: media_period_time_values</comment>
+        <addNotNullConstraint
+            columnDataType="number"
+            columnName="source_type_id"
+            defaultNullValue="-1"
+            schemaName="apps"
+            tableName="media_period_time_values"
+        />
+    </changeSet>
+
+    <changeSet id="media-eug-127" logicalFilePath="path-independent" author="eugene">
+        <comment>Adding not null constraint for column source_type_id in table: media_at_time_values</comment>
+        <addNotNullConstraint
+            columnDataType="number"
+            columnName="source_type_id"
+            defaultNullValue="-1"
+            schemaName="apps"
+            tableName="media_at_time_values"
+        />
+    </changeSet>
+
+    <changeSet id="media-eug-128" logicalFilePath="path-independent" author="eugene">
+        <preConditions>
+            <columnExists schemaName="apps" tableName="media_at_time_values" columnName="source_system_code" />
+        </preConditions>
+
+        <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="source_system_code" />
+        <rollback />
+    </changeSet>
+
+    <changeSet id="media-eug-129" logicalFilePath="path-independent" author="eugene">
+        <preConditions>
+            <columnExists schemaName="apps" tableName="media_at_time_values" columnName="input_method" />
+        </preConditions>
+
+        <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="input_method" />
+        <rollback />
+    </changeSet>
+
+    <changeSet id="media-eug-130" logicalFilePath="path-independent" author="eugene">
+        <preConditions>
+            <columnExists schemaName="apps" tableName="media_at_time_values" columnName="receiving_method" />
+        </preConditions>
+
+        <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="receiving_method" />
+        <rollback />
+    </changeSet>
+
+    <changeSet id="media-eug-131" logicalFilePath="path-independent" author="eugene">
+        <preConditions>
+            <columnExists schemaName="apps" tableName="media_period_time_values" columnName="source_system_code" />
+        </preConditions>
+
+        <dropColumn schemaName="apps" tableName="media_period_time_values" columnName="source_system_code" />
+        <rollback />
+    </changeSet>
+
+    <changeSet id="media-eug-132" logicalFilePath="path-independent" author="eugene">
+        <preConditions>
+            <columnExists schemaName="apps" tableName="media_period_time_values" columnName="input_method" />
+        </preConditions>
+
+        <dropColumn schemaName="apps" tableName="media_period_time_values" columnName="input_method" />
+        <rollback />
+    </changeSet>
+
+    <changeSet id="media-eug-133" logicalFilePath="path-independent" author="eugene">
+        <preConditions>
+            <columnExists schemaName="apps" tableName="media_period_time_values" columnName="receiving_method" />
+        </preConditions>
+
+        <dropColumn schemaName="apps" tableName="media_period_time_values" columnName="receiving_method" />
+        <rollback />
+    </changeSet>
+
+</databaseChangeLog>

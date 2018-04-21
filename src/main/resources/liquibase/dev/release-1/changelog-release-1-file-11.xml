@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="media-eug-37" logicalFilePath="path-independent" author="eugene">
+        <createIndex indexName="idx_media_at_time_values_raw_1" schemaName="apps" tableName="media_at_time_values_raw">
+            <column name="source_metering_point_code"   type="varchar(18)"/>
+            <column name="metering_date"                type="TIMESTAMP" />
+            <column name="source_system_code"           type="varchar(20)" />
+            <column name="source_param_code"            type="varchar(4)" />
+            <column name="source_unit_code"             type="varchar(10)" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="media-eug-38" logicalFilePath="path-independent" author="eugene">
+        <createIndex indexName="idx_media_period_time_values_raw_1" schemaName="apps" tableName="media_period_time_values_raw">
+            <column name="source_metering_point_code"   type="varchar(18)"/>
+            <column name="metering_date"                type="TIMESTAMP" />
+            <column name="source_system_code"           type="varchar(20)" />
+            <column name="source_param_code"            type="varchar(4)" />
+            <column name="source_unit_code"             type="varchar(10)" />
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

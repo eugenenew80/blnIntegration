@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<author>ruslan</author>
+<comment>Изменения полей в основных таблицах на нулевые</comment>
+-->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+
+    <changeSet id="media-rus-106" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating index: media_period_time_values</comment>
+        <createIndex indexName="idx_media_period_time_values_1"
+                     schemaName="apps"
+                     tableName="media_period_time_values"
+                     unique="false">
+            <column name="batch_id" type="number"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="media-rus-107" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating index: media_at_time_values</comment>
+        <createIndex indexName="idx_media_at_time_values_1"
+                     schemaName="apps"
+                     tableName="media_at_time_values"
+                     unique="false">
+            <column name="batch_id" type="number"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

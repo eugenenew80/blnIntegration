@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    
+    <changeSet id="media-rus-110" logicalFilePath="path-independent" author="ruslan">
+        <comment>Creating table: media_work_list_types</comment>
+        <createTable tableName="media_work_list_types" schemaName="apps" remarks="Справочник тип списков">
+            <column name="code" type="varchar(15)" remarks="Код">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar2(100)" remarks="Наименование">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+	<changeSet id="media-rus-111" logicalFilePath="path-independent" author="ruslan">
+	    <comment>Creating primary key for table: media_work_list_types</comment>
+	    <addPrimaryKey 
+	            columnNames="code"
+	            constraintName="pk_media_work_list_types"
+	            schemaName="apps"
+	            tableName="media_work_list_types"/>
+	</changeSet>
+
+	<changeSet id="media-rus-112" logicalFilePath="path-independent" author="ruslan">
+	    <comment>inserting records into table: media_work_list_types</comment>
+        <insert schemaName="apps"  tableName="media_work_list_types">
+            <column name="code"   type="varchar2(15)"       value="SYS" />
+            <column name="name"   type="varchar(20)"  value="Системные"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_work_list_types">
+            <column name="code"   type="varchar2(15)"       value="USER" />
+            <column name="name"   type="varchar2(100)"  value="Вручную пользователем" />
+        </insert>
+    </changeSet>
+
+    <changeSet id="media-rus-113" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating primary key for table: media_connection_protocol</comment>
+        <addPrimaryKey
+                columnNames="code"
+                constraintName="pk_media_connection_protocol"
+                schemaName="apps"
+                tableName="media_connection_protocol"/>
+    </changeSet>
+
+    <changeSet id="media-rus-114" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>add column in table: media_connection_protocol</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_connection_protocol">
+            <column name="name" type="varchar2(100)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-115" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>add column in table: media_connection_protocol</comment>
+        <update schemaName="apps"
+                tableName="media_connection_protocol">
+            <column name="name" type="varchar2" value="Simple Mail Transfer Protocol"/>
+            <where>code='SMTP'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="media-rus-116" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>add column in table: media_connection_protocol</comment>
+        <update schemaName="apps"
+                tableName="media_connection_protocol">
+            <column name="name" type="varchar2" value="Simple Mail Transfer Protocol"/>
+            <where>code='SMTP'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="media-rus-117" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>add column in table: media_connection_protocol</comment>
+        <update schemaName="apps"
+                tableName="media_connection_protocol">
+            <column name="name" type="varchar2" value="File Transfer Protocol"/>
+            <where>code='FTP'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="media-rus-118" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>add column in table: media_connection_protocol</comment>
+        <delete schemaName="apps"
+                tableName="media_connection_protocol">
+            <where>code='РК'</where>
+        </delete>
+    </changeSet>
+
+    <changeSet id="media-rus-119" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating table: media_work_list_types_tl</comment>
+        <createTable tableName="media_work_list_types_tl" schemaName="apps" remarks="Справочник способ запуска перевод">
+            <column name="code" type="varchar(15)" remarks="Ссылка на родительскую запись">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="lang" type="varchar(10)" remarks="Язык">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(100)" remarks="Наименование">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="media-rus-120" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating primary key for table: media_work_list_types_tl</comment>
+        <addPrimaryKey
+                columnNames="code, lang"
+                constraintName="pk_media_work_list_types_tl"
+                schemaName="apps"
+                tableName="media_work_list_types_tl"/>
+    </changeSet>
+
+    <changeSet id="media-rus-121" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating foreign constraint: media_work_list_types_tl to media_work_list_types</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_work_list_types_tl"
+                baseColumnNames="code"
+                constraintName="fk_media_work_list_types_tl_1"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_work_list_types"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+
+    <changeSet id="media-rus-122" logicalFilePath="path-independent" author="ruslan">
+        <comment>inserting records into table: media_work_list_types_tl</comment>
+        <insert schemaName="apps"  tableName="media_work_list_types_tl">
+            <column name="code"   type="varchar2(15)"       value="SYS" />
+            <column name="lang"   type="varchar2(10)"       value="RU" />
+            <column name="name"   type="varchar(20)"  value="Системные"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_work_list_types_tl">
+            <column name="code"   type="varchar2(15)"       value="USER" />
+            <column name="lang"   type="varchar2(10)"       value="RU" />
+            <column name="name"   type="varchar2(100)"  value="Вручную пользователем" />
+        </insert>
+    </changeSet>
+
+    <changeSet id="media-rus-123" logicalFilePath="path-independent" author="ruslan">
+        <comment>inserting records into table: media_work_list_types_tl</comment>
+        <insert schemaName="apps"  tableName="media_work_list_types_tl">
+            <column name="code"   type="varchar2(15)"       value="SYS" />
+            <column name="lang"   type="varchar2(10)"       value="KZ" />
+            <column name="name"   type="varchar(20)"  value="Системные"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_work_list_types_tl">
+            <column name="code"   type="varchar2(15)"       value="USER" />
+            <column name="lang"   type="varchar2(10)"       value="KZ" />
+            <column name="name"   type="varchar2(100)"  value="Вручную пользователем" />
+        </insert>
+    </changeSet>
+
+    <changeSet id="media-rus-124" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_work_list_types</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_work_list_types">
+            <column name="create_date" type="TIMESTAMP" remarks="Дата создания"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-125" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_work_list_types</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_work_list_types">
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата изменения"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-126" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_work_list_types</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_work_list_types">
+            <column name="create_by" type="number" remarks="Автор"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-127" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_work_list_types</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_work_list_types">
+            <column name="last_update_by" type="number" remarks="Автор изменения"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-128" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_work_list_types_tl</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_work_list_types_tl">
+            <column name="create_date" type="TIMESTAMP" remarks="Дата создания"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-129" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_work_list_types_tl</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_work_list_types_tl">
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата изменения"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-130" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_work_list_types_tl</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_work_list_types_tl">
+            <column name="create_by" type="number" remarks="Автор"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-131" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_work_list_types_tl</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_work_list_types_tl">
+            <column name="last_update_by" type="number" remarks="Автор изменения"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-132" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_ways_to_start</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_ways_to_start">
+            <column name="create_date" type="TIMESTAMP" remarks="Дата создания"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-133" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_ways_to_start</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_ways_to_start">
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата изменения"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-134" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_ways_to_start</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_ways_to_start">
+            <column name="create_by" type="number" remarks="Автор"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-135" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_ways_to_start</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_ways_to_start">
+            <column name="last_update_by" type="number" remarks="Автор изменения"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-136" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_ways_to_start_tl</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_ways_to_start_tl">
+            <column name="create_date" type="TIMESTAMP" remarks="Дата создания"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-137" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_ways_to_start_tl</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_ways_to_start_tl">
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата изменения"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-138" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_ways_to_start_tl</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_ways_to_start_tl">
+            <column name="create_by" type="number" remarks="Автор"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-139" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_ways_to_start_tl</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_ways_to_start_tl">
+            <column name="last_update_by" type="number" remarks="Автор изменения"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-140" logicalFilePath="path-independent" author="ruslan">
+        <comment>update comment on media_work_list_types_tl</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on table apps.media_work_list_types_tl IS 'Справочник тип списков перевод'
+        </sql>
+    </changeSet>
+
+
+</databaseChangeLog>

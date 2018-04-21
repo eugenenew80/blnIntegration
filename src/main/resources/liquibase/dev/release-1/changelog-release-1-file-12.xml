@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="media-eug-39" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: media_parameter_conf</comment>
+        <createTable tableName="media_parameter_conf" schemaName="apps" remarks="Настройка параметров для Интеграции">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="param_id" type="number" remarks="Идентификатор измеряемого параметра">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source_system_code" type="varchar(20)" remarks="Код внешней системы">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source_param_code" type="varchar(10)" remarks="Код параметра во внешней сестеме">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source_unit_code" type="varchar(10)" remarks="Код единицы измерения во внешней системе">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source_unit_id" type="number" remarks="Идентификатор еденицы измерения">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="interval" type="number" remarks="Интервал в секундах">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_date" type="TIMESTAMP" remarks="Дата и время создания">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата и время изменения">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_by" type="number" remarks="Автор">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_by" type="number" remarks="Автор последнего обновления">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+	<changeSet id="media-eug-40" logicalFilePath="path-independent" author="eugene">
+	    <comment>Creating primary key for table: media_parameter_conf</comment>
+	    <addPrimaryKey 
+	            columnNames="id"
+	            constraintName="pk_media_parameter_conf"
+	            schemaName="apps"
+	            tableName="media_parameter_conf"/>
+	</changeSet>
+	
+	<changeSet id="media-eug-41" logicalFilePath="path-independent" author="eugene">
+	    <comment>Creating sequence for table: media_parameter_conf_raw</comment>
+	    <createSequence 
+	            incrementBy="1"
+	            schemaName="apps"
+	            sequenceName="media_parameter_conf_s"
+	            startValue="14"/>
+	</changeSet>
+
+
+</databaseChangeLog>

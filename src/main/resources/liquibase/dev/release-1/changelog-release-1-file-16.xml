@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="media-rus-17" logicalFilePath="path-independent" author="ruslan">
+        <comment>Creating table: media_input_methods</comment>
+        <createTable tableName="media_input_methods" schemaName="apps" remarks="Справочник ввода данных">
+            <column name="code" type="varchar2(20)" remarks="Код">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar2(50)" remarks="Наименование">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="create_date" type="TIMESTAMP" remarks="Дата и время создания записи">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата и время последнего изменения">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_by" type="number" remarks="Автор" >
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_by" type="number" remarks="Автор последнего обновления" >
+                <constraints nullable="true"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+
+	<changeSet id="media-rus-18" logicalFilePath="path-independent" author="ruslan">
+	    <comment>Creating primary key for table: media_input_methods</comment>
+	    <addPrimaryKey 
+	            columnNames="code"
+	            constraintName="pk_media_input_methods"
+	            schemaName="apps"
+	            tableName="media_input_methods"/>
+	</changeSet>
+
+    <changeSet id="media-rus-19" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating table: media_input_methods_tl</comment>
+        <createTable tableName="media_input_methods_tl" schemaName="apps" remarks="Справочник ввода данных перевод">
+            <column name="code" type="varchar(20)" remarks="Ссылка на родительскую запись">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="lang" type="varchar(10)" remarks="Язык">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(50)" remarks="Наименование">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="create_date" type="TIMESTAMP" remarks="Дата и время создания записи">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата и время последнего изменения">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_by" type="number" remarks="Автор" >
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_by" type="number" remarks="Автор последнего обновления" >
+                <constraints nullable="true"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+
+    <changeSet id="media-rus-20" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating primary key for table: media_input_methods_tl</comment>
+        <addPrimaryKey
+                columnNames="code, lang"
+                constraintName="pk_media_input_methods_tl"
+                schemaName="apps"
+                tableName="media_input_methods_tl"/>
+    </changeSet>
+
+    <changeSet id="media-rus-21" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating foreign constraint: media_input_methods_tl to media_input_methods</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_input_methods_tl"
+                baseColumnNames="code"
+                constraintName="fk_media_input_methods_tl_1"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_input_methods"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+</databaseChangeLog>
