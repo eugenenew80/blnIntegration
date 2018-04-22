@@ -20,14 +20,13 @@ public interface AtTimeValueRawRepository extends JpaRepository<AtTimeValueRaw, 
     @Procedure(name = "AtTimeValueRaw.load")
     void load(@Param("p_batch_id") Long batchId);
 
-
     default void bulkSave(List<AtTimeValueRaw> list) {
         Logger logger = LoggerFactory.getLogger(AtTimeValueRawRepository.class);
         long count=0;
         LocalDateTime now = LocalDateTime.now();
-        for (AtTimeValueRaw at : list) {
-            at.setCreateDate(now);
-            save(at);
+        for (AtTimeValueRaw item : list) {
+            item.setCreateDate(now);
+            save(item);
 
             count++;
             if (count % 1000 == 0) {

@@ -23,9 +23,9 @@ public interface PeriodTimeValueRawRepository extends JpaRepository<PeriodTimeVa
         Logger logger = LoggerFactory.getLogger(PeriodTimeValueRawRepository.class);
         long count=0;
         LocalDateTime now = LocalDateTime.now();
-        for (PeriodTimeValueRaw pt : list) {
-            pt.setCreateDate(now);
-            save(pt);
+        for (PeriodTimeValueRaw item : list) {
+            item.setCreateDate(now);
+            save(item);
 
             count++;
             if (count % 1000 == 0) {
