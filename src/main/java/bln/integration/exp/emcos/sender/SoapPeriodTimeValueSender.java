@@ -64,11 +64,11 @@ public class SoapPeriodTimeValueSender implements Sender<PeriodTimeValueRaw> {
 						.points(points)
 						.send();
 
-					batchHelper.updateBatch(batch, null, (long)points.size());
+					batchHelper.updateBatch(batch, (long)points.size());
 				}
 				catch (Exception e) {
 					logger.error("SoapPeriodTimeValueSender.send failed: " + e.getMessage());
-					batchHelper.updateBatch(batch, e, null);
+					batchHelper.errorBatch(batch, e);
 				}
 			});
 

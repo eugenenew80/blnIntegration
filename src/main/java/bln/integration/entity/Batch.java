@@ -6,6 +6,7 @@ import bln.integration.entity.enums.ParamTypeEnum;
 import bln.integration.entity.enums.SourceSystemEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,9 +15,8 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of= {"id"})
 @Entity
 @Table(name = "media_batches")
+@NoArgsConstructor
 public class Batch  {
-    public Batch() {}
-
     public Batch(WorkListHeader header, ParamTypeEnum paramTypeEnum) {
         this.workListHeader = header;
         this.sourceSystemCode = header.getSourceSystemCode();

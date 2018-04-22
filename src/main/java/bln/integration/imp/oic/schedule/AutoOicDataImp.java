@@ -6,14 +6,21 @@ import bln.integration.imp.Reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AutoOicDataImp implements ImportRunner {
 	private static final Logger logger = LoggerFactory.getLogger(AutoOicDataImp.class);
 
-	//@Scheduled(cron = "*/15 * * * * *")
+	@Value("${bln.integration.imp.oic.schedule.AutoOicDataImp}")
+	private boolean enable;
+
+	@Scheduled(cron = "0 */5 * * * *")
 	public void run() {
+		if (!enable) return;
+
 		try {
 			reader.read();
 		}

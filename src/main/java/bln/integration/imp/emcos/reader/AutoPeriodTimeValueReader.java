@@ -28,10 +28,10 @@ import static java.util.stream.IntStream.range;
 @Service
 @RequiredArgsConstructor
 public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
-	private final PeriodTimeValueRawRepository ptValueRawRepository;
-	private final LastLoadInfoRepository lastLoadInfoRepository;
+	private final PeriodTimeValueRawRepository valueRepository;
 	private final WorkListHeaderRepository headerRepository;
-	private final PeriodTimeValueImpGateway ptValueGateway;
+	private final LastLoadInfoRepository lastLoadInfoRepository;
+	private final PeriodTimeValueImpGateway valueGateway;
 	private final BatchHelper batchHelper;
 
 	private static final Logger logger = LoggerFactory.getLogger(AutoPeriodTimeValueReader.class);
@@ -85,21 +85,22 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 					for (int i = 0; i < groupsPoints.size(); i++) {
 						logger.info("group of points: " + (i + 1));
 
-						List<PeriodTimeValueRaw> ptList = ptValueGateway
+						List<PeriodTimeValueRaw> ptList = valueGateway
 							.config(header.getConfig())
 							.points(groupsPoints.get(i))
 							.request();
 
-						batchHelper.savePtData(batch, ptList);
+						ptList.forEach(t -> t.setBatch(batch));
+						valueRepository.bulkSave(ptList);
 						recCount = recCount + ptList.size();
 					}
 
-					batchHelper.updateBatch(batch, null, recCount);
+					batchHelper.updateBatch(batch, recCount);
 					onBatchCompleted(batch);
 				}
 				catch (Exception e) {
 					logger.error("read failed: " + e.getMessage());
-					batchHelper.updateBatch(batch, e, null);
+					batchHelper.errorBatch(batch, e);
 					break;
 				}
 
@@ -131,31 +132,35 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void onBatchCompleted(Batch batch) {
 		logger.info("onBatchCompleted started");
-		ptValueRawRepository.updateLastDate(batch.getId());
-		ptValueRawRepository.load(batch.getId());
+		valueRepository.updateLastDate(batch.getId());
+		valueRepository.load(batch.getId());
 		logger.info("onBatchCompleted completed");
 	}
 
 	private List<MeteringPointCfg> buildPoints(List<WorkListLine> lines, LocalDateTime endDateTime) {
-		List<LastLoadInfo> lastLoadInfoList = lastLoadInfoRepository.findAll();
-
 		List<MeteringPointCfg> points = new ArrayList<>();
 		lines.stream()
 			.filter(line -> line.getParam().getIsPt())
 			.forEach(line -> {
-				LastLoadInfo lastLoadInfo = batchHelper.getLastLoadIfo(
-					lastLoadInfoList,
-					line,
-					ParamTypeEnum.PT,
-					900
+				ParameterConf parameterConf = line.getParam().getConfs()
+					.stream()
+					.filter(c -> c.getSourceSystemCode()==SourceSystemEnum.EMCOS)
+					.filter(c -> c.getParamType()==ParamTypeEnum.PT)
+					.filter(c -> c.getInterval().equals(900))
+					.findFirst()
+					.orElse(null);
+
+				LastLoadInfo lastLoadInfo = lastLoadInfoRepository.findBySourceSystemCodeAndSourceMeteringPointCodeAndSourceParamCode(
+					parameterConf.getSourceSystemCode(),
+					line.getMeteringPoint().getExternalCode(),
+					parameterConf.getSourceParamCode()
 				);
 
-				MeteringPointCfg mpc = batchHelper.buildPointCfg(
+				MeteringPointCfg mpc = MeteringPointCfg.fromLine(
 					line,
+					parameterConf,
 					buildStartTime(lastLoadInfo),
-					endDateTime,
-					ParamTypeEnum.PT,
-					900
+					endDateTime
 				);
 
 				if (mpc!=null) points.add(mpc);
@@ -165,20 +170,15 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	}
 
 	private LocalDateTime buildStartTime(LastLoadInfo lastLoadInfo) {
-		LocalDate now = LocalDate.now(ZoneId.of("UTC+1"));
-		LocalDateTime startTime = now
-			.minusDays(now.getDayOfMonth()-1)
-			.minusMonths(1)
-			.atStartOfDay();
-
 		if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate() !=null) {
 			LocalDateTime lastLoadDate = lastLoadInfo.getLastLoadDate();
-			startTime = lastLoadDate.getMinute() < 45
+			return lastLoadDate.getMinute() < 45
 				? lastLoadDate.truncatedTo(ChronoUnit.HOURS)
 				: lastLoadDate.plusMinutes(15);
 		}
 
-		return startTime;
+		LocalDate now = LocalDate.now(ZoneId.of("UTC+1"));
+		return now.minusDays(now.getDayOfMonth()-1).atStartOfDay();
 	}
 
 	private LocalDateTime buildEndDateTime() {

@@ -70,14 +70,15 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 						.arcType("MIN-3")
 						.request();
 
-					batchHelper.savePtData(batch, ptList);
-					batchHelper.updateBatch(batch, null, (long) ptList.size() );
+					ptList.forEach(t -> t.setBatch(batch));
+					ptValueRawRepository.bulkSave(ptList);
+					batchHelper.updateBatch(batch, (long) ptList.size() );
 					ptValueRawRepository.updateLastDate(batch.getId());
 					ptValueRawRepository.load(batch.getId());
 				}
 				catch (Exception e) {
 					logger.error("read failed: " + e.getMessage());
-					batchHelper.updateBatch(batch, e, null);
+					batchHelper.errorBatch(batch, e);
 				}
 			});
 

@@ -1,6 +1,7 @@
 package bln.integration.imp.emcos.reader;
 
 import bln.integration.entity.Batch;
+import bln.integration.entity.ParameterConf;
 import bln.integration.entity.WorkListLine;
 import bln.integration.entity.AtTimeValueRaw;
 import bln.integration.entity.enums.*;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +22,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
-	private final AtTimeValueRawRepository atValueRawRepository;
+	private final AtTimeValueRawRepository valueRepository;
 	private final WorkListHeaderRepository headerRepository;
+	private final AtTimeValueGateway valueGateway;
 	private final BatchHelper batchHelper;
-	private final AtTimeValueGateway atValueGateway;
 
 	private static final Logger logger = LoggerFactory.getLogger(ManualAtTimeValueReader.class);
 
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	@Transactional
 	public void read() {
 		logger.debug("read started");
 
@@ -61,21 +61,22 @@ public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
 
 				Long recCount = 0l;
 				try {
-					List<AtTimeValueRaw> atList = atValueGateway
+					List<AtTimeValueRaw> atList = valueGateway
 						.config(header.getConfig())
 						.points(points)
 						.request();
 
-					batchHelper.saveAtData(batch, atList);
+					atList.forEach(t -> t.setBatch(batch));
+					valueRepository.bulkSave(atList);
 					recCount = recCount + atList.size();
 
-					batchHelper.updateBatch(batch, null, recCount);
-					atValueRawRepository.updateLastDate(batch.getId());
-					atValueRawRepository.load(batch.getId());
+					batchHelper.updateBatch(batch, recCount);
+					valueRepository.updateLastDate(batch.getId());
+					valueRepository.load(batch.getId());
 				}
 				catch (Exception e) {
 					logger.error("read failed: " + e.getMessage());
-					batchHelper.updateBatch(batch, e, null);
+					batchHelper.errorBatch(batch, e);
 				}
 			});
 
@@ -88,12 +89,19 @@ public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
 		lines.stream()
 			.filter(line -> line.getParam().getIsAt())
 			.forEach(line -> {
-				MeteringPointCfg mpc = batchHelper.buildPointCfg(
+				ParameterConf parameterConf = line.getParam().getConfs()
+					.stream()
+					.filter(c -> c.getSourceSystemCode()==SourceSystemEnum.EMCOS)
+					.filter(c -> c.getParamType()==ParamTypeEnum.AT)
+					.filter(c ->  c.getInterval()==null)
+					.findFirst()
+					.orElse(null);
+
+				MeteringPointCfg mpc = MeteringPointCfg.fromLine(
 					line,
+					parameterConf,
 					line.getStartDate(),
-					line.getEndDate(),
-					ParamTypeEnum.AT,
-					null
+					line.getEndDate()
 				);
 
 				if (!(mpc.getStartTime().isEqual(mpc.getEndTime()) || mpc.getStartTime().isAfter(mpc.getEndTime())))

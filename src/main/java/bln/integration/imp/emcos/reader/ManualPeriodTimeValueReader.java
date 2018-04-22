@@ -1,6 +1,7 @@
 package bln.integration.imp.emcos.reader;
 
 import bln.integration.entity.Batch;
+import bln.integration.entity.ParameterConf;
 import bln.integration.entity.WorkListLine;
 import bln.integration.entity.PeriodTimeValueRaw;
 import bln.integration.entity.enums.*;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -23,14 +23,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
-	private final PeriodTimeValueRawRepository ptValueRawRepository;
+	private final PeriodTimeValueRawRepository valueRepository;
 	private final WorkListHeaderRepository headerRepository;
+	private final PeriodTimeValueImpGateway valueGateway;
 	private final BatchHelper batchHelper;
-	private final PeriodTimeValueImpGateway ptGateway;
 
 	private static final Logger logger = LoggerFactory.getLogger(ManualPeriodTimeValueReader.class);
 
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	@Transactional
 	public void read() {
 		logger.debug("read started");
 
@@ -62,21 +62,22 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 
 				Long recCount = 0l;
 				try {
-					List<PeriodTimeValueRaw> ptList = ptGateway
+					List<PeriodTimeValueRaw> ptList = valueGateway
 						.config(header.getConfig())
 						.points(points)
 						.request();
 
-					batchHelper.savePtData(batch, ptList);
+					ptList.forEach(t -> t.setBatch(batch));
+					valueRepository.bulkSave(ptList);
 					recCount = recCount + ptList.size();
 
-					batchHelper.updateBatch(batch, null, recCount);
-					ptValueRawRepository.updateLastDate(batch.getId());
-					ptValueRawRepository.load(batch.getId());
+					batchHelper.updateBatch(batch, recCount);
+					valueRepository.updateLastDate(batch.getId());
+					valueRepository.load(batch.getId());
 				}
 				catch (Exception e) {
 					logger.error("read failed: " + e.getMessage());
-					batchHelper.updateBatch(batch, e, null);
+					batchHelper.errorBatch(batch, e);
 				}
 			});
 
@@ -93,12 +94,19 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 		lines.stream()
 			.filter(line -> line.getParam().getIsPt())
 			.forEach(line -> {
-				MeteringPointCfg mpc = batchHelper.buildPointCfg(
+				ParameterConf parameterConf = line.getParam().getConfs()
+					.stream()
+					.filter(c -> c.getSourceSystemCode()==SourceSystemEnum.EMCOS)
+					.filter(c -> c.getParamType()==ParamTypeEnum.PT)
+					.filter(c -> c.getInterval().equals(900))
+					.findFirst()
+					.orElse(null);
+
+				MeteringPointCfg mpc = MeteringPointCfg.fromLine(
 					line,
+					parameterConf,
 					line.getStartDate(),
-					line.getEndDate(),
-					ParamTypeEnum.PT,
-					900
+					line.getEndDate()
 				);
 
 				if (!(mpc.getStartTime().isEqual(mpc.getEndTime()) || mpc.getStartTime().isAfter(mpc.getEndTime())))

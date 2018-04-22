@@ -6,6 +6,7 @@ import bln.integration.imp.Reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +14,13 @@ import org.springframework.stereotype.Component;
 public class AutoPeriodTimeValueImp implements ImportRunner {
 	private static final Logger logger = LoggerFactory.getLogger(AutoPeriodTimeValueImp.class);
 
-	@Scheduled(cron = "30 */1 * * * *")
+	@Value("${bln.integration.imp.emcos.schedule.AutoPeriodTimeValueImp}")
+	private boolean enable;
+
+	@Scheduled(cron = "0 */50 * * * *")
 	public void run() {
+		if (!enable) return;
+
 		try {
 			autoPeriodTimeValueReader.read();
 		}

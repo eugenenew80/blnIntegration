@@ -1,9 +1,6 @@
 package bln.integration.imp.emcos.reader;
 
-import bln.integration.entity.Batch;
-import bln.integration.entity.LastLoadInfo;
-import bln.integration.entity.WorkListLine;
-import bln.integration.entity.AtTimeValueRaw;
+import bln.integration.entity.*;
 import bln.integration.entity.enums.DirectionEnum;
 import bln.integration.entity.enums.ParamTypeEnum;
 import bln.integration.entity.enums.SourceSystemEnum;
@@ -36,15 +33,15 @@ import static java.util.stream.IntStream.range;
 @Service
 @RequiredArgsConstructor
 public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
-	private final AtTimeValueRawRepository atValueRawRepository;
-	private final LastLoadInfoRepository lastLoadInfoRepository;
+	private final AtTimeValueRawRepository valueRepository;
 	private final WorkListHeaderRepository headerRepository;
-	private final AtTimeValueGateway atValueGateway;
+	private final LastLoadInfoRepository lastLoadInfoRepository;
+	private final AtTimeValueGateway valueGateway;
 	private final BatchHelper batchHelper;
 
 	private static final Logger logger = LoggerFactory.getLogger(AutoAtTimeValueReader.class);
 
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	@Transactional
 	public void read() {
 		logger.info("read started");
 
@@ -93,21 +90,22 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 						for (int i = 0; i < groupsPoints.size(); i++) {
 							logger.info("group of points: " + (i + 1));
 
-							List<AtTimeValueRaw> atList = atValueGateway
+							List<AtTimeValueRaw> atList = valueGateway
 								.config(header.getConfig())
 								.points(groupsPoints.get(i))
 								.request();
 
-							batchHelper.saveAtData(batch, atList);
+							atList.forEach(t -> t.setBatch(batch));
+							valueRepository.bulkSave(atList);
 							recCount = recCount + atList.size();
 						}
 
-						batchHelper.updateBatch(batch, null, recCount);
+						batchHelper.updateBatch(batch, recCount);
 						onBatchCompleted(batch);
 					}
 					catch (Exception e) {
 						logger.error("read failed: " + e.getMessage());
-						batchHelper.updateBatch(batch, e, null);
+						batchHelper.errorBatch(batch, e);
 						break;
 					}
 
@@ -139,32 +137,37 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void onBatchCompleted(Batch batch) {
 		logger.info("onBatchCompleted started");
-		atValueRawRepository.updateLastDate(batch.getId());
-		atValueRawRepository.load(batch.getId());
+		valueRepository.updateLastDate(batch.getId());
+		valueRepository.load(batch.getId());
 		logger.info("onBatchCompleted completed");
 	}
 
 	private List<MeteringPointCfg> buildPoints(List<WorkListLine> lines, LocalDateTime endDateTime) {
-		List<LastLoadInfo> lastLoadInfoList = lastLoadInfoRepository.findAll();
-
 		List<MeteringPointCfg> points = new ArrayList<>();
 		lines.stream()
 			.filter(line -> line.getParam().getIsAt())
 			.forEach(line -> {
-				LastLoadInfo lastLoadInfo = batchHelper.getLastLoadIfo(
-					lastLoadInfoList,
-					line,
-					ParamTypeEnum.AT,
-					null
+				ParameterConf parameterConf = line.getParam().getConfs()
+					.stream()
+					.filter(c -> c.getSourceSystemCode()==SourceSystemEnum.EMCOS)
+					.filter(c -> c.getParamType()==ParamTypeEnum.AT)
+					.filter(c ->  c.getInterval()==null)
+					.findFirst()
+					.orElse(null);
+
+				LastLoadInfo lastLoadInfo = lastLoadInfoRepository.findBySourceSystemCodeAndSourceMeteringPointCodeAndSourceParamCode(
+					parameterConf.getSourceSystemCode(),
+					line.getMeteringPoint().getExternalCode(),
+					parameterConf.getSourceParamCode()
 				);
 
-				MeteringPointCfg mpc = batchHelper.buildPointCfg(
+				MeteringPointCfg mpc = MeteringPointCfg.fromLine(
 					line,
+					parameterConf,
 					buildStartTime(lastLoadInfo),
-					endDateTime,
-					ParamTypeEnum.AT,
-					null
+					endDateTime
 				);
+
 				if (mpc!=null) points.add(mpc);
 			});
 
@@ -172,21 +175,16 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	}
 
 	private LocalDateTime buildStartTime(LastLoadInfo lastLoadInfo) {
-		LocalDate now = LocalDate.now(ZoneId.of("UTC+1"));
-		LocalDateTime startDateTime =  now
-			.minusDays(now.getDayOfMonth())
-			.minusMonths(1)
-			.atStartOfDay();
-
 		if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate()!=null)
-			startDateTime = lastLoadInfo.getLastLoadDate().plusDays(1).truncatedTo(ChronoUnit.DAYS);
+			return lastLoadInfo.getLastLoadDate()
+				.plusDays(1)
+				.truncatedTo(ChronoUnit.DAYS);
 
-		return startDateTime;
+		LocalDate now = LocalDate.now(ZoneId.of("UTC+1"));
+		return now.minusDays(now.getDayOfMonth()).minusMonths(1).atStartOfDay();
 	}
 
 	private LocalDateTime buildEndDateTime() {
-		return LocalDate.now(ZoneId.of("UTC+1"))
-			.plusDays(1)
-			.atStartOfDay();
+		return LocalDate.now(ZoneId.of("UTC+1")).plusDays(1).atStartOfDay();
 	}
 }

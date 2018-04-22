@@ -10,6 +10,7 @@ import bln.integration.gateway.CompressService;
 import bln.integration.gateway.emcos.AtTimeValueGateway;
 import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.registry.TemplateRegistry;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -38,7 +39,10 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
 
 @Service
+@RequiredArgsConstructor
 public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
+    private final TemplateRegistry templateRegistry;
+
     private static final Logger logger = LoggerFactory.getLogger(AtTimeValueGatewayImpl.class);
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HH:mm:'00000'");
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -77,11 +81,11 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
             }
 
             byte[] byteAnswer = new HttpGatewayImpl.Builder()
-                    .url(new URL(config.getUrl()))
-                    .method("POST")
-                    .body(body)
-                    .build()
-                    .doRequest();
+                .url(new URL(config.getUrl()))
+                .method("POST")
+                .body(body)
+                .build()
+                .doRequest();
 
             String answer = new String(byteAnswer, "UTF-8");
             int n1 = answer.indexOf("<AnswerData>");
@@ -264,10 +268,4 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
 
         return mr;
     }
-
-    @Autowired
-    private TemplateRegistry templateRegistry;
-
-    @Autowired
-    private CompressService compressService;
 }

@@ -62,27 +62,6 @@ public class HttpGatewayImpl implements HttpGateway {
 		}
 
 		return response.toString().getBytes();
-
-		/*
-		String rawData = response.toString();
-		logger.info(rawData);
-
-		String answerData;
-		int n1 = rawData.indexOf("<AnswerData>");
-		int n2 = rawData.indexOf("</AnswerData>");
-		if (n2>n1)
-			answerData = rawData.substring(n1+12, n2);
-		else {
-			n1 = rawData.indexOf("<?xml version=\"1.0\"?>");
-			n2 = rawData.indexOf("</SOAP-ENV:Envelope>");
-			if (n2>n1)
-				answerData = rawData.substring(n1, n2 + 20);
-			else
-				answerData = rawData;
-		}
-
-        return answerData;
-        */
 	}
 
     public static class Builder {
