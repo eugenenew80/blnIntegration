@@ -151,7 +151,7 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 					.stream()
 					.filter(c -> c.getSourceSystemCode()==SourceSystemEnum.EMCOS)
 					.filter(c -> c.getParamType()==ParamTypeEnum.AT)
-					.filter(c ->  c.getInterval()==null)
+					.filter(c -> c.getInterval()==null)
 					.findFirst()
 					.orElse(null);
 
