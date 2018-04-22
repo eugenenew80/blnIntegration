@@ -17,7 +17,7 @@ public class AutoOicDataImp implements ImportRunner {
 	@Value("${bln.integration.imp.oic.schedule.AutoOicDataImp}")
 	private boolean enable;
 
-	@Scheduled(cron = "0 */5 * * * *")
+	@Scheduled(cron = "0 15 */1 * * *")
 	public void run() {
 		if (!enable) return;
 
