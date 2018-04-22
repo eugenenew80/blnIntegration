@@ -11,6 +11,7 @@ import bln.integration.imp.BatchHelper;
 import bln.integration.imp.Reader;
 import bln.integration.repo.AtTimeValueRawRepository;
 import bln.integration.repo.LastLoadInfoRepository;
+import bln.integration.repo.ParameterConfRepository;
 import bln.integration.repo.WorkListHeaderRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	private final AtTimeValueRawRepository valueRepository;
 	private final WorkListHeaderRepository headerRepository;
 	private final LastLoadInfoRepository lastLoadInfoRepository;
+	private final ParameterConfRepository parameterConfRepository;
 	private final AtTimeValueGateway valueGateway;
 	private final BatchHelper batchHelper;
 
@@ -143,15 +145,18 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	}
 
 	private List<MeteringPointCfg> buildPoints(List<WorkListLine> lines, LocalDateTime endDateTime) {
+		List<ParameterConf> confList = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
+			SourceSystemEnum.EMCOS,
+			ParamTypeEnum.AT
+		);
+
 		List<MeteringPointCfg> points = new ArrayList<>();
 		lines.stream()
 			.filter(line -> line.getParam().getIsAt())
 			.forEach(line -> {
-				ParameterConf parameterConf = line.getParam().getConfs()
-					.stream()
-					.filter(c -> c.getSourceSystemCode()==SourceSystemEnum.EMCOS)
-					.filter(c -> c.getParamType()==ParamTypeEnum.AT)
-					.filter(c -> c.getInterval()==null)
+				ParameterConf parameterConf = confList.stream()
+					.filter(c -> c.getParam().equals(line.getParam()))
+					.filter(c -> c.getInterval() == null)
 					.findFirst()
 					.orElse(null);
 

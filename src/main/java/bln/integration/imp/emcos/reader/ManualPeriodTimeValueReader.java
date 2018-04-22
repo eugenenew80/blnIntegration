@@ -9,6 +9,7 @@ import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.gateway.emcos.PeriodTimeValueImpGateway;
 import bln.integration.imp.BatchHelper;
 import bln.integration.imp.Reader;
+import bln.integration.repo.ParameterConfRepository;
 import bln.integration.repo.PeriodTimeValueRawRepository;
 import bln.integration.repo.WorkListHeaderRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.List;
 public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	private final PeriodTimeValueRawRepository valueRepository;
 	private final WorkListHeaderRepository headerRepository;
+	private final ParameterConfRepository parameterConfRepository;
 	private final PeriodTimeValueImpGateway valueGateway;
 	private final BatchHelper batchHelper;
 
@@ -85,19 +87,18 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	}
 
 
-	private List<MeteringPointCfg> buildPoints() {
-		return buildPoints();
-	}
-
 	private List<MeteringPointCfg> buildPoints(List<WorkListLine> lines) {
+		List<ParameterConf> confList = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
+			SourceSystemEnum.EMCOS,
+			ParamTypeEnum.PT
+		);
+
 		List<MeteringPointCfg> points = new ArrayList<>();
 		lines.stream()
 			.filter(line -> line.getParam().getIsPt())
 			.forEach(line -> {
-				ParameterConf parameterConf = line.getParam().getConfs()
-					.stream()
-					.filter(c -> c.getSourceSystemCode()==SourceSystemEnum.EMCOS)
-					.filter(c -> c.getParamType()==ParamTypeEnum.PT)
+				ParameterConf parameterConf = confList.stream()
+					.filter(c -> c.getParam().equals(line.getParam()))
 					.filter(c -> c.getInterval().equals(900))
 					.findFirst()
 					.orElse(null);

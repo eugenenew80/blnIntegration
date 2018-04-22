@@ -3,13 +3,9 @@ package bln.integration.entity;
 import bln.integration.jpa.BooleanToIntConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Immutable;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @EqualsAndHashCode(of= {"id"})
@@ -48,8 +44,4 @@ public class Parameter {
 
     @Column(name = "last_update_date")
     private LocalDateTime lastUpdateDate;
-
-    @OneToMany(mappedBy = "param")
-    @Fetch(FetchMode.SUBSELECT)
-    private List<ParameterConf> confs;
 }
