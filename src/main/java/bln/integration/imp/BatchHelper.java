@@ -5,8 +5,6 @@ import bln.integration.entity.enums.BatchStatusEnum;
 import bln.integration.entity.enums.ParamTypeEnum;
 import bln.integration.repo.*;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,8 +17,6 @@ import java.time.LocalDateTime;
 public class BatchHelper {
     private final WorkListHeaderRepository headerRepository;
     private final BatchRepository batchRepository;
-
-    private static final Logger logger = LoggerFactory.getLogger(BatchHelper.class);
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Batch createBatch(Batch batch) {
@@ -50,7 +46,6 @@ public class BatchHelper {
         updateHeader(batch, batch.getWorkListHeader());
         return batch;
     }
-
 
     @Lock(LockModeType.WRITE)
     private WorkListHeader updateHeader(Batch batch, WorkListHeader header) {

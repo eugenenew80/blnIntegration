@@ -31,7 +31,7 @@ public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	private final BatchHelper batchHelper;
 	private static final Logger logger = LoggerFactory.getLogger(ManualAtTimeValueReader.class);
 
-	@Transactional
+	@Transactional(propagation=Propagation.NOT_SUPPORTED)
 	public void read() {
 		logger.debug("read started");
 

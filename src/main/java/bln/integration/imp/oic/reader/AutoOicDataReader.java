@@ -63,16 +63,17 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 
 				Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.PT));
 				try {
-					List<PeriodTimeValueRaw> ptList = oicImpGateway
+					List<PeriodTimeValueRaw> list = oicImpGateway
 						.points(buildPoints(lines))
 						.startDateTime(startDateTime)
 						.endDateTime(endDateTime)
 						.arcType("MIN-3")
 						.request();
 
-					ptList.forEach(t -> t.setBatch(batch));
-					valueRawRepository.save(ptList);
-					batchHelper.updateBatch(batch, (long) ptList.size() );
+					list.forEach(t -> t.setBatch(batch));
+					valueRawRepository.save(list);
+
+					batchHelper.updateBatch(batch, (long) list.size() );
 					valueRawRepository.updateLastDate(batch.getId());
 					valueRawRepository.load(batch.getId());
 				}
