@@ -7,6 +7,7 @@ import bln.integration.entity.enums.WorkListTypeEnum;
 import bln.integration.jpa.BooleanToIntConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,8 +16,11 @@ import java.util.List;
 @EqualsAndHashCode(of= {"id"})
 @Entity
 @Table(name = "media_work_list_headers")
+@DynamicUpdate
 @NamedEntityGraph(name="WorkListHeader.allJoins", attributeNodes = {
-    @NamedAttributeNode("config")
+    @NamedAttributeNode("config"),
+    @NamedAttributeNode("atBatch"),
+    @NamedAttributeNode("ptBatch")
 })
 public class WorkListHeader {
     @Id

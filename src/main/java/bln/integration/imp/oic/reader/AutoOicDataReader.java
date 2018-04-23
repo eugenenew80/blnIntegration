@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AutoOicDataReader implements Reader<TelemetryRaw> {
-	private final PeriodTimeValueRawRepository ptValueRawRepository;
+	private final PeriodTimeValueRawRepository valueRawRepository;
 	private final LastLoadInfoRepository loadInfoRepository;
 	private final WorkListHeaderRepository headerRepository;
 	private final OicDataImpGateway oicImpGateway;
@@ -71,10 +71,10 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 						.request();
 
 					ptList.forEach(t -> t.setBatch(batch));
-					ptValueRawRepository.bulkSave(ptList);
+					valueRawRepository.save(ptList);
 					batchHelper.updateBatch(batch, (long) ptList.size() );
-					ptValueRawRepository.updateLastDate(batch.getId());
-					ptValueRawRepository.load(batch.getId());
+					valueRawRepository.updateLastDate(batch.getId());
+					valueRawRepository.load(batch.getId());
 				}
 				catch (Exception e) {
 					logger.error("read failed: " + e.getMessage());

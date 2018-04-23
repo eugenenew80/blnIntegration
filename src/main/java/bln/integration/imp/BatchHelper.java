@@ -17,14 +17,14 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class BatchHelper {
-    private final WorkListHeaderRepository workListHeaderService;
-    private final BatchRepository batchService;
+    private final WorkListHeaderRepository headerRepository;
+    private final BatchRepository batchRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(BatchHelper.class);
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Batch createBatch(Batch batch) {
-        batch = batchService.save(batch);
+        batch = batchRepository.save(batch);
         updateHeader(batch, batch.getWorkListHeader());
         return batch;
     }
@@ -34,7 +34,7 @@ public class BatchHelper {
         batch.setEndDate(LocalDateTime.now());
         batch.setStatus(BatchStatusEnum.C);
         batch.setRecCount(recCount);
-        batch = batchService.save(batch);
+        batch = batchRepository.save(batch);
 
         updateHeader(batch, batch.getWorkListHeader());
         return batch;
@@ -45,7 +45,7 @@ public class BatchHelper {
         batch.setEndDate(LocalDateTime.now());
         batch.setStatus(BatchStatusEnum.E);
         batch.setErrMsg(e.getMessage());
-        batch = batchService.save(batch);
+        batch = batchRepository.save(batch);
 
         updateHeader(batch, batch.getWorkListHeader());
         return batch;
@@ -56,7 +56,7 @@ public class BatchHelper {
     private WorkListHeader updateHeader(Batch batch, WorkListHeader header) {
         if (header==null) return null;
 
-        header = workListHeaderService.findOne(header.getId());
+        header = headerRepository.findOne(header.getId());
         if (batch.getParamType() == ParamTypeEnum.AT) {
             header.setAtBatch(batch);
             header.setAtStatus(batch.getStatus());
@@ -67,7 +67,7 @@ public class BatchHelper {
             header.setPtStatus(batch.getStatus());
         }
 
-        workListHeaderService.save(header);
+        headerRepository.save(header);
         return header;
     }
 }

@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Immutable;
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(of= {"id"})
@@ -38,10 +37,4 @@ public class Parameter {
     @Column(name = "is_pt")
     @Convert(converter = BooleanToIntConverter.class)
     private Boolean isPt;
-
-    @Column(name = "create_date")
-    private LocalDateTime createDate;
-
-    @Column(name = "last_update_date")
-    private LocalDateTime lastUpdateDate;
 }

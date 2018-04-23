@@ -1,8 +1,8 @@
 package bln.integration.entity;
 
+import bln.integration.entity.enums.SourceSystemEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -16,8 +16,9 @@ public class LastLoadInfo {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "media_last_load_info_s")
     private Long id;
 
-    @Column(name = "source_system_code")
-    private String sourceSystemCode;
+    @Column(name="source_system_code")
+    @Enumerated(EnumType.STRING)
+    private SourceSystemEnum sourceSystemCode;
 
     @Column(name = "source_metering_point_code")
     private String sourceMeteringPointCode;
@@ -27,8 +28,4 @@ public class LastLoadInfo {
 
     @Column(name = "last_load_date")
     private LocalDateTime lastLoadDate;
-
-    @ManyToOne
-    @JoinColumn(name="last_batch_id")
-    private Batch lastBatch;
 }

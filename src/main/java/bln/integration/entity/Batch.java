@@ -1,13 +1,8 @@
 package bln.integration.entity;
 
-import bln.integration.entity.enums.BatchStatusEnum;
-import bln.integration.entity.enums.DirectionEnum;
-import bln.integration.entity.enums.ParamTypeEnum;
-import bln.integration.entity.enums.SourceSystemEnum;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-
+import bln.integration.entity.enums.*;
+import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -15,6 +10,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of= {"id"})
 @Entity
 @Table(name = "media_batches")
+@DynamicUpdate
 @NoArgsConstructor
 public class Batch  {
     public Batch(WorkListHeader header, ParamTypeEnum paramTypeEnum) {

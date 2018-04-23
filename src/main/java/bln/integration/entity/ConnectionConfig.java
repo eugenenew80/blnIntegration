@@ -4,9 +4,7 @@ import bln.integration.entity.enums.SourceSystemEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Immutable;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(of= {"id"})
@@ -37,10 +35,4 @@ public class ConnectionConfig {
 
     @Column
     private String pwd;
-
-    @Column(name = "create_date")
-    private LocalDateTime createDate;
-
-    @Column(name = "last_update_date")
-    private LocalDateTime lastUpdateDate;
 }

@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -29,10 +30,9 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	private final ParameterConfRepository parameterConfRepository;
 	private final PeriodTimeValueImpGateway valueGateway;
 	private final BatchHelper batchHelper;
-
 	private static final Logger logger = LoggerFactory.getLogger(ManualPeriodTimeValueReader.class);
 
-	@Transactional
+	@Transactional(propagation=Propagation.NOT_SUPPORTED)
 	public void read() {
 		logger.debug("read started");
 
@@ -64,18 +64,17 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 
 				Long recCount = 0l;
 				try {
-					List<PeriodTimeValueRaw> ptList = valueGateway
+					List<PeriodTimeValueRaw> list = valueGateway
 						.config(header.getConfig())
 						.points(points)
 						.request();
 
-					ptList.forEach(t -> t.setBatch(batch));
-					valueRepository.bulkSave(ptList);
-					recCount = recCount + ptList.size();
+					save(list, batch);
+					recCount = recCount + list.size();
 
 					batchHelper.updateBatch(batch, recCount);
-					valueRepository.updateLastDate(batch.getId());
-					valueRepository.load(batch.getId());
+					updateLastDate(batch);
+					load(batch);
 				}
 				catch (Exception e) {
 					logger.error("read failed: " + e.getMessage());
@@ -87,6 +86,29 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	}
 
 
+	@Transactional(propagation= Propagation.REQUIRES_NEW)
+	private void save(List<PeriodTimeValueRaw> list, Batch batch) {
+		logger.info("saving records started");
+		list.forEach(t -> t.setBatch(batch));
+		valueRepository.save(list);
+		logger.info("saving records completed");
+	}
+
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	private void updateLastDate(Batch batch) {
+		logger.info("updateLastDate started");
+		valueRepository.updateLastDate(batch.getId());
+		logger.info("updateLastDate completed");
+	}
+
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	private void load(Batch batch) {
+		logger.info("load started");
+		valueRepository.load(batch.getId());
+		logger.info("load completed");
+	}
+
+	@Transactional(propagation=Propagation.REQUIRED, readOnly = true)
 	private List<MeteringPointCfg> buildPoints(List<WorkListLine> lines) {
 		List<ParameterConf> confList = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
 			SourceSystemEnum.EMCOS,

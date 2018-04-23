@@ -5,9 +5,7 @@ import bln.integration.entity.enums.SourceSystemEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Immutable;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(of= {"id"})
@@ -44,10 +42,4 @@ public class ParameterConf {
     @Column(name="param_type")
     @Enumerated(EnumType.STRING)
     private ParamTypeEnum paramType;
-
-    @Column(name = "create_date")
-    private LocalDateTime createDate;
-
-    @Column(name = "last_update_date")
-    private LocalDateTime lastUpdateDate;
 }

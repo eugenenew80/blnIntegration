@@ -17,7 +17,7 @@ public class AutoAtTimeValueImp implements ImportRunner {
 	@Value("${bln.integration.imp.emcos.schedule.AutoAtTimeValueImp}")
 	private boolean enable;
 
-	@Scheduled(cron = "0 5 */1 * * *")
+	@Scheduled(cron = "0 45 */1 * * *")
 	public void run() {
 		if (!enable) return;
 
