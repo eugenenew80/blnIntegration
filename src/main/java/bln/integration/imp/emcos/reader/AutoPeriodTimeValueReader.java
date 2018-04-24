@@ -31,7 +31,7 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	private final BatchHelper batchHelper;
 
 	private static final Logger logger = LoggerFactory.getLogger(AutoPeriodTimeValueReader.class);
-	private static final int groupCount = 6000;
+	private static final int groupCount = 300;
 
 	@Transactional(propagation=Propagation.NOT_SUPPORTED)
 	public void read() {
