@@ -70,7 +70,11 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 						.arcType("MIN-3")
 						.request();
 
-					list.forEach(t -> t.setBatch(batch));
+					LocalDateTime now = LocalDateTime.now();
+					list.forEach(t -> {
+						t.setBatch(batch);
+						t.setCreateDate(now);
+					});
 					valueRawRepository.save(list);
 
 					batchHelper.updateBatch(batch, (long) list.size() );

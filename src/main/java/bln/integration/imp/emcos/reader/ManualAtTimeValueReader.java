@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,7 +89,11 @@ public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	@Transactional(propagation= Propagation.REQUIRES_NEW)
 	private void save(List<AtTimeValueRaw> list, Batch batch) {
 		logger.info("saving records started");
-		list.forEach(t -> t.setBatch(batch));
+		LocalDateTime now = LocalDateTime.now();
+		list.forEach(t -> {
+			t.setBatch(batch);
+			t.setCreateDate(now);
+		});
 		valueRepository.save(list);
 		logger.info("saving records completed");
 	}

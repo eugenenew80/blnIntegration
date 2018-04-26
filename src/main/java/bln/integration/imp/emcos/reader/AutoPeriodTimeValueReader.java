@@ -116,7 +116,11 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	private void save(List<PeriodTimeValueRaw> list, Batch batch) {
 		logger.info("saving records started");
-		list.forEach(t -> t.setBatch(batch));
+		LocalDateTime now = LocalDateTime.now();
+		list.forEach(t -> {
+			t.setBatch(batch);
+			t.setCreateDate(now);
+		});
 		valueRepository.save(list);
 		logger.info("saving records completed");
 	}

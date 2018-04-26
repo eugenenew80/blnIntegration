@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class AutoOicDataImp implements ImportRunner {
 	private static final Logger logger = LoggerFactory.getLogger(AutoOicDataImp.class);
 
-	@Value("${bln.integration.imp.oic.schedule.AutoOicDataImp}")
+	@Value("${bln.integration.imp.oic.schedule.autoOicImp}")
 	private boolean enable;
 
 	@Scheduled(cron = "0 15 */1 * * *")

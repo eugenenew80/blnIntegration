@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +90,11 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	@Transactional(propagation= Propagation.REQUIRES_NEW)
 	private void save(List<PeriodTimeValueRaw> list, Batch batch) {
 		logger.info("saving records started");
-		list.forEach(t -> t.setBatch(batch));
+		LocalDateTime now = LocalDateTime.now();
+		list.forEach(t -> {
+			t.setBatch(batch);
+			t.setCreateDate(now);
+		});
 		valueRepository.save(list);
 		logger.info("saving records completed");
 	}

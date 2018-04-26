@@ -1,6 +1,7 @@
 package bln.integration.imp.emcos.schedule;
 
 import bln.integration.entity.AtTimeValueRaw;
+import bln.integration.entity.PeriodTimeValueRaw;
 import bln.integration.imp.ImportRunner;
 import bln.integration.imp.Reader;
 import org.slf4j.Logger;
@@ -9,12 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Component
-public class AutoAtTimeValueImp implements ImportRunner {
-	private static final Logger logger = LoggerFactory.getLogger(AutoAtTimeValueImp.class);
+public class AutoEmcosImp implements ImportRunner {
+	private static final Logger logger = LoggerFactory.getLogger(AutoEmcosImp.class);
 
-	@Value("${bln.integration.imp.emcos.schedule.AutoAtTimeValueImp}")
+	@Value("${bln.integration.imp.emcos.schedule.autoEmcosImp}")
 	private boolean enable;
 
 	@Scheduled(cron = "0 45 */1 * * *")
@@ -22,7 +26,12 @@ public class AutoAtTimeValueImp implements ImportRunner {
 		if (!enable) return;
 
 		try {
-			autoAtTimeValueReader.read();
+			ExecutorService executor = Executors.newFixedThreadPool(2);
+			executor.invokeAll(Arrays.asList(
+				() -> { autoAtTimeValueReader.read(); return null; },
+				() -> { autoPeriodTimeValueReader.read(); return null; }
+			));
+			executor.shutdown();
 		}
 
 		catch (Exception e) {
@@ -32,4 +41,7 @@ public class AutoAtTimeValueImp implements ImportRunner {
 
 	@Autowired
 	private Reader<AtTimeValueRaw> autoAtTimeValueReader;
+
+	@Autowired
+	private Reader<PeriodTimeValueRaw> autoPeriodTimeValueReader;
 }
