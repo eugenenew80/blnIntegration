@@ -1,16 +1,12 @@
 package bln.integration.imp.oic.reader;
 
-import bln.integration.entity.Batch;
-import bln.integration.entity.WorkListLine;
-import bln.integration.entity.PeriodTimeValueRaw;
-import bln.integration.entity.TelemetryRaw;
+import bln.integration.entity.*;
 import bln.integration.entity.enums.*;
 import bln.integration.gateway.oic.OicDataImpGateway;
 import bln.integration.imp.BatchHelper;
 import bln.integration.imp.Reader;
 import bln.integration.repo.LastLoadInfoRepository;
 import bln.integration.repo.PeriodTimeValueRawRepository;
-import bln.integration.repo.WorkListHeaderRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,67 +21,57 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AutoOicDataReader implements Reader<TelemetryRaw> {
-	private final PeriodTimeValueRawRepository valueRawRepository;
-	private final LastLoadInfoRepository loadInfoRepository;
-	private final WorkListHeaderRepository headerRepository;
-	private final OicDataImpGateway oicImpGateway;
-	private final BatchHelper batchHelper;
+    private static final Logger logger = LoggerFactory.getLogger(AutoOicDataReader.class);
+    private final PeriodTimeValueRawRepository valueRawRepository;
+    private final LastLoadInfoRepository loadInfoRepository;
+    private final OicDataImpGateway oicImpGateway;
+    private final BatchHelper batchHelper;
 
-	private static final Logger logger = LoggerFactory.getLogger(AutoOicDataReader.class);
 
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void read() {
+	public void read(WorkListHeader header) {
 		logger.info("read started");
+		logger.info("headerId: " + header.getId());
+		logger.info("url: " + header.getConfig().getUrl());
+		logger.info("user: " + header.getConfig().getUserName());
 
-		headerRepository.findAllBySourceSystemCodeAndDirectionAndWorkListType(
-			SourceSystemEnum.OIC,
-			DirectionEnum.IMPORT,
-			WorkListTypeEnum.SYS
-		).stream()
-			.filter(h -> h.getActive() && h.getConfig()!=null)
-			.forEach(header -> {
-				logger.info("headerId: " + header.getId());
-				logger.info("url: " + header.getConfig().getUrl());
-				logger.info("user: " + header.getConfig().getUserName());
+		List<WorkListLine> lines = header.getLines();
+		if (lines.size()==0) {
+			logger.info("List of points is empty, import data stopped");
+			return;
+		}
 
-				List<WorkListLine> lines = header.getLines();
-				if (lines.size()==0) {
-					logger.info("List of points is empty, import data stopped");
-					return;
-				}
+		LocalDateTime startDateTime = buildStartTime();
+		LocalDateTime endDateTime = buildEndDateTime();
+		if (startDateTime.isAfter(endDateTime)){
+			logger.info("Import media is not required, import data stopped");
+			return;
+		}
 
-				LocalDateTime startDateTime = buildStartTime();
-				LocalDateTime endDateTime = buildEndDateTime();
-				if (startDateTime.isAfter(endDateTime)){
-					logger.info("Import media is not required, import data stopped");
-					return;
-				}
+		Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.PT));
+		try {
+			List<PeriodTimeValueRaw> list = oicImpGateway
+				.points(buildPoints(lines))
+				.startDateTime(startDateTime)
+				.endDateTime(endDateTime)
+				.arcType("MIN-3")
+				.request();
 
-				Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.PT));
-				try {
-					List<PeriodTimeValueRaw> list = oicImpGateway
-						.points(buildPoints(lines))
-						.startDateTime(startDateTime)
-						.endDateTime(endDateTime)
-						.arcType("MIN-3")
-						.request();
-
-					LocalDateTime now = LocalDateTime.now();
-					list.forEach(t -> {
-						t.setBatch(batch);
-						t.setCreateDate(now);
-					});
-					valueRawRepository.save(list);
-
-					batchHelper.updateBatch(batch, (long) list.size() );
-					valueRawRepository.updateLastDate(batch.getId());
-					valueRawRepository.load(batch.getId());
-				}
-				catch (Exception e) {
-					logger.error("read failed: " + e.getMessage());
-					batchHelper.errorBatch(batch, e);
-				}
+			LocalDateTime now = LocalDateTime.now();
+			list.forEach(t -> {
+				t.setBatch(batch);
+				t.setCreateDate(now);
 			});
+			valueRawRepository.save(list);
+
+			batchHelper.updateBatch(batch, (long) list.size() );
+			valueRawRepository.updateLastDate(batch.getId());
+			valueRawRepository.load(batch.getId());
+		}
+		catch (Exception e) {
+			logger.error("read failed: " + e.getMessage());
+			batchHelper.errorBatch(batch, e);
+		}
 
 		logger.info("read completed");
     }

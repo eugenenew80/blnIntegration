@@ -1,9 +1,6 @@
 package bln.integration.imp.emcos.reader;
 
-import bln.integration.entity.Batch;
-import bln.integration.entity.ParameterConf;
-import bln.integration.entity.WorkListLine;
-import bln.integration.entity.PeriodTimeValueRaw;
+import bln.integration.entity.*;
 import bln.integration.entity.enums.*;
 import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.gateway.emcos.PeriodTimeValueImpGateway;
@@ -26,69 +23,60 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
-	private final PeriodTimeValueRawRepository valueRepository;
-	private final WorkListHeaderRepository headerRepository;
-	private final ParameterConfRepository parameterConfRepository;
-	private final PeriodTimeValueImpGateway valueGateway;
-	private final BatchHelper batchHelper;
-	private static final Logger logger = LoggerFactory.getLogger(ManualPeriodTimeValueReader.class);
+    private static final Logger logger = LoggerFactory.getLogger(ManualPeriodTimeValueReader.class);
+    private final PeriodTimeValueRawRepository valueRepository;
+    private final ParameterConfRepository parameterConfRepository;
+    private final PeriodTimeValueImpGateway valueGateway;
+    private final BatchHelper batchHelper;
 
 	@Transactional(propagation=Propagation.NOT_SUPPORTED)
-	public void read() {
+	public void read(WorkListHeader header) {
 		logger.debug("read started");
+		logger.info("Import media started");
+		logger.info("headerId: " + header.getId());
+		logger.info("url: " + header.getConfig().getUrl());
+		logger.info("user: " + header.getConfig().getUserName());
 
-		headerRepository.findAllBySourceSystemCodeAndDirectionAndWorkListType(
-			SourceSystemEnum.EMCOS,
-			DirectionEnum.IMPORT,
-			WorkListTypeEnum.USER
-		).stream()
-			.filter(h -> h.getActive() && h.getPtStatus()==BatchStatusEnum.W && h.getConfig()!=null)
-			.forEach(header -> {
-				logger.info("Import media started");
-				logger.info("headerId: " + header.getId());
-				logger.info("url: " + header.getConfig().getUrl());
-				logger.info("user: " + header.getConfig().getUserName());
+		List<WorkListLine> lines = header.getLines();
+		if (lines.size()==0) {
+			logger.info("List of points is empty, import media stopped");
+			return;
+		}
 
-				List<WorkListLine> lines = header.getLines();
-				if (lines.size()==0) {
-					logger.info("List of points is empty, import media stopped");
-					return;
-				}
+		List<MeteringPointCfg> points = buildPoints(lines);
+		if (points.size()==0) {
+			logger.info("Import media is not required, import media stopped");
+			return;
+		}
 
-				List<MeteringPointCfg> points = buildPoints(lines);
-				if (points.size()==0) {
-					logger.info("Import media is not required, import media stopped");
-					return;
-				}
+		Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.PT));
 
-				Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.PT));
+		Long recCount = 0l;
+		try {
+			List<PeriodTimeValueRaw> list = valueGateway
+				.config(header.getConfig())
+				.points(points)
+				.request();
 
-				Long recCount = 0l;
-				try {
-					List<PeriodTimeValueRaw> list = valueGateway
-						.config(header.getConfig())
-						.points(points)
-						.request();
+			save(list, batch);
+			recCount = recCount + list.size();
 
-					save(list, batch);
-					recCount = recCount + list.size();
-
-					batchHelper.updateBatch(batch, recCount);
-					updateLastDate(batch);
-					load(batch);
-				}
-				catch (Exception e) {
-					logger.error("read failed: " + e.getMessage());
-					batchHelper.errorBatch(batch, e);
-				}
-			});
+			batchHelper.updateBatch(batch, recCount);
+			updateLastDate(batch);
+			load(batch);
+		}
+		catch (Exception e) {
+			logger.error("read failed: " + e.getMessage());
+			batchHelper.errorBatch(batch, e);
+		}
 
 		logger.debug("read completed");
 	}
 
 
+	@SuppressWarnings("Duplicates")
 	@Transactional(propagation= Propagation.REQUIRES_NEW)
-	private void save(List<PeriodTimeValueRaw> list, Batch batch) {
+	void save(List<PeriodTimeValueRaw> list, Batch batch) {
 		logger.info("saving records started");
 		LocalDateTime now = LocalDateTime.now();
 		list.forEach(t -> {
@@ -100,21 +88,21 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	}
 
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	private void updateLastDate(Batch batch) {
+	void updateLastDate(Batch batch) {
 		logger.info("updateLastDate started");
 		valueRepository.updateLastDate(batch.getId());
 		logger.info("updateLastDate completed");
 	}
 
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	private void load(Batch batch) {
+	void load(Batch batch) {
 		logger.info("load started");
 		valueRepository.load(batch.getId());
 		logger.info("load completed");
 	}
 
 	@Transactional(propagation=Propagation.REQUIRED, readOnly = true)
-	private List<MeteringPointCfg> buildPoints(List<WorkListLine> lines) {
+	List<MeteringPointCfg> buildPoints(List<WorkListLine> lines) {
 		List<ParameterConf> confList = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
 			SourceSystemEnum.EMCOS,
 			ParamTypeEnum.PT

@@ -22,100 +22,89 @@ import static java.util.stream.IntStream.range;
 @Service
 @RequiredArgsConstructor
 public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
+	private static final Logger logger = LoggerFactory.getLogger(AutoAtTimeValueReader.class);
+	private static final int groupCount = 6000;
 	private final AtTimeValueRawRepository valueRepository;
-	private final WorkListHeaderRepository headerRepository;
 	private final LastLoadInfoRepository lastLoadInfoRepository;
 	private final ParameterConfRepository parameterConfRepository;
 	private final AtTimeValueGateway valueGateway;
 	private final BatchHelper batchHelper;
 
-	private static final Logger logger = LoggerFactory.getLogger(AutoAtTimeValueReader.class);
-	private static final int groupCount = 6000;
-
 	@Transactional(propagation=Propagation.NOT_SUPPORTED)
-	public void read() {
+	public void read(WorkListHeader header) {
 		logger.info("read started");
+		logger.info("headerId: " + header.getId());
+		logger.info("url: " + header.getConfig().getUrl());
+		logger.info("user: " + header.getConfig().getUserName());
 
-		headerRepository.findAllBySourceSystemCodeAndDirectionAndWorkListType(
-			SourceSystemEnum.EMCOS,
-			DirectionEnum.IMPORT,
-			WorkListTypeEnum.SYS
-		).stream()
-			.filter(h -> h.getActive())
-			.filter(h -> h.getConfig()!=null)
-			.forEach(header -> {
-				logger.info("headerId: " + header.getId());
-				logger.info("url: " + header.getConfig().getUrl());
-				logger.info("user: " + header.getConfig().getUserName());
+		List<WorkListLine> lines = header.getLines();
+		if (lines.size()==0) {
+			logger.info("List of lines is empty, import data stopped");
+			return;
+		}
 
-				List<WorkListLine> lines = header.getLines();
-				if (lines.size()==0) {
-					logger.info("List of lines is empty, import data stopped");
-					return;
+		LocalDateTime endDateTime = buildEndDateTime();
+		List<MeteringPointCfg> points = buildPoints(lines, endDateTime);
+
+		if (points.size()==0) {
+			logger.info("List of points is empty, import data stopped");
+			return;
+		}
+
+		LocalDateTime lastLoadDateTime = points.stream()
+			.map(p -> p.getStartTime())
+			.max(LocalDateTime::compareTo)
+			.orElse(endDateTime);
+
+		LocalDateTime requestedDateTime = lastLoadDateTime.plusDays(1);
+		if (requestedDateTime.isAfter(endDateTime))
+			requestedDateTime=endDateTime;
+
+		while (!endDateTime.isBefore(requestedDateTime)) {
+			logger.info("requested date: " + requestedDateTime);
+
+			points = buildPoints(lines, requestedDateTime);
+			final List<List<MeteringPointCfg>> groupsPoints = splitPoints(points);
+
+			Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.AT));
+			Long recCount = 0l;
+			try {
+				for (int i = 0; i < groupsPoints.size(); i++) {
+					logger.info("group of points: " + (i + 1));
+
+					List<AtTimeValueRaw> list = valueGateway
+						.config(header.getConfig())
+						.points(groupsPoints.get(i))
+						.request();
+
+					save(list, batch);
+					recCount = recCount + list.size();
 				}
 
-				LocalDateTime endDateTime = buildEndDateTime();
-				List<MeteringPointCfg> points = buildPoints(lines, endDateTime);
+				batchHelper.updateBatch(batch, recCount);
+				updateLastDate(batch);
+				load(batch);
+			}
+			catch (Exception e) {
+				logger.error("read failed: " + e.getMessage());
+				batchHelper.errorBatch(batch, e);
+				break;
+			}
 
-				if (points.size()==0) {
-					logger.info("List of points is empty, import data stopped");
-					return;
-				}
+			if (requestedDateTime.isEqual(endDateTime))
+				break;
 
-				LocalDateTime lastLoadDateTime = points.stream()
-					.map(p -> p.getStartTime())
-					.max(LocalDateTime::compareTo)
-					.orElse(endDateTime);
-
-				LocalDateTime requestedDateTime = lastLoadDateTime.plusDays(1);
-				if (requestedDateTime.isAfter(endDateTime))
-					requestedDateTime=endDateTime;
-
-				while (!endDateTime.isBefore(requestedDateTime)) {
-					logger.info("requested date: " + requestedDateTime);
-
-					points = buildPoints(lines, requestedDateTime);
-					final List<List<MeteringPointCfg>> groupsPoints = splitPoints(points);
-
-					Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.AT));
-					Long recCount = 0l;
-					try {
-						for (int i = 0; i < groupsPoints.size(); i++) {
-							logger.info("group of points: " + (i + 1));
-
-							List<AtTimeValueRaw> list = valueGateway
-								.config(header.getConfig())
-								.points(groupsPoints.get(i))
-								.request();
-
-							save(list, batch);
-							recCount = recCount + list.size();
-						}
-
-						batchHelper.updateBatch(batch, recCount);
-						updateLastDate(batch);
-						load(batch);
-					}
-					catch (Exception e) {
-						logger.error("read failed: " + e.getMessage());
-						batchHelper.errorBatch(batch, e);
-						break;
-					}
-
-					if (requestedDateTime.isEqual(endDateTime))
-						break;
-
-					requestedDateTime = requestedDateTime.plusDays(1);
-					if (requestedDateTime.isAfter(endDateTime))
-						requestedDateTime=endDateTime;
-				}
-			});
+			requestedDateTime = requestedDateTime.plusDays(1);
+			if (requestedDateTime.isAfter(endDateTime))
+				requestedDateTime=endDateTime;
+		}
 
 		logger.info("read completed");
     }
 
+	@SuppressWarnings("Duplicates")
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	private void save(List<AtTimeValueRaw> list, Batch batch) {
+	void save(List<AtTimeValueRaw> list, Batch batch) {
 		logger.info("saving records started");
 		LocalDateTime now = LocalDateTime.now();
 		list.forEach(t -> {
@@ -127,21 +116,21 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	}
 
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	private void updateLastDate(Batch batch) {
+	void updateLastDate(Batch batch) {
 		logger.info("updateLastDate started");
 		valueRepository.updateLastDate(batch.getId());
 		logger.info("updateLastDate completed");
 	}
 
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	private void load(Batch batch) {
+	void load(Batch batch) {
 		logger.info("load started");
 		valueRepository.load(batch.getId());
 		logger.info("load completed");
 	}
 
 	@Transactional(propagation=Propagation.REQUIRED, readOnly = true)
-	private List<MeteringPointCfg> buildPoints(List<WorkListLine> lines, LocalDateTime endDateTime) {
+	List<MeteringPointCfg> buildPoints(List<WorkListLine> lines, LocalDateTime endDateTime) {
 		List<ParameterConf> confList = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
 			SourceSystemEnum.EMCOS,
 			ParamTypeEnum.AT
@@ -181,15 +170,15 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 
 	private List<List<MeteringPointCfg>> splitPoints(List<MeteringPointCfg> points) {
 		return range(0, points.size())
-				.boxed()
-				.collect(groupingBy(index -> index / groupCount))
-				.values()
-				.stream()
-				.map(indices -> indices
-						.stream()
-						.map(points::get)
-						.collect(toList()))
-				.collect(toList());
+			.boxed()
+			.collect(groupingBy(index -> index / groupCount))
+			.values()
+			.stream()
+			.map(indices -> indices
+					.stream()
+					.map(points::get)
+					.collect(toList()))
+			.collect(toList());
 	}
 
 	private LocalDateTime buildStartTime(LastLoadInfo lastLoadInfo) {
