@@ -12,17 +12,18 @@ import bln.integration.repo.WorkListHeaderRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import static java.util.stream.Collectors.toList;
 
 @Component
 @RequiredArgsConstructor
@@ -30,7 +31,6 @@ public class ManualEmcosImp implements ImportRunner {
 	private final Reader<AtTimeValueRaw> manualAtTimeValueReader;
 	private final Reader<PeriodTimeValueRaw> manualPeriodTimeValueReader;
 	private final WorkListHeaderRepository headerRepository;
-
 	private static final Logger logger = LoggerFactory.getLogger(ManualEmcosImp.class);
 
 	@Value("${bln.integration.imp.emcos.schedule.manualEmcosImp}")
@@ -42,18 +42,15 @@ public class ManualEmcosImp implements ImportRunner {
 		if (!enable) return;
 
 		List<Callable<Void>> callables = new ArrayList<>();
-		headerRepository.findAllBySourceSystemCodeAndDirectionAndWorkListType(SourceSystemEnum.EMCOS, DirectionEnum.IMPORT, WorkListTypeEnum.USER)
-			.stream()
-			.filter(h -> h.getAtStatus()==BatchStatusEnum.W )
-			.filter(h -> h.getActive())
-			.filter(h -> h.getConfig()!=null)
-			.forEach(header -> {
-				callables.add( () -> { manualAtTimeValueReader.read(header); return null; } );
-				callables.add( () -> { manualPeriodTimeValueReader.read(header); return null; } );
-			});
+		buildHeaderIds().stream()
+			.forEach(headerId -> callables.add( () -> {
+                manualAtTimeValueReader.read(headerId);
+                manualPeriodTimeValueReader.read(headerId);
+                return null;
+            }));
 
 		try {
-			ExecutorService executor = Executors.newFixedThreadPool(2);
+			ExecutorService executor = Executors.newFixedThreadPool(callables.size());
 			executor.invokeAll(callables);
 			executor.shutdown();
 		}
@@ -62,4 +59,15 @@ public class ManualEmcosImp implements ImportRunner {
 			logger.error("run failed: " + e.getMessage());
 		}
     }
+
+	@Transactional(propagation= Propagation.NOT_SUPPORTED, readOnly = true)
+	private List<Long> buildHeaderIds() {
+		return headerRepository.findAllBySourceSystemCodeAndDirectionAndWorkListType(
+			SourceSystemEnum.EMCOS,  DirectionEnum.IMPORT, WorkListTypeEnum.SYS
+		)
+		.stream()
+		.filter(h-> h.getActive() && h.getConfig()!=null && h.getAtStatus()== BatchStatusEnum.W && h.getPtStatus()==BatchStatusEnum.W)
+		.map(h -> h.getId())
+		.collect(toList());
+	}
 }

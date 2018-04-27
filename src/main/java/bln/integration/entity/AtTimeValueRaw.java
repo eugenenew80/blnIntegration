@@ -16,12 +16,6 @@ import java.time.LocalDateTime;
 @Table(name = "media_at_time_values_raw")
 @NamedStoredProcedureQueries({
 	@NamedStoredProcedureQuery(
-		name = "AtTimeValueRaw.updateLastDate",
-		procedureName = "media_raw_data_proc.at_last_load_info",
-		parameters = { @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_batch_id", type = Long.class) }
-	),
-
-	@NamedStoredProcedureQuery(
 		name = "AtTimeValueRaw.load",
 		procedureName = "media_raw_data_proc.at_proc",
 		parameters = { @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_batch_id", type = Long.class) }

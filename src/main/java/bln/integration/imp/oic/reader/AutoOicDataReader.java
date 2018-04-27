@@ -7,6 +7,7 @@ import bln.integration.imp.BatchHelper;
 import bln.integration.imp.Reader;
 import bln.integration.repo.LastLoadInfoRepository;
 import bln.integration.repo.PeriodTimeValueRawRepository;
+import bln.integration.repo.WorkListHeaderRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +25,15 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
     private static final Logger logger = LoggerFactory.getLogger(AutoOicDataReader.class);
     private final PeriodTimeValueRawRepository valueRawRepository;
     private final LastLoadInfoRepository loadInfoRepository;
+	private final WorkListHeaderRepository headerRepository;
     private final OicDataImpGateway oicImpGateway;
     private final BatchHelper batchHelper;
 
 
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void read(WorkListHeader header) {
+	public void read(Long headerId) {
+		WorkListHeader header = headerRepository.findOne(headerId);
+
 		logger.info("read started");
 		logger.info("headerId: " + header.getId());
 		logger.info("url: " + header.getConfig().getUrl());
@@ -65,7 +69,7 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 			valueRawRepository.save(list);
 
 			batchHelper.updateBatch(batch, (long) list.size() );
-			valueRawRepository.updateLastDate(batch.getId());
+			loadInfoRepository.updatePtLastDate(batch.getId());
 			valueRawRepository.load(batch.getId());
 		}
 		catch (Exception e) {

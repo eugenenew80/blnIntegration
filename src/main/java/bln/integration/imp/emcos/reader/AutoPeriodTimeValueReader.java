@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -28,11 +30,15 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
     private final PeriodTimeValueRawRepository valueRepository;
     private final LastLoadInfoRepository lastLoadInfoRepository;
     private final ParameterConfRepository parameterConfRepository;
+	private final WorkListHeaderRepository headerRepository;
     private final PeriodTimeValueImpGateway valueGateway;
     private final BatchHelper batchHelper;
+	private final EntityManager entityManager;
 
 	@Transactional(propagation=Propagation.NOT_SUPPORTED)
-	public void read(WorkListHeader header) {
+	public void read(Long headerId) {
+		WorkListHeader header = headerRepository.findOne(headerId);
+
 		logger.info("read started");
 		logger.info("headerId: " + header.getId());
 		logger.info("url: " + header.getConfig().getUrl());
@@ -118,7 +124,7 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	void updateLastDate(Batch batch) {
 		logger.info("updateLastDate started");
-		valueRepository.updateLastDate(batch.getId());
+		lastLoadInfoRepository.updatePtLastDate(batch.getId());
 		logger.info("updateLastDate completed");
 	}
 
@@ -136,6 +142,7 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 			ParamTypeEnum.PT
 		);
 
+		entityManager.clear();
 		List<LastLoadInfo> lastLoadInfoList = lastLoadInfoRepository
 			.findAllBySourceSystemCode(SourceSystemEnum.EMCOS);
 

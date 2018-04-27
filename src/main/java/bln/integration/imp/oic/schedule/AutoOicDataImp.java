@@ -1,7 +1,6 @@
 package bln.integration.imp.oic.schedule;
 
 import bln.integration.entity.TelemetryRaw;
-import bln.integration.entity.WorkListHeader;
 import bln.integration.entity.enums.DirectionEnum;
 import bln.integration.entity.enums.SourceSystemEnum;
 import bln.integration.entity.enums.WorkListTypeEnum;
@@ -11,18 +10,18 @@ import bln.integration.repo.WorkListHeaderRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
 
 @Component
 @RequiredArgsConstructor
@@ -40,19 +39,12 @@ public class AutoOicDataImp implements ImportRunner {
 	public void run() {
 		if (!enable) return;
 
-		List<Callable<Void>> callables = headerRepository.findAllBySourceSystemCodeAndDirectionAndWorkListType(
-			SourceSystemEnum.OIC, DirectionEnum.IMPORT, WorkListTypeEnum.SYS
-		)
-			.stream()
-			.filter(WorkListHeader::getActive)
-			.filter(h -> h.getConfig() != null)
-			.<Callable<Void>>map(header -> () -> {
-				reader.read(header);
-				return null;
-			}).collect(Collectors.toList());
+		List<Callable<Void>> callables = new ArrayList<>();
+		buildHeaderIds().stream()
+			.forEach(headerId -> callables.add( () -> { reader.read(headerId); return null; } ));
 
 		try {
-			ExecutorService executor = Executors.newFixedThreadPool(2);
+			ExecutorService executor = Executors.newFixedThreadPool(callables.size());
 			executor.invokeAll(callables);
 			executor.shutdown();
 		}
@@ -62,5 +54,14 @@ public class AutoOicDataImp implements ImportRunner {
 		}
 	}
 
-
+	@Transactional(propagation= Propagation.NOT_SUPPORTED, readOnly = true)
+	private List<Long> buildHeaderIds() {
+		return headerRepository.findAllBySourceSystemCodeAndDirectionAndWorkListType(
+			SourceSystemEnum.OIC,  DirectionEnum.IMPORT, WorkListTypeEnum.SYS
+		)
+		.stream()
+		.filter(h-> h.getActive() && h.getConfig()!=null)
+		.map(h -> h.getId())
+		.collect(toList());
+	}
 }

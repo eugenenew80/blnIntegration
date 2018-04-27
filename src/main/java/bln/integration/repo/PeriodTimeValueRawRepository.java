@@ -8,9 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PeriodTimeValueRawRepository extends JpaRepository<PeriodTimeValueRaw, Long> {
-    @Procedure(name = "PeriodTimeValueRaw.updateLastDate")
-    void updateLastDate(@Param("p_batch_id") Long batchId);
-
     @Procedure(name = "PeriodTimeValueRaw.load")
     void load(@Param("p_batch_id") Long batchId);
 }

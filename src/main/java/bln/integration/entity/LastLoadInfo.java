@@ -10,6 +10,19 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of= {"id"})
 @Entity
 @Table(name = "media_last_load_info")
+@NamedStoredProcedureQueries({
+    @NamedStoredProcedureQuery(
+        name = "LastLoadInfo.updateAtLastDate",
+        procedureName = "media_raw_data_proc.at_last_load_info",
+        parameters = { @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_batch_id", type = Long.class) }
+    ),
+
+    @NamedStoredProcedureQuery(
+        name = "LastLoadInfo.updatePtLastDate",
+        procedureName = "media_raw_data_proc.pt_last_load_info",
+        parameters = { @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_batch_id", type = Long.class) }
+    )
+})
 public class LastLoadInfo {
     @Id
     @SequenceGenerator(name="media_last_load_info_s", sequenceName = "media_last_load_info_s", allocationSize=1)

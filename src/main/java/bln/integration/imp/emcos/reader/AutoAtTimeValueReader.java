@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -27,11 +29,15 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	private final AtTimeValueRawRepository valueRepository;
 	private final LastLoadInfoRepository lastLoadInfoRepository;
 	private final ParameterConfRepository parameterConfRepository;
+	private final WorkListHeaderRepository headerRepository;
 	private final AtTimeValueGateway valueGateway;
 	private final BatchHelper batchHelper;
+	private final EntityManager entityManager;
 
 	@Transactional(propagation=Propagation.NOT_SUPPORTED)
-	public void read(WorkListHeader header) {
+	public void read(Long headerId) {
+		WorkListHeader header = headerRepository.findOne(headerId);
+
 		logger.info("read started");
 		logger.info("headerId: " + header.getId());
 		logger.info("url: " + header.getConfig().getUrl());
@@ -118,7 +124,7 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	void updateLastDate(Batch batch) {
 		logger.info("updateLastDate started");
-		valueRepository.updateLastDate(batch.getId());
+		lastLoadInfoRepository.updateAtLastDate(batch.getId());
 		logger.info("updateLastDate completed");
 	}
 
@@ -136,12 +142,14 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 			ParamTypeEnum.AT
 		);
 
+		entityManager.clear();
 		List<LastLoadInfo> lastLoadInfoList = lastLoadInfoRepository
 			.findAllBySourceSystemCode(SourceSystemEnum.EMCOS);
 
 		List<MeteringPointCfg> points = new ArrayList<>();
 		lines.stream()
 			.filter(line -> line.getParam().getIsAt())
+			.filter(line -> line.getMeteringPoint().getExternalCode().equals("130321022010010052"))
 			.forEach(line -> {
 				ParameterConf parameterConf = confList.stream()
 					.filter(c -> c.getParam().equals(line.getParam()))
