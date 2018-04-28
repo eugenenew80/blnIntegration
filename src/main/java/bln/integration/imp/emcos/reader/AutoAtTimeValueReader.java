@@ -96,6 +96,9 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 				batchHelper.errorBatch(batch, e);
 				break;
 			}
+			finally {
+				System.gc();
+			}
 
 			if (requestedDateTime.isEqual(endDateTime))
 				break;
@@ -149,7 +152,6 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 		List<MeteringPointCfg> points = new ArrayList<>();
 		lines.stream()
 			.filter(line -> line.getParam().getIsAt())
-			.filter(line -> line.getMeteringPoint().getExternalCode().equals("130321022010010052"))
 			.forEach(line -> {
 				ParameterConf parameterConf = confList.stream()
 					.filter(c -> c.getParam().equals(line.getParam()))

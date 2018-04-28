@@ -74,6 +74,9 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 			logger.error("read failed: " + e.getMessage());
 			batchHelper.errorBatch(batch, e);
 		}
+		finally {
+			System.gc();
+		}
 
 		logger.debug("read completed");
 	}

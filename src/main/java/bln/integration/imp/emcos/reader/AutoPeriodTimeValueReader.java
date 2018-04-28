@@ -96,6 +96,9 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 				batchHelper.errorBatch(batch, e);
 				break;
 			}
+			finally {
+				System.gc();
+			}
 
 			if (requestedDateTime.isEqual(endDateTime))
 				break;
