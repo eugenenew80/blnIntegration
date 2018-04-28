@@ -32,7 +32,7 @@ public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
     private final AtTimeValueGateway valueGateway;
     private final BatchHelper batchHelper;
 
-	@Transactional(propagation=Propagation.NOT_SUPPORTED)
+	@Transactional(propagation=Propagation.NOT_SUPPORTED, readOnly = true)
 	public void read(Long headerId) {
 		WorkListHeader header = headerRepository.findOne(headerId);
 
@@ -105,7 +105,7 @@ public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
 		logger.info("load completed");
 	}
 
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
 	List<MeteringPointCfg> buildPoints(List<WorkListLine> lines) {
 		List<ParameterConf> confList = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
 			SourceSystemEnum.EMCOS,

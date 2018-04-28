@@ -34,7 +34,7 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	private final BatchHelper batchHelper;
 	private final EntityManager entityManager;
 
-	@Transactional(propagation=Propagation.NOT_SUPPORTED)
+	@Transactional(propagation=Propagation.NOT_SUPPORTED, readOnly = true)
 	public void read(Long headerId) {
 		WorkListHeader header = headerRepository.findOne(headerId);
 
