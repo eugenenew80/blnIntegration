@@ -170,7 +170,8 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 					endDateTime
 				);
 
-				if (mpc!=null) points.add(mpc);
+				if (mpc!=null && !mpc.getEndTime().isBefore(mpc.getStartTime()))
+					points.add(mpc);
 			});
 
 		return points;

@@ -169,7 +169,8 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 					endDateTime
 				);
 
-				if (mpc!=null) points.add(mpc);
+				if (!(mpc.getStartTime().isEqual(mpc.getEndTime()) || mpc.getStartTime().isAfter(mpc.getEndTime())))
+					points.add(mpc);
 			});
 
 		return points;
