@@ -129,7 +129,7 @@ public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
 					line.getEndDate()
 				);
 
-				if (!(mpc.getStartTime().isEqual(mpc.getEndTime()) || mpc.getStartTime().isAfter(mpc.getEndTime())))
+				if (mpc!=null && !mpc.getEndTime().isBefore(mpc.getStartTime()))
 					points.add(mpc);
 			});
 
