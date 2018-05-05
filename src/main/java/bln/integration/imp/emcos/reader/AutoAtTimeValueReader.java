@@ -25,7 +25,7 @@ import static java.util.stream.IntStream.range;
 @RequiredArgsConstructor
 public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	private static final Logger logger = LoggerFactory.getLogger(AutoAtTimeValueReader.class);
-	private static final int groupCount = 6000;
+	private static final int groupCount = 8000;
 	private final AtTimeValueRawRepository valueRepository;
 	private final LastLoadInfoRepository lastLoadInfoRepository;
 	private final ParameterConfRepository parameterConfRepository;
@@ -199,10 +199,11 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 				.truncatedTo(ChronoUnit.DAYS);
 
 		LocalDate now = LocalDate.now(ZoneId.of("UTC+1"));
-		return now.minusDays(now.getDayOfMonth()).minusMonths(1).atStartOfDay();
+		return now.minusDays(now.getDayOfMonth()).minusMonths(2).atStartOfDay();
 	}
 
 	private LocalDateTime buildEndDateTime() {
-		return LocalDate.now(ZoneId.of("UTC+1")).plusDays(1).atStartOfDay();
+		LocalDateTime endDateTime = LocalDate.now(ZoneId.of("UTC+1")).atStartOfDay();
+		return endDateTime;
 	}
 }
