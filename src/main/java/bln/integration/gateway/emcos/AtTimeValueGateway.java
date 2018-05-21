@@ -6,9 +6,5 @@ import bln.integration.entity.AtTimeValueRaw;
 import java.util.List;
 
 public interface AtTimeValueGateway {
-    AtTimeValueGateway config(ConnectionConfig config);
-
-    AtTimeValueGateway points(List<MeteringPointCfg> points);
-
-    List<AtTimeValueRaw> request() throws Exception;
+    List<AtTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points) throws Exception;
 }

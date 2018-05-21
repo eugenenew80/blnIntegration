@@ -6,7 +6,6 @@ import bln.integration.entity.enums.InputMethodEnum;
 import bln.integration.entity.enums.ProcessingStatusEnum;
 import bln.integration.entity.enums.ReceivingMethodEnum;
 import bln.integration.entity.enums.SourceSystemEnum;
-import bln.integration.gateway.CompressService;
 import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.gateway.emcos.PeriodTimeValueImpGateway;
 import bln.integration.registry.TemplateRegistry;
@@ -42,20 +41,9 @@ import static java.util.stream.Collectors.groupingBy;
 public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway {
     private static final Logger logger = LoggerFactory.getLogger(PeriodTimeValueImpGatewayImpl.class);
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HH:mm:'00000'");
-    private List<MeteringPointCfg> points;
-    private ConnectionConfig config;
 
-    public PeriodTimeValueImpGateway points(List<MeteringPointCfg> points) {
-        this.points = points;
-        return this;
-    }
-
-    public PeriodTimeValueImpGateway config(ConnectionConfig config) {
-        this.config = config;
-        return this;
-    }
-
-    public List<PeriodTimeValueRaw> request() throws Exception {
+    @Override
+    public List<PeriodTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points) throws Exception {
         logger.info("request started");
 
         if (config ==null) {
@@ -71,7 +59,7 @@ public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway 
         List<PeriodTimeValueRaw> list;
         try {
             logger.info("Send http request for metering media...");
-            byte[] body = buildBody();
+            byte[] body = buildBody(config, points);
             if (body==null || body.length==0) {
             	logger.info("Request body is empty, request stopped");
                 return emptyList();
@@ -90,7 +78,7 @@ public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway 
             if (n2>n1)
                 answer = answer.substring(n1+12, n2);
 
-            list = parseAnswer(answer);
+            list = parseAnswer(answer, points);
             logger.info("request competed");
         }
 
@@ -102,7 +90,7 @@ public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway 
         return list;
     }
 
-    private byte[] buildBody() {
+    private byte[] buildBody(ConnectionConfig config, List<MeteringPointCfg> points) {
     	logger.debug("buildBody started");
 
     	String strPoints = points.stream()
@@ -138,6 +126,7 @@ public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway 
         logger.trace("body part 2 for request metering data: " + body2);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        //noinspection Duplicates
         try {
             baos.write(body1.getBytes());
             baos.write(Base64.encodeBase64(aData.getBytes()));
@@ -158,13 +147,13 @@ public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway 
 
     private String buildPoint(MeteringPointCfg point) {
         return ""
-                + "<ROW PPOINT_CODE=\"" + point.getSourceMeteringPointCode() + "\" "
-                + "PML_ID=\"" + point.getSourceParamCode() + "\" "
-                + "PBT=\"" + point.getStartTime().format(timeFormatter) + "\" "
-                + "PET=\"" + point.getEndTime().format(timeFormatter) + "\" />";
-    }
+            + "<ROW PPOINT_CODE=\"" + point.getSourceMeteringPointCode() + "\" "
+            + "PML_ID=\"" + point.getSourceParamCode() + "\" "
+            + "PBT=\"" + point.getStartTime().format(timeFormatter) + "\" "
+            + "PET=\"" + point.getEndTime().format(timeFormatter) + "\" />";
+}
 
-    private List<PeriodTimeValueRaw> parseAnswer(String answer) throws Exception {
+    private List<PeriodTimeValueRaw> parseAnswer(String answer, List<MeteringPointCfg> points) throws Exception {
     	logger.info("parseAnswer started");
         logger.trace("answer: " + new String(Base64.decodeBase64(answer), "Cp1251"));
 
@@ -253,22 +242,19 @@ public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway 
         if (valStr!=null)
             val = Double.parseDouble(valStr);
 
-        PeriodTimeValueRaw pc = new PeriodTimeValueRaw();
-        pc.setSourceMeteringPointCode(externalCode);
-        pc.setMeteringDate(time);
-        pc.setSourceSystemCode(SourceSystemEnum.EMCOS);
-        pc.setStatus(ProcessingStatusEnum.TMP);
-        pc.setInputMethod(InputMethodEnum.AUTO);
-        pc.setReceivingMethod(ReceivingMethodEnum.SERVICE);
-        pc.setSourceParamCode(sourceParamCode);
-        pc.setVal(val);
+        PeriodTimeValueRaw value = new PeriodTimeValueRaw();
+        value.setSourceMeteringPointCode(externalCode);
+        value.setMeteringDate(time);
+        value.setSourceSystemCode(SourceSystemEnum.EMCOS);
+        value.setStatus(ProcessingStatusEnum.TMP);
+        value.setInputMethod(InputMethodEnum.AUTO);
+        value.setReceivingMethod(ReceivingMethodEnum.SERVICE);
+        value.setSourceParamCode(sourceParamCode);
+        value.setVal(val);
         
-        return pc;
+        return value;
     }
 
     @Autowired
     private TemplateRegistry templateRegistry;
-
-    @Autowired
-    private CompressService compressService;
 }

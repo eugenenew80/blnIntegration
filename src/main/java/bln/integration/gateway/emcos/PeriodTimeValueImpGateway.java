@@ -5,9 +5,5 @@ import bln.integration.entity.PeriodTimeValueRaw;
 import java.util.List;
 
 public interface PeriodTimeValueImpGateway {
-    PeriodTimeValueImpGateway config(ConnectionConfig config);
-
-    PeriodTimeValueImpGateway points(List<MeteringPointCfg> points);
-
-    List<PeriodTimeValueRaw> request() throws Exception;
+    List<PeriodTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points) throws Exception;
 }

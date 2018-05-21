@@ -23,25 +23,28 @@ import static java.util.stream.IntStream.range;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	private static final Logger logger = LoggerFactory.getLogger(AutoAtTimeValueReader.class);
 	private static final int groupCount = 2000;
-	private final AtTimeValueRawRepository valueRepository;
 	private final LastLoadInfoRepository lastLoadInfoRepository;
 	private final ParameterConfRepository parameterConfRepository;
 	private final WorkListHeaderRepository headerRepository;
+	private final LastRequestedDateRepository lastRequestedDateRepository;
 	private final AtTimeValueGateway valueGateway;
 	private final BatchHelper batchHelper;
 	private final EntityManager entityManager;
 
 	@Transactional(propagation=Propagation.NOT_SUPPORTED, readOnly = true)
 	public void read(Long headerId) {
-		WorkListHeader header = headerRepository.findOne(headerId);
-
 		logger.info("read started");
-		logger.info("headerId: " + header.getId());
-		logger.info("url: " + header.getConfig().getUrl());
-		logger.info("user: " + header.getConfig().getUserName());
+		logger.info("headerId: " + headerId);
+
+		WorkListHeader header = headerRepository.findOne(headerId);
+		if (header==null) {
+			logger.info("Work list not found");
+			return;
+		}
 
 		List<WorkListLine> lines = header.getLines();
 		if (lines.size()==0) {
@@ -50,46 +53,55 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 		}
 
 		LocalDateTime endDateTime = buildEndDateTime();
-		List<MeteringPointCfg> points = buildPoints(lines, endDateTime);
+		List<MeteringPointCfg> points = buildPointsCfg(lines, endDateTime);
 
 		if (points.size()==0) {
 			logger.info("List of points is empty, import data stopped");
 			return;
 		}
 
-		LocalDateTime lastLoadDateTime = points.stream()
-			.map(p -> p.getStartTime())
-			.max(LocalDateTime::compareTo)
-			.orElse(endDateTime);
+		LastRequestedDate lastRequestedDate = lastRequestedDateRepository.findAllByWorkListHeaderIdAndParamType(headerId, ParamTypeEnum.AT)
+			.stream()
+			.findFirst()
+			.orElseGet(() -> {
+				LastRequestedDate d = new LastRequestedDate();
+				d.setWorkListHeader(header);
+				d.setParamType(ParamTypeEnum.AT);
+				d.setLastRequestedDate(endDateTime);
+				return d;
+			});
 
-		LocalDateTime requestedDateTime = lastLoadDateTime.plusDays(1);
+		logger.info("url: " + header.getConfig().getUrl());
+		logger.info("user: " + header.getConfig().getUserName());
+		logger.info("lastRequestedDate: " + lastRequestedDate.getLastRequestedDate());
+
+		LocalDateTime requestedDateTime = lastRequestedDate.getLastRequestedDate().plusDays(1);
 		if (requestedDateTime.isAfter(endDateTime))
 			requestedDateTime=endDateTime;
 
 		while (!endDateTime.isBefore(requestedDateTime)) {
-			logger.info("requested date: " + requestedDateTime);
+			logger.info("batch requested date: " + requestedDateTime);
 
-			points = buildPoints(lines, requestedDateTime);
-			final List<List<MeteringPointCfg>> groupsPoints = splitPoints(points);
+			points = buildPointsCfg(lines, requestedDateTime);
+			final List<List<MeteringPointCfg>> groupsPoints = splitPointsCfg(points);
 
 			Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.AT));
 			Long recCount = 0l;
 			try {
 				for (int i = 0; i < groupsPoints.size(); i++) {
 					logger.info("group of points: " + (i + 1));
-
-					List<AtTimeValueRaw> list = valueGateway
-						.config(header.getConfig())
-						.points(groupsPoints.get(i))
-						.request();
-
-					save(list, batch);
+					List<AtTimeValueRaw> list = valueGateway.request(header.getConfig(), groupsPoints.get(i));
+					batchHelper.atSave(list, batch);
 					recCount = recCount + list.size();
 				}
 
 				batchHelper.updateBatch(batch, recCount);
-				updateLastDate(batch);
-				load(batch);
+				batchHelper.updateAtLastDate(batch);
+				batchHelper.atLoad(batch);
+				if (recCount>0) {
+					lastRequestedDate.setLastRequestedDate(requestedDateTime);
+					batchHelper.updateLastRequestedDate(lastRequestedDate);
+				}
 			}
 			catch (Exception e) {
 				logger.error("read failed: " + e.getMessage());
@@ -111,35 +123,8 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 		logger.info("read completed");
     }
 
-	@SuppressWarnings("Duplicates")
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	void save(List<AtTimeValueRaw> list, Batch batch) {
-		logger.info("saving records started");
-		LocalDateTime now = LocalDateTime.now();
-		list.forEach(t -> {
-			t.setBatch(batch);
-			t.setCreateDate(now);
-		});
-		valueRepository.save(list);
-		logger.info("saving records completed");
-	}
-
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	void updateLastDate(Batch batch) {
-		logger.info("updateLastDate started");
-		lastLoadInfoRepository.updateAtLastDate(batch.getId());
-		logger.info("updateLastDate completed");
-	}
-
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	void load(Batch batch) {
-		logger.info("load started");
-		valueRepository.load(batch.getId());
-		logger.info("load completed");
-	}
-
 	@Transactional(propagation=Propagation.REQUIRED, readOnly = true)
-	List<MeteringPointCfg> buildPoints(List<WorkListLine> lines, LocalDateTime endDateTime) {
+	List<MeteringPointCfg> buildPointsCfg(List<WorkListLine> lines, LocalDateTime endDateTime) {
 		List<ParameterConf> confList = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
 			SourceSystemEnum.EMCOS,
 			ParamTypeEnum.AT
@@ -168,7 +153,7 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 				MeteringPointCfg mpc = MeteringPointCfg.fromLine(
 					line,
 					parameterConf,
-					buildStartTime(lastLoadInfo),
+					buildStartDateTime(lastLoadInfo),
 					endDateTime
 				);
 
@@ -179,20 +164,20 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 		return points;
 	}
 
-	private List<List<MeteringPointCfg>> splitPoints(List<MeteringPointCfg> points) {
+	private List<List<MeteringPointCfg>> splitPointsCfg(List<MeteringPointCfg> points) {
 		return range(0, points.size())
 			.boxed()
 			.collect(groupingBy(index -> index / groupCount))
 			.values()
 			.stream()
 			.map(indices -> indices
-					.stream()
-					.map(points::get)
-					.collect(toList()))
+				.stream()
+				.map(points::get)
+				.collect(toList()))
 			.collect(toList());
 	}
 
-	private LocalDateTime buildStartTime(LastLoadInfo lastLoadInfo) {
+	private LocalDateTime buildStartDateTime(LastLoadInfo lastLoadInfo) {
 		if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate()!=null)
 			return lastLoadInfo.getLastLoadDate()
 				.plusDays(1)

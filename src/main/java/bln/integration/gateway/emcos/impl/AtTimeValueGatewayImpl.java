@@ -6,7 +6,6 @@ import bln.integration.entity.enums.InputMethodEnum;
 import bln.integration.entity.enums.ProcessingStatusEnum;
 import bln.integration.entity.enums.ReceivingMethodEnum;
 import bln.integration.entity.enums.SourceSystemEnum;
-import bln.integration.gateway.CompressService;
 import bln.integration.gateway.emcos.AtTimeValueGateway;
 import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.registry.TemplateRegistry;
@@ -16,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -42,24 +40,11 @@ import static java.util.stream.Collectors.groupingBy;
 @RequiredArgsConstructor
 public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
     private final TemplateRegistry templateRegistry;
-
     private static final Logger logger = LoggerFactory.getLogger(AtTimeValueGatewayImpl.class);
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HH:mm:'00000'");
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-    private List<MeteringPointCfg> points;
-    private ConnectionConfig config;
 
-    public AtTimeValueGateway points(List<MeteringPointCfg> points) {
-        this.points = points;
-        return this;
-    }
-
-    public AtTimeValueGateway config(ConnectionConfig config) {
-        this.config = config;
-        return this;
-    }
-
-    public List<AtTimeValueRaw> request() throws Exception {
+    public List<AtTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points) throws Exception {
         logger.info("request started");
 
         if (config ==null) {
@@ -74,7 +59,7 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
 
         List<AtTimeValueRaw> list;
         try {
-            byte[] body = buildBody();
+            byte[] body = buildBody(config, points);
             if (body==null || body.length==0) {
                 logger.info("Request body is empty, AtTimeValueGatewayImpl.request stopped");
                 return emptyList();
@@ -93,7 +78,7 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
             if (n2>n1)
                 answer = answer.substring(n1+12, n2);
 
-            list = parseAnswer(answer);
+            list = parseAnswer(answer, points);
             logger.info("request successfully completed");
         }
 
@@ -105,7 +90,7 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
         return list;
     }
 
-    private byte[] buildBody() {
+    private byte[] buildBody(ConnectionConfig config, List<MeteringPointCfg> points) {
         logger.debug("buildBody started");
 
         String strPoints = points.stream()
@@ -141,6 +126,7 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
         logger.trace("body part 2 for request metering aData: " + body2);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        //noinspection Duplicates
         try {
             baos.write(body1.getBytes());
             baos.write(Base64.encodeBase64(aData.getBytes()));
@@ -161,13 +147,13 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
 
     private String buildNode(MeteringPointCfg point) {
         return ""
-                + "<ROW PPOINT_CODE=\"" + point.getSourceMeteringPointCode() + "\" "
-                + "PML_ID=\"" + point.getSourceParamCode() + "\" "
-                + "PBT=\"" + point.getStartTime().format(timeFormatter) + "\" "
-                + "PET=\"" + point.getEndTime().format(timeFormatter) + "\" />";
+            + "<ROW PPOINT_CODE=\"" + point.getSourceMeteringPointCode() + "\" "
+            + "PML_ID=\"" + point.getSourceParamCode() + "\" "
+            + "PBT=\"" + point.getStartTime().format(timeFormatter) + "\" "
+            + "PET=\"" + point.getEndTime().format(timeFormatter) + "\" />";
     }
 
-    private List<AtTimeValueRaw> parseAnswer(String answer) throws Exception {
+    private List<AtTimeValueRaw> parseAnswer(String answer, List<MeteringPointCfg> points) throws Exception {
         logger.info("parseAnswer started");
         logger.trace("answer: " + new String(Base64.decodeBase64(answer), "Cp1251"));
 
@@ -256,16 +242,16 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
         if (valStr!=null)
             val = Double.parseDouble(valStr);
 
-        AtTimeValueRaw mr = new AtTimeValueRaw();
-        mr.setSourceMeteringPointCode(externalCode);
-        mr.setMeteringDate(date.atStartOfDay());
-        mr.setSourceSystemCode(SourceSystemEnum.EMCOS);
-        mr.setStatus(ProcessingStatusEnum.TMP);
-        mr.setInputMethod(InputMethodEnum.AUTO);
-        mr.setReceivingMethod(ReceivingMethodEnum.SERVICE);
-        mr.setSourceParamCode(sourceParamCode);
-        mr.setVal(val);
+        AtTimeValueRaw value = new AtTimeValueRaw();
+        value.setSourceMeteringPointCode(externalCode);
+        value.setMeteringDate(date.atStartOfDay());
+        value.setSourceSystemCode(SourceSystemEnum.EMCOS);
+        value.setStatus(ProcessingStatusEnum.TMP);
+        value.setInputMethod(InputMethodEnum.AUTO);
+        value.setReceivingMethod(ReceivingMethodEnum.SERVICE);
+        value.setSourceParamCode(sourceParamCode);
+        value.setVal(val);
 
-        return mr;
+        return value;
     }
 }
