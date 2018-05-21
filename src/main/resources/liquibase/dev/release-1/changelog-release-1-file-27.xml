@@ -63,4 +63,14 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="media-eug-140" logicalFilePath="path-independent" author="eugene" context="dev">
+        <preConditions onFail="MARK_RAN" >
+            <columnExists schemaName="apps" tableName="media_parameters" columnName="param_type" />
+        </preConditions>
+
+        <comment>Dropping columns from table media_parameters</comment>
+            <dropColumn schemaName="apps" tableName="media_parameters" columnName="param_type" />
+        <rollback/>
+    </changeSet>
 </databaseChangeLog>
