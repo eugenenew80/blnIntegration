@@ -73,4 +73,44 @@
             <dropColumn schemaName="apps" tableName="media_parameters" columnName="param_type" />
         <rollback/>
     </changeSet>
+
+    <changeSet id="media-eug-141" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: media_last_requested_dates</comment>
+        <createTable tableName="media_last_requested_dates" schemaName="apps" remarks="Дата и время последнего запроса данных">
+            <column name="id" type="number" remarks="Идентификатор записи">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="work_list_header_id" type="number" remarks="Идентификатор рабочего списка">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="param_type" type="varchar(10)" remarks="Тип параметра">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="last_requested_date" type="TIMESTAMP" remarks="Метка времени последнего запроса данных">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="media-eug-142" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating primary key for table: media_last_requested_dates</comment>
+        <addPrimaryKey
+                columnNames="id"
+                constraintName="pk_media_last_requested_dates"
+                schemaName="apps"
+                tableName="media_last_requested_dates"/>
+    </changeSet>
+
+    <changeSet id="media-eug-143" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating sequence for table: media_last_requested_dates</comment>
+        <createSequence
+                incrementBy="1"
+                schemaName="apps"
+                sequenceName="media_last_requested_dates_s"
+                startValue="1"/>
+    </changeSet>
+
 </databaseChangeLog>

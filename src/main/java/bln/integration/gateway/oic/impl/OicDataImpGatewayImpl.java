@@ -70,8 +70,8 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
     }
 
 
-    private List<PeriodTimeValueRaw> mapToPeriodTimeValue(List<TelemetryRaw> teleiemetries) {
-        return teleiemetries.stream()
+    private List<PeriodTimeValueRaw> mapToPeriodTimeValue(List<TelemetryRaw> telemetryList) {
+        return telemetryList.stream()
             .map(t -> {
                 PeriodTimeValueRaw pt = new PeriodTimeValueRaw();
                 pt.setInterval(180);
