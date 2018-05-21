@@ -8,6 +8,9 @@ import bln.integration.jpa.BooleanToIntConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,8 +22,7 @@ import java.util.List;
 @DynamicUpdate
 @NamedEntityGraph(name="WorkListHeader.allJoins", attributeNodes = {
     @NamedAttributeNode("config"),
-    @NamedAttributeNode("atBatch"),
-    @NamedAttributeNode("ptBatch")
+    @NamedAttributeNode("batch")
 })
 public class WorkListHeader {
     @Id
@@ -47,13 +49,9 @@ public class WorkListHeader {
     @JoinColumn(name="config_id")
     private ConnectionConfig config;
 
-    @Column(name="at_status")
+    @Column(name="status")
     @Enumerated(EnumType.STRING)
-    private BatchStatusEnum atStatus;
-
-    @Column(name="pt_status")
-    @Enumerated(EnumType.STRING)
-    private BatchStatusEnum ptStatus;
+    private BatchStatusEnum status;
 
     @Column(name = "is_active")
     @Convert(converter = BooleanToIntConverter.class)
@@ -63,12 +61,9 @@ public class WorkListHeader {
     private List<WorkListLine> lines;
 
     @ManyToOne
-    @JoinColumn(name="at_batch_id")
-    private Batch atBatch;
-
-    @ManyToOne
-    @JoinColumn(name="pt_batch_id")
-    private Batch ptBatch;
+    @JoinColumn(name="batch_id")
+    @NotFound(action = NotFoundAction.IGNORE)
+    private Batch batch;
 
     @Column(name = "start_date")
     private LocalDateTime startDate;

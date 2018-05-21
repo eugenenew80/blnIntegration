@@ -66,7 +66,7 @@ public class ManualEmcosImp implements ImportRunner {
 			SourceSystemEnum.EMCOS,  DirectionEnum.IMPORT, WorkListTypeEnum.SYS
 		)
 		.stream()
-		.filter(h-> h.getActive() && h.getConfig()!=null && h.getAtStatus()== BatchStatusEnum.W && h.getPtStatus()==BatchStatusEnum.W)
+		.filter(h-> h.getActive() && h.getConfig()!=null && h.getStatus()== BatchStatusEnum.W && h.getStatus()==BatchStatusEnum.W)
 		.map(h -> h.getId())
 		.collect(toList());
 	}

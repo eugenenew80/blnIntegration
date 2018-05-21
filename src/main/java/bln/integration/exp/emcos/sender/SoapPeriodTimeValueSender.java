@@ -34,7 +34,7 @@ public class SoapPeriodTimeValueSender implements Sender<PeriodTimeValueRaw> {
 			DirectionEnum.EXPORT,
 			WorkListTypeEnum.USER
 		).stream()
-			.filter(h -> h.getActive() && h.getPtStatus()==BatchStatusEnum.W && h.getConfig()!=null)
+			.filter(h -> h.getActive() && h.getStatus()==BatchStatusEnum.W && h.getConfig()!=null)
 			.forEach(header -> {
 				if (!flag.get())
 					logger.info("read started");

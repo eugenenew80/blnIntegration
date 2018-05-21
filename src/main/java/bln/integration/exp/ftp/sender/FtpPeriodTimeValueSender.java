@@ -33,7 +33,7 @@ public class FtpPeriodTimeValueSender implements Sender<PeriodTimeValueRaw> {
             DirectionEnum.EXPORT,
             WorkListTypeEnum.USER
         ).stream()
-            .filter(h -> h.getActive() && h.getPtStatus()==BatchStatusEnum.W && h.getConfig()!=null)
+            .filter(h -> h.getActive() && h.getStatus()==BatchStatusEnum.W && h.getConfig()!=null)
             .forEach(header -> {
                 if (!flag.get())
                     logger.warn("send started");
@@ -110,8 +110,8 @@ public class FtpPeriodTimeValueSender implements Sender<PeriodTimeValueRaw> {
         batch = batchService.save(batch);
 
         header = headerService.findOne(header.getId());
-        header.setPtBatch(batch);
-        header.setPtStatus(BatchStatusEnum.P);
+        header.setBatch(batch);
+        header.setStatus(BatchStatusEnum.P);
         headerService.save(header);
         return batch;
     }
@@ -125,7 +125,7 @@ public class FtpPeriodTimeValueSender implements Sender<PeriodTimeValueRaw> {
         batchService.save(batch);
 
         header = headerService.findOne(header.getId());
-        header.setPtStatus(BatchStatusEnum.C);
+        header.setStatus(BatchStatusEnum.C);
         headerService.save(header);
         return batch;
     }
@@ -138,7 +138,7 @@ public class FtpPeriodTimeValueSender implements Sender<PeriodTimeValueRaw> {
         batchService.save(batch);
 
         header = headerService.findOne(header.getId());
-        header.setPtStatus(BatchStatusEnum.E);
+        header.setStatus(BatchStatusEnum.E);
         headerService.save(header);
         return batch;
     }

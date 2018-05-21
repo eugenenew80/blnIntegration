@@ -52,15 +52,8 @@ public class BatchHelper {
         if (header==null) return null;
 
         header = headerRepository.findOne(header.getId());
-        if (batch.getParamType() == ParamTypeEnum.AT) {
-            header.setAtBatch(batch);
-            header.setAtStatus(batch.getStatus());
-        }
-
-        if (batch.getParamType() == ParamTypeEnum.PT) {
-            header.setPtBatch(batch);
-            header.setPtStatus(batch.getStatus());
-        }
+        header.setBatch(batch);
+        header.setStatus(batch.getStatus());
 
         headerRepository.save(header);
         return header;

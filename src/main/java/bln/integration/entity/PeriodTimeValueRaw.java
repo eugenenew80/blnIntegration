@@ -6,6 +6,9 @@ import bln.integration.entity.enums.ReceivingMethodEnum;
 import bln.integration.entity.enums.SourceSystemEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -62,6 +65,7 @@ public class PeriodTimeValueRaw  {
 
 	@ManyToOne
 	@JoinColumn(name="batch_id")
+	@NotFound(action = NotFoundAction.IGNORE)
 	private Batch batch;
 
 	@Column(name = "create_date")

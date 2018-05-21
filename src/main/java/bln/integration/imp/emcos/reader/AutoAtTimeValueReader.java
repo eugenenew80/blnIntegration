@@ -25,7 +25,7 @@ import static java.util.stream.IntStream.range;
 @RequiredArgsConstructor
 public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	private static final Logger logger = LoggerFactory.getLogger(AutoAtTimeValueReader.class);
-	private static final int groupCount = 8000;
+	private static final int groupCount = 2000;
 	private final AtTimeValueRawRepository valueRepository;
 	private final LastLoadInfoRepository lastLoadInfoRepository;
 	private final ParameterConfRepository parameterConfRepository;

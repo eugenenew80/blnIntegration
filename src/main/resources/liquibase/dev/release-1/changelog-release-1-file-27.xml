@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="media-eug-134" logicalFilePath="path-independent" author="eugene" context="dev">
+        <preConditions onFail="MARK_RAN" >
+            <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="at_batch_id" />
+        </preConditions>
+
+        <comment>Dropping columns from table media_work_list_headers</comment>
+        <dropColumn schemaName="apps" tableName="media_work_list_headers" columnName="at_batch_id" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-135" logicalFilePath="path-independent" author="eugene" context="dev">
+        <preConditions onFail="MARK_RAN" >
+            <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="at_status" />
+        </preConditions>
+
+        <comment>Dropping columns from table media_work_list_headers</comment>
+        <dropColumn schemaName="apps" tableName="media_work_list_headers" columnName="at_status" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-136" logicalFilePath="path-independent" author="eugene" context="dev">
+        <preConditions onFail="MARK_RAN" >
+            <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="pt_batch_id" />
+        </preConditions>
+
+        <comment>Dropping columns from table media_work_list_headers</comment>
+        <dropColumn schemaName="apps" tableName="media_work_list_headers" columnName="pt_batch_id" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-137" logicalFilePath="path-independent" author="eugene" context="dev">
+        <preConditions onFail="MARK_RAN" >
+            <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="pt_status" />
+        </preConditions>
+
+        <comment>Dropping columns from table media_work_list_headers</comment>
+        <dropColumn schemaName="apps" tableName="media_work_list_headers" columnName="pt_status" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-138" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>add Column into table: media_work_list_headers</comment>
+        <addColumn schemaName="apps" tableName="media_work_list_headers">
+            <column name="batch_id" type="number" remarks="Идентификатора пакета">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-139" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>add Column into table: media_work_list_headers</comment>
+        <addColumn schemaName="apps" tableName="media_work_list_headers">
+            <column name="status" type="varchar(20)" remarks="Статус рабочего списка">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
