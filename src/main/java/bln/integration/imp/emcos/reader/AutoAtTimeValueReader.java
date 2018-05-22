@@ -26,7 +26,7 @@ import static java.util.stream.IntStream.range;
 @Transactional
 public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	private static final Logger logger = LoggerFactory.getLogger(AutoAtTimeValueReader.class);
-	private static final int groupCount = 2000;
+	private static final int groupCount = 500;
 	private final LastLoadInfoRepository lastLoadInfoRepository;
 	private final ParameterConfRepository parameterConfRepository;
 	private final WorkListHeaderRepository headerRepository;
@@ -67,7 +67,7 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 				LastRequestedDate d = new LastRequestedDate();
 				d.setWorkListHeader(header);
 				d.setParamType(ParamTypeEnum.AT);
-				d.setLastRequestedDate(endDateTime);
+				d.setLastRequestedDate(buildEndDateTimeDef());
 				return d;
 			});
 
@@ -190,5 +190,10 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	private LocalDateTime buildEndDateTime() {
 		LocalDateTime endDateTime = LocalDate.now(ZoneId.of("UTC+1")).atStartOfDay();
 		return endDateTime;
+	}
+
+	private LocalDateTime buildEndDateTimeDef() {
+		LocalDate now = LocalDate.now(ZoneId.of("UTC+1"));
+		return now.minusDays(now.getDayOfMonth()-1).atStartOfDay();
 	}
 }

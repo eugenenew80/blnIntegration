@@ -30,7 +30,7 @@ public class AutoEmcosImp implements ImportRunner {
 	private boolean enable;
 
 	@SuppressWarnings("Duplicates")
-	@Scheduled(cron = "0 53 */1 * * *")
+	@Scheduled(cron = "0 20 */1 * * *")
 	public void run() {
 		if (!enable) return;
 
@@ -38,7 +38,7 @@ public class AutoEmcosImp implements ImportRunner {
 		buildHeaderIds().stream()
 			.forEach(headerId -> callables.add( () -> {
                 autoAtTimeValueReader.read(headerId);
-                //autoPeriodTimeValueReader.read(headerId);
+                autoPeriodTimeValueReader.read(headerId);
                 return null;
             }));
 

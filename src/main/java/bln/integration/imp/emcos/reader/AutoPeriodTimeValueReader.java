@@ -65,7 +65,7 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 				LastRequestedDate d = new LastRequestedDate();
 				d.setWorkListHeader(header);
 				d.setParamType(ParamTypeEnum.PT);
-				d.setLastRequestedDate(endDateTime);
+				d.setLastRequestedDate(buildEndDateTimeDef());
 				return d;
 			});
 
@@ -190,5 +190,10 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 
 	private LocalDateTime buildEndDateTime() {
 		return LocalDateTime.now(ZoneId.of("UTC+1")).minusMinutes(15).truncatedTo(ChronoUnit.HOURS);
+	}
+
+	private LocalDateTime buildEndDateTimeDef() {
+		LocalDate now = LocalDate.now(ZoneId.of("UTC+1"));
+		return now.minusDays(now.getDayOfMonth()-1).atStartOfDay();
 	}
 }
