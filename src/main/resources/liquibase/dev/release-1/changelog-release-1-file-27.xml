@@ -113,4 +113,14 @@
                 startValue="1"/>
     </changeSet>
 
+    <changeSet id="media-eug-144" logicalFilePath="path-independent" author="eugene">
+        <comment>add column in table: media_parameters</comment>
+        <addColumn schemaName="apps" tableName="media_parameters">
+            <column name="is_at" type="number"/>
+        </addColumn>
+        <addColumn schemaName="apps" tableName="media_parameters">
+            <column name="is_pt" type="number"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
