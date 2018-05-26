@@ -123,4 +123,10 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="media-eug-145" logicalFilePath="path-independent" author="eugene">
+        <comment>add column in table: media_parameter_conf</comment>
+        <addColumn schemaName="apps" tableName="media_parameter_conf">
+            <column name="metering_point_id" type="number"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

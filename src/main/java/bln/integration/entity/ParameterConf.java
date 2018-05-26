@@ -42,4 +42,8 @@ public class ParameterConf {
     @Column(name="param_type")
     @Enumerated(EnumType.STRING)
     private ParamTypeEnum paramType;
+
+    @ManyToOne
+    @JoinColumn(name="metering_point_id")
+    private MeteringPoint meteringPoint;
 }
