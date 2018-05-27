@@ -1,18 +1,11 @@
 package bln.integration.gateway.oic;
 
+import bln.integration.entity.ConnectionConfig;
 import bln.integration.entity.PeriodTimeValueRaw;
+import bln.integration.gateway.emcos.MeteringPointCfg;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OicDataImpGateway {
-    OicDataImpGateway points(List<String> points);
-
-    OicDataImpGateway startDateTime(LocalDateTime startDateTime);
-
-    OicDataImpGateway endDateTime(LocalDateTime endDateTime);
-
-    OicDataImpGateway arcType(String arcType);
-
-    List<PeriodTimeValueRaw> request() throws Exception;
+    List<PeriodTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points, String arcType) throws Exception;
 }

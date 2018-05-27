@@ -66,21 +66,12 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 			return;
 		}
 
-		List<String> pointsStr = points.stream()
-			.map(p -> p.getSourceParamCode())
-			.collect(toList());
-
 		logger.info("url: " + header.getConfig().getUrl());
 		logger.info("user: " + header.getConfig().getUserName());
 
 		Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.PT));
 		try {
-			List<PeriodTimeValueRaw> list = oicImpGateway
-				.points(pointsStr)
-				.endDateTime(endDateTime)
-				.arcType("MIN-60")
-				.request();
-
+			List<PeriodTimeValueRaw> list = oicImpGateway.request(header.getConfig(), points, "MIN-60");
 			batchHelper.ptSave(list, batch);
 			batchHelper.updateBatch(batch, (long)list.size());
 			batchHelper.updatePtLastDate(batch);
@@ -147,11 +138,13 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 				: lastLoadDate.plusMinutes(15);
 		}
 
-		LocalDate now = LocalDate.now(ZoneId.of("UTC+1"));
+		LocalDate now = LocalDate.now();
 		return now.minusDays(now.getDayOfMonth()-1).atStartOfDay();
 	}
 
 	private LocalDateTime buildEndDateTime() {
-		return LocalDateTime.now(ZoneId.of("UTC+1")).minusMinutes(15).truncatedTo(ChronoUnit.HOURS);
+		return LocalDateTime.now()
+			.minusMinutes(15)
+			.truncatedTo(ChronoUnit.HOURS);
 	}
 }

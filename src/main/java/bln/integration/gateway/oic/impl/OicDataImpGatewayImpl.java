@@ -1,17 +1,20 @@
 package bln.integration.gateway.oic.impl;
 
+import bln.integration.entity.ConnectionConfig;
 import bln.integration.entity.PeriodTimeValueRaw;
 import bln.integration.entity.TelemetryRaw;
 import bln.integration.entity.enums.InputMethodEnum;
 import bln.integration.entity.enums.ProcessingStatusEnum;
 import bln.integration.entity.enums.ReceivingMethodEnum;
 import bln.integration.entity.enums.SourceSystemEnum;
+import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.gateway.oic.OicDataImpGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
@@ -27,54 +30,31 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
     private static final Logger logger = LoggerFactory.getLogger(OicDataImpGatewayImpl.class);
 
     @Override
-    public OicDataImpGateway points(List<String> points) {
-        this.points = points;
-        return this;
-    }
-
-    @Override
-    public OicDataImpGateway startDateTime(LocalDateTime startDateTime) {
-        this.startDateTime = startDateTime;
-        return this;
-    }
-
-    @Override
-    public OicDataImpGateway endDateTime(LocalDateTime endDateTime) {
-        this.endDateTime = endDateTime;
-        return this;
-    }
-
-    @Override
-    public OicDataImpGateway arcType(String arcType) {
-        this.arcType = arcType;
-        return this;
-    }
-
-    @Override
-    public List<PeriodTimeValueRaw> request() throws Exception {
-        logger.info(startDateTime.toString());
-        logger.info(endDateTime.toString());
-
+    public List<PeriodTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points, String arcType) throws Exception {
         Client client = ClientBuilder.newClient();
-        WebTarget webTarget = client.target("http://10.8.0.76:8081");
-        WebTarget telemetryWebTarget = webTarget.path("rest/exp/telemetry")
-            .queryParam("start", startDateTime.format(timeFormatter))
-            .queryParam("end", endDateTime.format(timeFormatter))
-            .queryParam("arcType", arcType);
+        WebTarget webTarget = client.target(config.getUrl());
+        WebTarget telemetryWebTarget = webTarget.path("/" + arcType);
 
-        List<TelemetryRaw> response =
-            telemetryWebTarget.request(MediaType.APPLICATION_JSON)
-            .get((new GenericType<List<TelemetryRaw>>(){}));
+        List<TelemetryRaw> response = telemetryWebTarget.request(MediaType.APPLICATION_JSON)
+            .post(Entity.entity(points, MediaType.APPLICATION_JSON), new GenericType<List<TelemetryRaw>>(){});
 
-        return mapToPeriodTimeValue(response);
+        return mapToValue(response, arcType);
     }
 
+    private List<PeriodTimeValueRaw> mapToValue(List<TelemetryRaw> telemetryList, String arcType) {
+        Integer interval = null;
+        if (arcType.equals("MIN-60"))
+            interval=3600;
+        else if (arcType.equals("MIN-15"))
+            interval = 900;
+        else if (arcType.equals("MIN-3"))
+            interval = 180;
 
-    private List<PeriodTimeValueRaw> mapToPeriodTimeValue(List<TelemetryRaw> telemetryList) {
+        Integer finalInterval = interval;
         return telemetryList.stream()
             .map(t -> {
                 PeriodTimeValueRaw pt = new PeriodTimeValueRaw();
-                pt.setInterval(180);
+                pt.setInterval(finalInterval);
                 pt.setSourceParamCode(t.getParamCode());
                 pt.setSourceMeteringPointCode(t.getLogPoint().toString());
                 pt.setSourceUnitCode(t.getUnitCode());
@@ -88,9 +68,4 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
             })
             .collect(toList());
     }
-
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
-    private String arcType;
-    private List<String> points;
 }
