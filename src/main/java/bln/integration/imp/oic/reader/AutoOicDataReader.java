@@ -3,6 +3,7 @@ package bln.integration.imp.oic.reader;
 import bln.integration.entity.*;
 import bln.integration.entity.enums.*;
 import bln.integration.gateway.emcos.MeteringPointCfg;
+import bln.integration.gateway.oic.LogPointCfg;
 import bln.integration.gateway.oic.OicDataImpGateway;
 import bln.integration.imp.BatchHelper;
 import bln.integration.imp.Reader;
@@ -60,7 +61,7 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 		}
 
 		LocalDateTime endDateTime = buildEndDateTime();
-		List<MeteringPointCfg> points = buildPointsCfg(lines, endDateTime);
+		List<LogPointCfg> points = buildPointsCfg(lines, endDateTime);
 		if (points.size()==0) {
 			logger.info("List of points is empty, import data stopped");
 			return;
@@ -89,7 +90,7 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
     }
 
 	@Transactional(propagation=Propagation.REQUIRED, readOnly = true)
-	List<MeteringPointCfg> buildPointsCfg(List<WorkListLine> lines, LocalDateTime endDateTime) {
+	List<LogPointCfg> buildPointsCfg(List<WorkListLine> lines, LocalDateTime endDateTime) {
 		List<ParameterConf> confList = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
 			SourceSystemEnum.OIC,
 			ParamTypeEnum.PT
@@ -99,7 +100,7 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 		List<LastLoadInfo> lastLoadInfoList = lastLoadInfoRepository
 			.findAllBySourceSystemCode(SourceSystemEnum.OIC);
 
-		List<MeteringPointCfg> points = new ArrayList<>();
+		List<LogPointCfg> points = new ArrayList<>();
 		lines.stream()
 			.filter(line -> line.getParam().getIsAt())
 			.forEach(line -> {
@@ -116,15 +117,13 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 					.findFirst()
 					.orElse(null);
 
-				MeteringPointCfg mpc = MeteringPointCfg.fromLine(
-					line,
-					parameterConf,
-					buildStartDateTime(lastLoadInfo),
-					endDateTime
-				);
+				LogPointCfg lpc = new LogPointCfg();
+				lpc.setLogPointId(Long.parseLong(parameterConf.getSourceParamCode()));
+				lpc.setStart(buildStartDateTime(lastLoadInfo));
+				lpc.setEnd(endDateTime);
 
-				if (mpc!=null && !mpc.getEndTime().isBefore(mpc.getStartTime()))
-					points.add(mpc);
+				if (lpc!=null && !lpc.getEnd().isBefore(lpc.getStart()))
+					points.add(lpc);
 			});
 
 		return points;
