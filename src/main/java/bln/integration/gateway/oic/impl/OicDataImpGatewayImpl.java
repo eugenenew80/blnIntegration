@@ -32,17 +32,17 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<List<LogPointCfg>> pointsEntity = new HttpEntity<>(points, headers);
+        HttpEntity<List<LogPointCfg>> requestEntity = new HttpEntity<>(points, headers);
         String url = config.getUrl() + "/" + arcType;
 
-        ResponseEntity<List<TelemetryRaw>> response = restTemplate.exchange(
+        ResponseEntity<List<TelemetryRaw>> responseEntity = restTemplate.exchange(
             url,
             HttpMethod.POST,
-            pointsEntity,
+            requestEntity,
             new ParameterizedTypeReference<List<TelemetryRaw>>() {}
         );
 
-        return mapToValue(response.getBody(), arcType);
+        return mapToValue(responseEntity.getBody(), arcType);
     }
 
     private List<PeriodTimeValueRaw> mapToValue(List<TelemetryRaw> telemetryList, String arcType) {
