@@ -36,6 +36,8 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
         WebTarget webTarget = client.target(config.getUrl());
         WebTarget telemetryWebTarget = webTarget.path("/" + arcType);
 
+        points.stream().forEach(System.out::println);
+
         List<TelemetryRaw> response = telemetryWebTarget.request(MediaType.APPLICATION_JSON)
             .post(Entity.entity(points, MediaType.APPLICATION_JSON), new GenericType<List<TelemetryRaw>>(){});
 

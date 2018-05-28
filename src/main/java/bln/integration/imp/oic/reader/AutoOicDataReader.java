@@ -2,7 +2,6 @@ package bln.integration.imp.oic.reader;
 
 import bln.integration.entity.*;
 import bln.integration.entity.enums.*;
-import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.gateway.oic.LogPointCfg;
 import bln.integration.gateway.oic.OicDataImpGateway;
 import bln.integration.imp.BatchHelper;
@@ -17,18 +16,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
