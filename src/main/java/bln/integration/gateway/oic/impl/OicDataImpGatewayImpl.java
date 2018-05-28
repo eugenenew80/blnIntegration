@@ -11,17 +11,14 @@ import bln.integration.gateway.oic.LogPointCfg;
 import bln.integration.gateway.oic.OicDataImpGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
+import org.springframework.web.client.RestTemplate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -31,16 +28,21 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
 
     @Override
     public List<PeriodTimeValueRaw> request(ConnectionConfig config, List<LogPointCfg> points, String arcType) throws Exception {
-        Client client = ClientBuilder.newClient();
-        WebTarget webTarget = client.target(config.getUrl());
-        WebTarget telemetryWebTarget = webTarget.path("/" + arcType);
+        RestTemplate restTemplate = new RestTemplateBuilder().build();
 
-        points.stream().forEach(System.out::println);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<List<LogPointCfg>> pointsEntity = new HttpEntity<>(points, headers);
+        String url = config.getUrl() + "/" + arcType;
 
-        List<TelemetryRaw> response = telemetryWebTarget.request(MediaType.APPLICATION_JSON)
-            .post(Entity.entity(points, MediaType.APPLICATION_JSON), new GenericType<List<TelemetryRaw>>(){});
+        ResponseEntity<List<TelemetryRaw>> response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            pointsEntity,
+            new ParameterizedTypeReference<List<TelemetryRaw>>() {}
+        );
 
-        return mapToValue(response, arcType);
+        return mapToValue(response.getBody(), arcType);
     }
 
     private List<PeriodTimeValueRaw> mapToValue(List<TelemetryRaw> telemetryList, String arcType) {

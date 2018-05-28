@@ -35,7 +35,7 @@ public class AutoOicDataImp implements ImportRunner {
 	private boolean enable;
 
 	@SuppressWarnings("Duplicates")
-	@Scheduled(cron = "0 1 */1 * * *")
+	@Scheduled(cron = "0 8 */1 * * *")
 	public void run() {
 		if (!enable) return;
 
@@ -55,7 +55,7 @@ public class AutoOicDataImp implements ImportRunner {
 	}
 
 	@Transactional(propagation= Propagation.NOT_SUPPORTED, readOnly = true)
-	private List<Long> buildHeaderIds() {
+	List<Long> buildHeaderIds() {
 		return headerRepository.findAllBySourceSystemCodeAndDirectionAndWorkListType(
 			SourceSystemEnum.OIC,  DirectionEnum.IMPORT, WorkListTypeEnum.SYS
 		)
