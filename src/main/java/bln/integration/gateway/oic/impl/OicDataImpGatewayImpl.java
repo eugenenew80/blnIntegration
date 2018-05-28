@@ -7,7 +7,6 @@ import bln.integration.entity.enums.InputMethodEnum;
 import bln.integration.entity.enums.ProcessingStatusEnum;
 import bln.integration.entity.enums.ReceivingMethodEnum;
 import bln.integration.entity.enums.SourceSystemEnum;
-import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.gateway.oic.LogPointCfg;
 import bln.integration.gateway.oic.OicDataImpGateway;
 import org.slf4j.Logger;
