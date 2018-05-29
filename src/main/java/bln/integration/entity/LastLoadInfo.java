@@ -41,4 +41,7 @@ public class LastLoadInfo {
 
     @Column(name = "last_load_date")
     private LocalDateTime lastLoadDate;
+
+    @Column(name = "metering_point_id")
+    private Long meteringPointId;
 }

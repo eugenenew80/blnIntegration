@@ -100,23 +100,30 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 				ParameterConf parameterConf = confList.stream()
 					.filter(c -> c.getParam().equals(line.getParam()))
 					.filter(c -> c.getInterval() == 3600)
-					.filter(c -> c.getMeteringPoint().getId().equals(line.getMeteringPoint().getId()))
+					.filter(c -> c.getMeteringPoint()!=null)
+					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
 					.findFirst()
 					.orElse(null);
 
 				LastLoadInfo lastLoadInfo = lastLoadInfoList.stream()
-					.filter(l -> l.getSourceMeteringPointCode().equals(line.getMeteringPoint().getExternalCode()))
+					.filter(l -> l.getSourceMeteringPointCode().equals(parameterConf.getSourceMeteringPointCode()))
 					.filter(l -> l.getSourceParamCode().equals(parameterConf.getSourceParamCode()))
+					.filter(l -> l.getMeteringPointId().equals(parameterConf.getMeteringPoint().getId()))
 					.findFirst()
 					.orElse(null);
 
-				LogPointCfg lpc = new LogPointCfg();
-				lpc.setLogPointId(Long.parseLong(parameterConf.getSourceParamCode()));
-				lpc.setStart(buildStartDateTime(lastLoadInfo));
-				lpc.setEnd(endDateTime);
+				if (parameterConf!=null) {
+					LogPointCfg lpc = new LogPointCfg();
+					lpc.setMeteringPointId(line.getMeteringPoint().getId());
+					lpc.setLogPointId(Long.parseLong(parameterConf.getSourceMeteringPointCode()));
+					lpc.setParamCode(parameterConf.getSourceParamCode());
+					lpc.setUnitCode(parameterConf.getSourceUnitCode());
+					lpc.setStart(buildStartDateTime(lastLoadInfo));
+					lpc.setEnd(endDateTime);
 
-				if (lpc!=null && !lpc.getEnd().isBefore(lpc.getStart()))
-					points.add(lpc);
+					if (lpc != null && !lpc.getEnd().isBefore(lpc.getStart()))
+						points.add(lpc);
+				}
 			});
 
 		return points;
@@ -125,9 +132,7 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 	private LocalDateTime buildStartDateTime(LastLoadInfo lastLoadInfo) {
 		if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate() !=null) {
 			LocalDateTime lastLoadDate = lastLoadInfo.getLastLoadDate();
-			return lastLoadDate.getMinute() < 45
-				? lastLoadDate.truncatedTo(ChronoUnit.HOURS)
-				: lastLoadDate.plusMinutes(15);
+			return lastLoadDate.truncatedTo(ChronoUnit.HOURS).plusHours(1);
 		}
 
 		LocalDate now = LocalDate.now();
@@ -135,8 +140,6 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 	}
 
 	private LocalDateTime buildEndDateTime() {
-		return LocalDateTime.now()
-			.minusMinutes(15)
-			.truncatedTo(ChronoUnit.HOURS);
+		return LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
 	}
 }

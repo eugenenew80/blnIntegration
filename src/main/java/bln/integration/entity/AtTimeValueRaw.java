@@ -70,4 +70,7 @@ public class AtTimeValueRaw {
 
 	@Column(name = "last_update_date")
 	private LocalDateTime lastUpdateDate;
+
+	@Column(name = "metering_point_id")
+	private Long meteringPointId;
 }

@@ -46,4 +46,7 @@ public class ParameterConf {
     @ManyToOne
     @JoinColumn(name="metering_point_id")
     private MeteringPoint meteringPoint;
+
+    @Column(name = "source_metering_point_code")
+    private String sourceMeteringPointCode;
 }

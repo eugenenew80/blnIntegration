@@ -30,7 +30,7 @@ public class AutoEmcosImp implements ImportRunner {
 	private boolean enable;
 
 	@SuppressWarnings("Duplicates")
-	@Scheduled(cron = "0 31 */1 * * *")
+	@Scheduled(cron = "0 0 */1 * * *")
 	public void run() {
 		if (!enable) return;
 

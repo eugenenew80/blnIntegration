@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(of= {"sourceMeteringPointCode", "sourceParamCode"})
 public class MeteringPointCfg {
+	private Long meteringPointId;
 	private String sourceMeteringPointCode;
 	private String sourceParamCode;
 	private String sourceUnitCode;
@@ -24,6 +25,7 @@ public class MeteringPointCfg {
 		mpc.setSourceParamCode(parameterConf.getSourceParamCode());
 		mpc.setSourceUnitCode(parameterConf.getSourceUnitCode());
 		mpc.setInterval(parameterConf.getInterval());
+		mpc.setMeteringPointId(line.getMeteringPoint().getId());
 		mpc.setSourceMeteringPointCode(line.getMeteringPoint().getExternalCode());
 		mpc.setParamCode(line.getParam().getCode());
 		mpc.setStartTime(startTime);

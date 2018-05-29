@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -73,4 +72,7 @@ public class PeriodTimeValueRaw  {
 
 	@Column(name = "last_update_date")
 	private LocalDateTime lastUpdateDate;
+
+	@Column(name = "metering_point_id")
+	private Long meteringPointId;
 }

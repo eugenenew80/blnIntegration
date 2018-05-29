@@ -35,7 +35,7 @@ public class AutoOicDataImp implements ImportRunner {
 	private boolean enable;
 
 	@SuppressWarnings("Duplicates")
-	@Scheduled(cron = "0 8 */1 * * *")
+	@Scheduled(cron = "0 13 */1 * * *")
 	public void run() {
 		if (!enable) return;
 

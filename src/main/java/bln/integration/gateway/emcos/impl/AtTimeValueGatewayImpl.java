@@ -79,6 +79,17 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
                 answer = answer.substring(n1+12, n2);
 
             list = parseAnswer(answer, points);
+            list.stream().forEach(l -> {
+                MeteringPointCfg point = points.stream()
+                    .filter(p -> p.getSourceMeteringPointCode().equals(l.getSourceMeteringPointCode()))
+                    .filter(p -> p.getSourceParamCode().equals(l.getSourceParamCode()))
+                    .findFirst()
+                    .orElse(null);
+
+                if (point!=null)
+                    l.setMeteringPointId(point.getMeteringPointId());
+            });
+
             logger.info("request successfully completed");
         }
 

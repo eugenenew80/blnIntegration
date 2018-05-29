@@ -79,6 +79,17 @@ public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway 
                 answer = answer.substring(n1+12, n2);
 
             list = parseAnswer(answer, points);
+            list.stream().forEach(l -> {
+                MeteringPointCfg point = points.stream()
+                    .filter(p -> p.getSourceMeteringPointCode().equals(l.getSourceMeteringPointCode()))
+                    .filter(p -> p.getSourceParamCode().equals(l.getSourceParamCode()))
+                    .findFirst()
+                    .orElse(null);
+
+                if (point!=null)
+                    l.setMeteringPointId(point.getMeteringPointId());
+            });
+
             logger.info("request competed");
         }
 
@@ -197,9 +208,9 @@ public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway 
                 .orElse(null);
 
             Pair<String, Integer> pair2 = map2.keySet().stream()
-                    .filter(p -> p.getLeft().equals(mr.getSourceParamCode()))
-                    .findFirst()
-                    .orElse(null);
+                .filter(p -> p.getLeft().equals(mr.getSourceParamCode()))
+                .findFirst()
+                .orElse(null);
 
             if (pair1!=null)
                 mr.setSourceUnitCode(pair1.getRight());
