@@ -22,6 +22,9 @@ public class ParameterConf {
     @Enumerated(EnumType.STRING)
     private SourceSystemEnum sourceSystemCode;
 
+    @Column(name = "source_metering_point_code")
+    private String sourceMeteringPointCode;
+
     @Column(name = "source_param_code")
     private String sourceParamCode;
 
@@ -33,20 +36,17 @@ public class ParameterConf {
     private Unit sourceUnit;
 
     @ManyToOne
+    @JoinColumn(name="metering_point_id")
+    private MeteringPoint meteringPoint;
+
+    @ManyToOne
     @JoinColumn(name="param_id")
     private Parameter param;
-
-    @Column
-    private Integer interval;
 
     @Column(name="param_type")
     @Enumerated(EnumType.STRING)
     private ParamTypeEnum paramType;
 
-    @ManyToOne
-    @JoinColumn(name="metering_point_id")
-    private MeteringPoint meteringPoint;
-
-    @Column(name = "source_metering_point_code")
-    private String sourceMeteringPointCode;
+    @Column
+    private Integer interval;
 }
