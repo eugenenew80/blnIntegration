@@ -196,27 +196,27 @@ public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway 
 
         logger.debug("find unit codes for list started");
         Map<Pair<String, String>, List<MeteringPointCfg>> map1 = points.stream()
-                .collect(groupingBy(p -> Pair.of(p.getSourceParamCode(), p.getSourceUnitCode())));
+            .collect(groupingBy(p -> Pair.of(p.getSourceParamCode(), p.getSourceUnitCode())));
 
         Map<Pair<String, Integer>, List<MeteringPointCfg>> map2 = points.stream()
-                .collect(groupingBy(p -> Pair.of(p.getSourceParamCode(), p.getInterval())));
+            .collect(groupingBy(p -> Pair.of(p.getSourceParamCode(), p.getInterval())));
 
-        list.forEach(mr -> {
+        list.stream().forEach(val -> {
             Pair<String, String> pair1 = map1.keySet().stream()
-                .filter(p -> p.getLeft().equals(mr.getSourceParamCode()))
+                .filter(p -> p.getLeft().equals(val.getSourceParamCode()))
                 .findFirst()
                 .orElse(null);
 
             Pair<String, Integer> pair2 = map2.keySet().stream()
-                .filter(p -> p.getLeft().equals(mr.getSourceParamCode()))
+                .filter(p -> p.getLeft().equals(val.getSourceParamCode()))
                 .findFirst()
                 .orElse(null);
 
             if (pair1!=null)
-                mr.setSourceUnitCode(pair1.getRight());
+                val.setSourceUnitCode(pair1.getRight());
 
             if (pair2!=null)
-                mr.setInterval(pair2.getRight());
+                val.setInterval(pair2.getRight());
         });
         logger.debug("find unit codes for list completed");
 

@@ -48,12 +48,12 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
         logger.info("request started");
 
         if (config ==null) {
-            logger.warn("Config is empty, AtTimeValueGatewayImpl.request stopped");
+            logger.warn("Config is empty, request terminated");
             return emptyList();
         }
 
         if (points ==null || points.isEmpty()) {
-            logger.warn("List of points is empty, AtTimeValueGatewayImpl.request stopped");
+            logger.warn("List of points is empty, request terminated");
             return emptyList();
         }
 
@@ -61,7 +61,7 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
         try {
             byte[] body = buildBody(config, points);
             if (body==null || body.length==0) {
-                logger.info("Request body is empty, AtTimeValueGatewayImpl.request stopped");
+                logger.info("Request body is empty, request terminated");
                 return emptyList();
             }
 
@@ -200,14 +200,14 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
         Map<Pair<String, String>, List<MeteringPointCfg>> map = points.stream()
             .collect(groupingBy(p -> Pair.of(p.getSourceParamCode(), p.getSourceUnitCode())));
 
-        list.forEach(mr -> {
+        list.forEach(val -> {
             Pair<String, String> pair = map.keySet().stream()
-                .filter(p -> p.getLeft().equals(mr.getSourceParamCode()))
+                .filter(p -> p.getLeft().equals(val.getSourceParamCode()))
                 .findFirst()
                 .orElse(null);
 
             if (pair!=null)
-                mr.setSourceUnitCode(pair.getRight());
+                val.setSourceUnitCode(pair.getRight());
         });
         logger.debug("find unit codes for list completed");
 
