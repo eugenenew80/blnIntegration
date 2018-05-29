@@ -28,8 +28,6 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
 
     @Override
     public List<PeriodTimeValueRaw> request(ConnectionConfig config, List<LogPointCfg> points, String arcType) throws Exception {
-        System.out.println(points);
-
         RestTemplate restTemplate = new RestTemplateBuilder().build();
 
         HttpHeaders headers = new HttpHeaders();

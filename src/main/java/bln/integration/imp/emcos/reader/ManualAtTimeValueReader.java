@@ -80,16 +80,14 @@ public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
 			.forEach(line -> {
 				ParameterConf parameterConf = confList.stream()
 					.filter(c -> c.getParam().equals(line.getParam()))
-					.filter(c -> c.getInterval() == null)
+					.filter(c -> c.getParamType() == ParamTypeEnum.AT)
+					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
 					.findFirst()
 					.orElse(null);
 
-				MeteringPointCfg mpc = MeteringPointCfg.fromLine(
-					line,
-					parameterConf,
-					line.getStartDate(),
-					line.getEndDate()
-				);
+				MeteringPointCfg mpc = MeteringPointCfg.fromLine(parameterConf);
+				mpc.setStartTime(line.getStartDate());
+				mpc.setEndTime(line.getEndDate());
 
 				if (mpc!=null && !mpc.getEndTime().isBefore(mpc.getStartTime()))
 					points.add(mpc);

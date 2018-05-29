@@ -41,13 +41,13 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 		logger.info("headerId: " + headerId);
 
 		WorkListHeader header = headerRepository.findOne(headerId);
-		if (header==null) {
+		if (header == null) {
 			logger.info("Work list not found");
 			return;
 		}
 
 		List<WorkListLine> lines = header.getLines();
-		if (lines.size()==0) {
+		if (lines.size() == 0) {
 			logger.info("List of lines is empty, import data stopped");
 			return;
 		}
@@ -55,7 +55,7 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 		LocalDateTime endDateTime = buildEndDateTime();
 		List<MeteringPointCfg> points = buildPointsCfg(lines, endDateTime);
 
-		if (points.size()==0) {
+		if (points.size() == 0) {
 			logger.info("List of points is empty, import data stopped");
 			return;
 		}
@@ -140,22 +140,21 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 			.forEach(line -> {
 				ParameterConf parameterConf = confList.stream()
 					.filter(c -> c.getParam().equals(line.getParam()))
-					.filter(c -> c.getInterval() == null)
+					.filter(c -> c.getParamType() == ParamTypeEnum.AT)
+					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
 					.findFirst()
 					.orElse(null);
 
 				LastLoadInfo lastLoadInfo = lastLoadInfoList.stream()
-					.filter(l -> l.getSourceMeteringPointCode().equals(line.getMeteringPoint().getExternalCode()))
+					.filter(l -> l.getMeteringPointId().equals(parameterConf.getMeteringPoint().getId()))
+					.filter(l -> l.getSourceMeteringPointCode().equals(parameterConf.getMeteringPoint().getExternalCode()))
 					.filter(l -> l.getSourceParamCode().equals(parameterConf.getSourceParamCode()))
 					.findFirst()
 					.orElse(null);
 
-				MeteringPointCfg mpc = MeteringPointCfg.fromLine(
-					line,
-					parameterConf,
-					buildStartDateTime(lastLoadInfo),
-					endDateTime
-				);
+				MeteringPointCfg mpc = MeteringPointCfg.fromLine(parameterConf);
+				mpc.setStartTime(buildStartDateTime(lastLoadInfo));
+				mpc.setEndTime(endDateTime);
 
 				if (mpc!=null && !mpc.getEndTime().isBefore(mpc.getStartTime()))
 					points.add(mpc);

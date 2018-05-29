@@ -99,8 +99,8 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 			.forEach(line -> {
 				ParameterConf parameterConf = confList.stream()
 					.filter(c -> c.getParam().equals(line.getParam()))
-					.filter(c -> c.getInterval() == 3600)
-					.filter(c -> c.getMeteringPoint()!=null)
+					.filter(c -> c.getParamType() == ParamTypeEnum.PT)
+					.filter(c -> c.getInterval().equals(line.getHeader().getInterval()))
 					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
 					.findFirst()
 					.orElse(null);
@@ -114,7 +114,7 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 
 				if (parameterConf!=null) {
 					LogPointCfg lpc = new LogPointCfg();
-					lpc.setMeteringPointId(line.getMeteringPoint().getId());
+					lpc.setMeteringPointId(parameterConf.getMeteringPoint().getId());
 					lpc.setLogPointId(Long.parseLong(parameterConf.getSourceMeteringPointCode()));
 					lpc.setParamCode(parameterConf.getSourceParamCode());
 					lpc.setUnitCode(parameterConf.getSourceUnitCode());

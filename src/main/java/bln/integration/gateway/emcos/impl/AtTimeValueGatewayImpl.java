@@ -47,12 +47,12 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
     public List<AtTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points) throws Exception {
         logger.info("request started");
 
-        if (config ==null) {
+        if (config == null) {
             logger.warn("Config is empty, request terminated");
             return emptyList();
         }
 
-        if (points ==null || points.isEmpty()) {
+        if (points == null || points.isEmpty()) {
             logger.warn("List of points is empty, request terminated");
             return emptyList();
         }
