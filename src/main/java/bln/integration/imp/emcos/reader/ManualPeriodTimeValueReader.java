@@ -82,7 +82,7 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
 					.filter(c -> c.getParam().equals(line.getParam()))
 					.filter(c -> c.getParamType() == ParamTypeEnum.PT)
-					.filter(c -> c.getInterval().equals(line.getHeader().getInterval()))
+					.filter(c -> c.getInterval().equals(900))
 					.findFirst()
 					.orElse(null);
 

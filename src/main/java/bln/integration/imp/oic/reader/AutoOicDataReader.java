@@ -101,7 +101,7 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
 					.filter(c -> c.getParam().equals(line.getParam()))
 					.filter(c -> c.getParamType() == ParamTypeEnum.PT)
-					.filter(c -> c.getInterval().equals(line.getHeader().getInterval()))
+					.filter(c -> c.getInterval().equals(3600))
 					.findFirst()
 					.orElse(null);
 

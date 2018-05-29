@@ -76,7 +76,4 @@ public class WorkListHeader {
 
     @Column(name = "last_update_date")
     private LocalDateTime lastUpdateDate;
-
-    @Column
-    private Integer interval;
 }
