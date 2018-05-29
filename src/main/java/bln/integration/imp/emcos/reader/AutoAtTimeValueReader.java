@@ -139,9 +139,10 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 			.filter(line -> line.getParam().getIsAt())
 			.forEach(line -> {
 				ParameterConf parameterConf = confList.stream()
+					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
 					.filter(c -> c.getParam().equals(line.getParam()))
 					.filter(c -> c.getParamType() == ParamTypeEnum.AT)
-					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
+					.filter(c -> c.getInterval().equals(line.getHeader().getInterval()))
 					.findFirst()
 					.orElse(null);
 

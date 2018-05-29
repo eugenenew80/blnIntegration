@@ -137,9 +137,9 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 			.filter(line -> line.getParam().getIsPt())
 			.forEach(line -> {
 				ParameterConf parameterConf = confList.stream()
+					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
 					.filter(c -> c.getParam().equals(line.getParam()))
 					.filter(c -> c.getParamType() == ParamTypeEnum.PT)
-					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
 					.filter(c -> c.getInterval().equals(line.getHeader().getInterval()))
 					.findFirst()
 					.orElse(null);
