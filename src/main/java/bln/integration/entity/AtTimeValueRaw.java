@@ -1,14 +1,9 @@
 package bln.integration.entity;
 
-import bln.integration.entity.enums.InputMethodEnum;
-import bln.integration.entity.enums.ProcessingStatusEnum;
-import bln.integration.entity.enums.ReceivingMethodEnum;
-import bln.integration.entity.enums.SourceSystemEnum;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import bln.integration.entity.enums.*;
+import lombok.*;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -67,9 +62,6 @@ public class AtTimeValueRaw {
 
 	@Column(name = "create_date")
 	private LocalDateTime createDate;
-
-	@Column(name = "last_update_date")
-	private LocalDateTime lastUpdateDate;
 
 	@Column(name = "metering_point_id")
 	private Long meteringPointId;
