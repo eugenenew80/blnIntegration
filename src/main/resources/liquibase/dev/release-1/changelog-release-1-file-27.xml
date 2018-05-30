@@ -167,4 +167,14 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="media-eug-150" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <columnExists schemaName="apps" tableName="media_work_list_lines" columnName="param_id" />
+        </preConditions>
+
+        <comment>Dropping columns from table media_work_list_lines</comment>
+        <dropColumn schemaName="apps" tableName="media_work_list_lines" columnName="param_id" />
+        <rollback/>
+    </changeSet>
 </databaseChangeLog>
