@@ -78,7 +78,7 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
             if (n2>n1)
                 answer = answer.substring(n1+12, n2);
 
-            list = parseAnswer(answer, points);
+            list = parseAnswer(answer);
             list.stream().forEach(l -> {
                 MeteringPointCfg point = points.stream()
                     .filter(p -> p.getSourceMeteringPointCode().equals(l.getSourceMeteringPointCode()))
@@ -86,8 +86,10 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
                     .findFirst()
                     .orElse(null);
 
-                if (point!=null)
+                if (point!=null) {
                     l.setMeteringPointId(point.getMeteringPointId());
+                    l.setSourceUnitCode(point.getSourceUnitCode());
+                }
             });
 
             logger.info("request successfully completed");
@@ -164,7 +166,7 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
             + "PET=\"" + point.getEndTime().format(timeFormatter) + "\" />";
     }
 
-    private List<AtTimeValueRaw> parseAnswer(String answer, List<MeteringPointCfg> points) throws Exception {
+    private List<AtTimeValueRaw> parseAnswer(String answer) throws Exception {
         logger.info("parseAnswer started");
         logger.trace("answer: " + new String(Base64.decodeBase64(answer), "Cp1251"));
 
@@ -195,21 +197,6 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
             }
         }
         logger.debug("convert xml to list completed");
-
-        logger.debug("find unit codes for list started");
-        Map<Pair<String, String>, List<MeteringPointCfg>> map = points.stream()
-            .collect(groupingBy(p -> Pair.of(p.getSourceParamCode(), p.getSourceUnitCode())));
-
-        list.forEach(val -> {
-            Pair<String, String> pair = map.keySet().stream()
-                .filter(p -> p.getLeft().equals(val.getSourceParamCode()))
-                .findFirst()
-                .orElse(null);
-
-            if (pair!=null)
-                val.setSourceUnitCode(pair.getRight());
-        });
-        logger.debug("find unit codes for list completed");
 
         logger.info("parseAnswer completed, count of rows: " + list.size());
         return list;

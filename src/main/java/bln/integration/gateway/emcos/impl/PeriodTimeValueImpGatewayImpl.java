@@ -78,7 +78,7 @@ public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway 
             if (n2>n1)
                 answer = answer.substring(n1+12, n2);
 
-            list = parseAnswer(answer, points);
+            list = parseAnswer(answer);
             list.stream().forEach(l -> {
                 MeteringPointCfg point = points.stream()
                     .filter(p -> p.getSourceMeteringPointCode().equals(l.getSourceMeteringPointCode()))
@@ -86,8 +86,11 @@ public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway 
                     .findFirst()
                     .orElse(null);
 
-                if (point!=null)
+                if (point!=null) {
                     l.setMeteringPointId(point.getMeteringPointId());
+                    l.setSourceUnitCode(point.getSourceUnitCode());
+                    l.setInterval(point.getInterval());
+                }
             });
 
             logger.info("request competed");
@@ -164,7 +167,7 @@ public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway 
             + "PET=\"" + point.getEndTime().format(timeFormatter) + "\" />";
 }
 
-    private List<PeriodTimeValueRaw> parseAnswer(String answer, List<MeteringPointCfg> points) throws Exception {
+    private List<PeriodTimeValueRaw> parseAnswer(String answer) throws Exception {
     	logger.info("parseAnswer started");
         logger.trace("answer: " + new String(Base64.decodeBase64(answer), "Cp1251"));
 
@@ -193,32 +196,6 @@ public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway 
             }
         }
         logger.debug("convert xml to list completed");
-
-        logger.debug("find unit codes for list started");
-        Map<Pair<String, String>, List<MeteringPointCfg>> map1 = points.stream()
-            .collect(groupingBy(p -> Pair.of(p.getSourceParamCode(), p.getSourceUnitCode())));
-
-        Map<Pair<String, Integer>, List<MeteringPointCfg>> map2 = points.stream()
-            .collect(groupingBy(p -> Pair.of(p.getSourceParamCode(), p.getInterval())));
-
-        list.stream().forEach(val -> {
-            Pair<String, String> pair1 = map1.keySet().stream()
-                .filter(p -> p.getLeft().equals(val.getSourceParamCode()))
-                .findFirst()
-                .orElse(null);
-
-            Pair<String, Integer> pair2 = map2.keySet().stream()
-                .filter(p -> p.getLeft().equals(val.getSourceParamCode()))
-                .findFirst()
-                .orElse(null);
-
-            if (pair1!=null)
-                val.setSourceUnitCode(pair1.getRight());
-
-            if (pair2!=null)
-                val.setInterval(pair2.getRight());
-        });
-        logger.debug("find unit codes for list completed");
 
         logger.info("parseAnswer completed, count of rows: " + list.size());
         return list;
