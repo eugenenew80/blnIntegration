@@ -98,9 +98,9 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 					.filter(p -> p.getInterval().equals(3600))
 					.map(p -> {
 						LastLoadInfo lastLoadInfo = lastLoadInfos.stream()
+							.filter(l -> l.getMeteringPoint().equals(p.getMeteringPoint()))
 							.filter(l -> l.getSourceMeteringPointCode().equals(p.getSourceMeteringPointCode()))
 							.filter(l -> l.getSourceParamCode().equals(p.getSourceParamCode()))
-							.filter(l -> l.getMeteringPointId().equals(p.getMeteringPoint().getId()))
 							.findFirst()
 							.orElse(null);
 

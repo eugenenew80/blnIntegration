@@ -138,18 +138,17 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 			.flatMap(line ->
 				parameters.stream()
 					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
-					.map(parameterConf -> {
+					.map(p -> {
 						LastLoadInfo lastLoadInfo = lastLoadInfos.stream()
-							.filter(l -> l.getMeteringPointId().equals(parameterConf.getMeteringPoint().getId()))
-							.filter(l -> l.getSourceMeteringPointCode().equals(parameterConf.getMeteringPoint().getExternalCode()))
-							.filter(l -> l.getSourceParamCode().equals(parameterConf.getSourceParamCode()))
+							.filter(l -> l.getMeteringPoint().equals(p.getMeteringPoint()))
+							.filter(l -> l.getSourceMeteringPointCode().equals(p.getSourceMeteringPointCode()))
+							.filter(l -> l.getSourceParamCode().equals(p.getSourceParamCode()))
 							.findFirst()
 							.orElse(null);
 
-						MeteringPointCfg mpc = MeteringPointCfg.fromLine(parameterConf);
+						MeteringPointCfg mpc = MeteringPointCfg.fromLine(p);
 						mpc.setStartTime(buildStartDateTime(lastLoadInfo));
 						mpc.setEndTime(endDateTime);
-
 						return !mpc.getEndTime().isBefore(mpc.getStartTime()) ? mpc : null;
 					})
 					.filter(mpc -> mpc != null)

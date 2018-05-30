@@ -39,8 +39,9 @@ public class LastLoadInfo {
     @Column(name = "source_param_code")
     private String sourceParamCode;
 
-    @Column(name = "metering_point_id")
-    private Long meteringPointId;
+    @ManyToOne
+    @JoinColumn(name="metering_point_id")
+    private MeteringPoint meteringPoint;
 
     @Column(name = "last_load_date")
     private LocalDateTime lastLoadDate;

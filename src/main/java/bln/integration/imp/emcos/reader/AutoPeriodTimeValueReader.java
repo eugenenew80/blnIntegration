@@ -139,8 +139,8 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 					.filter(c -> c.getInterval().equals(900))
 					.map(parameterConf -> {
 						LastLoadInfo lastLoadInfo = lastLoadInfos.stream()
-							.filter(l -> l.getMeteringPointId().equals(parameterConf.getMeteringPoint().getId()))
-							.filter(l -> l.getSourceMeteringPointCode().equals(parameterConf.getMeteringPoint().getExternalCode()))
+							.filter(l -> l.getMeteringPoint().equals(parameterConf.getMeteringPoint()))
+							.filter(l -> l.getSourceMeteringPointCode().equals(parameterConf.getSourceMeteringPointCode()))
 							.filter(l -> l.getSourceParamCode().equals(parameterConf.getSourceParamCode()))
 							.findFirst()
 							.orElse(null);
@@ -148,7 +148,6 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 						MeteringPointCfg mpc = MeteringPointCfg.fromLine(parameterConf);
 						mpc.setStartTime(buildStartDateTime(lastLoadInfo));
 						mpc.setEndTime(endDateTime);
-
 						return mpc.getEndTime().isAfter(mpc.getStartTime()) ? mpc : null;
 					})
 					.filter(mpc -> mpc != null)
