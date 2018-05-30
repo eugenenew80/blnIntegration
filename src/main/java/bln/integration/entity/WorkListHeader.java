@@ -70,10 +70,4 @@ public class WorkListHeader {
 
     @Column(name = "end_date")
     private LocalDateTime endDate;
-
-    @Column(name = "create_date")
-    private LocalDateTime createDate;
-
-    @Column(name = "last_update_date")
-    private LocalDateTime lastUpdateDate;
 }

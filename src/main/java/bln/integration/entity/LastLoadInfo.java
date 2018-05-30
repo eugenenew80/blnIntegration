@@ -39,9 +39,9 @@ public class LastLoadInfo {
     @Column(name = "source_param_code")
     private String sourceParamCode;
 
-    @Column(name = "last_load_date")
-    private LocalDateTime lastLoadDate;
-
     @Column(name = "metering_point_id")
     private Long meteringPointId;
+
+    @Column(name = "last_load_date")
+    private LocalDateTime lastLoadDate;
 }

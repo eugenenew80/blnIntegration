@@ -2,7 +2,7 @@ package bln.integration.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
+import org.hibernate.annotations.Immutable;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of= {"id"})
 @Entity
 @Table(name = "media_work_list_lines")
+@Immutable
 public class WorkListLine  {
     @Id
     @SequenceGenerator(name="media_work_list_lines_s", sequenceName = "media_work_list_lines_s", allocationSize=1)
@@ -24,19 +25,9 @@ public class WorkListLine  {
     @JoinColumn(name="metering_point_id")
     private MeteringPoint meteringPoint;
 
-    @ManyToOne
-    @JoinColumn(name="param_id")
-    private Parameter param;
-
     @Column(name = "start_date")
     private LocalDateTime startDate;
 
     @Column(name = "end_date")
     private LocalDateTime endDate;
-
-    @Column(name = "create_date")
-    private LocalDateTime createDate;
-
-    @Column(name = "last_update_date")
-    private LocalDateTime lastUpdateDate;
 }

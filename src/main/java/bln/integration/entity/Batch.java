@@ -58,10 +58,4 @@ public class Batch  {
 
     @Column(name = "err_msg")
     private String errMsg;
-
-    @Column(name = "create_date")
-    private LocalDateTime createDate;
-
-    @Column(name = "last_update_date")
-    private LocalDateTime lastUpdateDate;
 }
