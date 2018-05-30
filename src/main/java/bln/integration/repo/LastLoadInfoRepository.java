@@ -2,6 +2,7 @@ package bln.integration.repo;
 
 import bln.integration.entity.LastLoadInfo;
 import bln.integration.entity.enums.SourceSystemEnum;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Repository
 public interface LastLoadInfoRepository extends JpaRepository<LastLoadInfo, Long> {
+    @EntityGraph(value = "LastLoadInfo.allJoins" , type= EntityGraph.EntityGraphType.FETCH)
     List<LastLoadInfo> findAllBySourceSystemCode(SourceSystemEnum sourceSystemCode);
 
     @Procedure(name = "LastLoadInfo.updatePtLastDate")

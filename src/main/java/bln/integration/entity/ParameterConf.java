@@ -12,6 +12,11 @@ import javax.persistence.*;
 @Entity
 @Table(name = "media_parameter_conf")
 @Immutable
+@NamedEntityGraph(name="ParameterConf.allJoins", attributeNodes = {
+    @NamedAttributeNode("meteringPoint"),
+    @NamedAttributeNode("sourceUnit"),
+    @NamedAttributeNode("param")
+})
 public class ParameterConf {
     @Id
     @SequenceGenerator(name="media_parameter_conf_s", sequenceName = "media_parameter_conf_s", allocationSize=1)

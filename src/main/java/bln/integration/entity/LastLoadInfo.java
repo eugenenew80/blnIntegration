@@ -10,6 +10,11 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of= {"id"})
 @Entity
 @Table(name = "media_last_load_info")
+
+@NamedEntityGraph(name="LastLoadInfo.allJoins", attributeNodes = {
+    @NamedAttributeNode("meteringPoint")
+})
+
 @NamedStoredProcedureQueries({
     @NamedStoredProcedureQuery(
         name = "LastLoadInfo.updateAtLastDate",
