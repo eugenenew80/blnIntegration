@@ -20,8 +20,8 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
+import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +29,6 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
     private static final Logger logger = LoggerFactory.getLogger(AutoOicDataReader.class);
 	private final LastLoadInfoRepository lastLoadInfoRepository;
 	private final ParameterConfRepository parameterConfRepository;
-	private final PeriodTimeValueRawRepository valueRawRepository;
-    private final LastLoadInfoRepository loadInfoRepository;
 	private final WorkListHeaderRepository headerRepository;
     private final OicDataImpGateway oicImpGateway;
     private final BatchHelper batchHelper;
@@ -84,47 +82,43 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 
 	@Transactional(propagation=Propagation.REQUIRED, readOnly = true)
 	List<LogPointCfg> buildPointsCfg(List<WorkListLine> lines, LocalDateTime endDateTime) {
-		List<ParameterConf> confList = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
+		List<ParameterConf> parameters = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
 			SourceSystemEnum.OIC,
 			ParamTypeEnum.PT
 		);
 
 		entityManager.clear();
-		List<LastLoadInfo> lastLoadInfoList = lastLoadInfoRepository
+		List<LastLoadInfo> lastLoadInfos = lastLoadInfoRepository
 			.findAllBySourceSystemCode(SourceSystemEnum.OIC);
 
-		List<LogPointCfg> points = new ArrayList<>();
-		lines.stream()
-			.filter(line -> line.getParam().getIsAt())
-			.forEach(line -> {
-				ParameterConf parameterConf = confList.stream()
-					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
-					.filter(c -> c.getParam().equals(line.getParam()))
-					.filter(c -> c.getParamType() == ParamTypeEnum.PT)
-					.filter(c -> c.getInterval().equals(3600))
-					.findFirst()
-					.orElse(null);
+		List<LogPointCfg> points = lines.stream()
+			.flatMap(line ->
+				parameters.stream()
+					.filter(p -> p.getMeteringPoint().equals(line.getMeteringPoint()))
+					.filter(p -> p.getInterval().equals(3600))
+					.map(p -> {
+						LastLoadInfo lastLoadInfo = lastLoadInfos.stream()
+							.filter(l -> l.getSourceMeteringPointCode().equals(p.getSourceMeteringPointCode()))
+							.filter(l -> l.getSourceParamCode().equals(p.getSourceParamCode()))
+							.filter(l -> l.getMeteringPointId().equals(p.getMeteringPoint().getId()))
+							.findFirst()
+							.orElse(null);
 
-				LastLoadInfo lastLoadInfo = lastLoadInfoList.stream()
-					.filter(l -> l.getSourceMeteringPointCode().equals(parameterConf.getSourceMeteringPointCode()))
-					.filter(l -> l.getSourceParamCode().equals(parameterConf.getSourceParamCode()))
-					.filter(l -> l.getMeteringPointId().equals(parameterConf.getMeteringPoint().getId()))
-					.findFirst()
-					.orElse(null);
+						LogPointCfg lpc = new LogPointCfg();
+						lpc.setMeteringPointId(p.getMeteringPoint().getId());
+						lpc.setLogPointId(Long.parseLong(p.getSourceMeteringPointCode()));
+						lpc.setParamCode(p.getSourceParamCode());
+						lpc.setUnitCode(p.getSourceUnitCode());
+						lpc.setStart(buildStartDateTime(lastLoadInfo));
+						lpc.setEnd(endDateTime);
 
-				if (parameterConf!=null) {
-					LogPointCfg lpc = new LogPointCfg();
-					lpc.setMeteringPointId(parameterConf.getMeteringPoint().getId());
-					lpc.setLogPointId(Long.parseLong(parameterConf.getSourceMeteringPointCode()));
-					lpc.setParamCode(parameterConf.getSourceParamCode());
-					lpc.setUnitCode(parameterConf.getSourceUnitCode());
-					lpc.setStart(buildStartDateTime(lastLoadInfo));
-					lpc.setEnd(endDateTime);
-
-					if (lpc != null && !lpc.getEnd().isBefore(lpc.getStart()))
-						points.add(lpc);
-				}
-			});
+						return !lpc.getEnd().isBefore(lpc.getStart()) ? lpc : null;
+					})
+					.filter(lpc -> lpc!=null)
+					.collect(toList())
+					.stream()
+			)
+			.collect(toList());
 
 		return points;
 	}

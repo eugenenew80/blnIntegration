@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
 import java.util.List;
+import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,8 +33,6 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 		logger.debug("read started");
 		logger.info("Import media started");
 		logger.info("headerId: " + header.getId());
-		logger.info("url: " + header.getConfig().getUrl());
-		logger.info("user: " + header.getConfig().getUserName());
 
 		List<WorkListLine> lines = header.getLines();
 		if (lines.size()==0) {
@@ -47,6 +45,9 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 			logger.info("Import media is not required, import media stopped");
 			return;
 		}
+
+		logger.info("url: " + header.getConfig().getUrl());
+		logger.info("user: " + header.getConfig().getUserName());
 
 		Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.PT));
 		try {
@@ -69,30 +70,27 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 
 	@Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
 	List<MeteringPointCfg> buildPointsCfg(List<WorkListLine> lines) {
-		List<ParameterConf> confList = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
+		List<ParameterConf> parameters = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
 			SourceSystemEnum.EMCOS,
 			ParamTypeEnum.PT
 		);
 
-		List<MeteringPointCfg> points = new ArrayList<>();
-		lines.stream()
-			.filter(line -> line.getParam().getIsPt())
-			.forEach(line -> {
-				ParameterConf parameterConf = confList.stream()
+		List<MeteringPointCfg> points = lines.stream()
+			.flatMap(line ->
+				parameters.stream()
 					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
-					.filter(c -> c.getParam().equals(line.getParam()))
-					.filter(c -> c.getParamType() == ParamTypeEnum.PT)
 					.filter(c -> c.getInterval().equals(900))
-					.findFirst()
-					.orElse(null);
-
-				MeteringPointCfg mpc = MeteringPointCfg.fromLine(parameterConf);
-				mpc.setStartTime(line.getStartDate());
-				mpc.setEndTime(line.getEndDate());
-
-				if (mpc!=null && !mpc.getEndTime().isBefore(mpc.getStartTime()))
-					points.add(mpc);
-			});
+					.map(parameterConf -> {
+						MeteringPointCfg mpc = MeteringPointCfg.fromLine(parameterConf);
+						mpc.setStartTime(line.getStartDate());
+						mpc.setEndTime(line.getEndDate());
+						return !mpc.getEndTime().isBefore(mpc.getStartTime()) ? mpc : null;
+					})
+					.filter(mpc -> mpc != null)
+					.collect(toList())
+					.stream()
+			)
+			.collect(toList());
 
 		return points;
 	}

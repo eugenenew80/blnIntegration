@@ -16,35 +16,58 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 @Service
 public class OicDataImpGatewayImpl implements OicDataImpGateway {
-    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     private static final Logger logger = LoggerFactory.getLogger(OicDataImpGatewayImpl.class);
 
     @Override
     public List<PeriodTimeValueRaw> request(ConnectionConfig config, List<LogPointCfg> points, String arcType) throws Exception {
-        RestTemplate restTemplate = new RestTemplateBuilder().build();
+        logger.info("request started");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        if (config == null) {
+            logger.warn("Config is empty, request terminated");
+            return emptyList();
+        }
 
-        String url = config.getUrl() + "/" + arcType;
-        HttpEntity<List<LogPointCfg>> requestEntity = new HttpEntity<>(points, headers);
+        if (points == null || points.isEmpty()) {
+            logger.warn("List of points is empty, request terminated");
+            return emptyList();
+        }
 
-        ResponseEntity<List<TelemetryDto>> responseEntity = restTemplate.exchange(
-            url,
-            HttpMethod.POST,
-            requestEntity,
-            new ParameterizedTypeReference<List<TelemetryDto>>() {}
-        );
+        List<PeriodTimeValueRaw> list;
+        try {
+            RestTemplate restTemplate = new RestTemplateBuilder().build();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-        return mapToValue(responseEntity.getBody(), arcType, points);
+            String url = config.getUrl() + "/" + arcType;
+            HttpEntity<List<LogPointCfg>> requestEntity = new HttpEntity<>(points, headers);
+
+            ResponseEntity<List<TelemetryDto>> responseEntity = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<List<TelemetryDto>>() {}
+            );
+
+            list = mapToValue(responseEntity.getBody(), arcType, points);
+            logger.info("parseAnswer completed, count of rows: " + list.size());
+
+            logger.info("request successfully completed");
+        }
+
+        catch (Exception e) {
+            logger.error("request failed: " + e.toString());
+            throw e;
+        }
+
+        return list;
     }
 
     private List<PeriodTimeValueRaw> mapToValue(List<TelemetryDto> telemetryList, String arcType, List<LogPointCfg> points) {

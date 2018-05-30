@@ -134,33 +134,31 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 		List<LastLoadInfo> lastLoadInfos = lastLoadInfoRepository
 			.findAllBySourceSystemCode(SourceSystemEnum.EMCOS);
 
-		return
-			lines.stream()
-				.filter(line -> line.getParam().getIsAt())
-				.flatMap(line ->
-					parameters.stream()
-						.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
-						.map(parameterConf -> {
-							LastLoadInfo lastLoadInfo = lastLoadInfos.stream()
-								.filter(l -> l.getMeteringPointId().equals(parameterConf.getMeteringPoint().getId()))
-								.filter(l -> l.getSourceMeteringPointCode().equals(parameterConf.getMeteringPoint().getExternalCode()))
-								.filter(l -> l.getSourceParamCode().equals(parameterConf.getSourceParamCode()))
-								.findFirst()
-								.orElse(null);
+		List<MeteringPointCfg> points = lines.stream()
+			.flatMap(line ->
+				parameters.stream()
+					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
+					.map(parameterConf -> {
+						LastLoadInfo lastLoadInfo = lastLoadInfos.stream()
+							.filter(l -> l.getMeteringPointId().equals(parameterConf.getMeteringPoint().getId()))
+							.filter(l -> l.getSourceMeteringPointCode().equals(parameterConf.getMeteringPoint().getExternalCode()))
+							.filter(l -> l.getSourceParamCode().equals(parameterConf.getSourceParamCode()))
+							.findFirst()
+							.orElse(null);
 
-							MeteringPointCfg mpc = MeteringPointCfg.fromLine(parameterConf);
-							mpc.setStartTime(buildStartDateTime(lastLoadInfo));
-							mpc.setEndTime(endDateTime);
+						MeteringPointCfg mpc = MeteringPointCfg.fromLine(parameterConf);
+						mpc.setStartTime(buildStartDateTime(lastLoadInfo));
+						mpc.setEndTime(endDateTime);
 
-							if (mpc!=null && !mpc.getEndTime().isBefore(mpc.getStartTime()))
-								return mpc;
-							return null;
-						})
-						.filter(mpc ->  mpc!=null)
-						.collect(toList())
-						.stream()
-				)
-				.collect(toList());
+						return !mpc.getEndTime().isBefore(mpc.getStartTime()) ? mpc : null;
+					})
+					.filter(mpc -> mpc != null)
+					.collect(toList())
+					.stream()
+			)
+			.collect(toList());
+
+		return points;
 	}
 
 	private List<List<MeteringPointCfg>> splitPointsCfg(List<MeteringPointCfg> points) {
