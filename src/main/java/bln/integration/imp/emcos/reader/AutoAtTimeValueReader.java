@@ -180,7 +180,7 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 				.truncatedTo(ChronoUnit.DAYS);
 
 		LocalDate now = LocalDate.now(ZoneId.of("UTC+1"));
-		return now.minusDays(now.getDayOfMonth()).minusMonths(2).atStartOfDay();
+		return now.minusDays(now.getDayOfMonth()).atStartOfDay();
 	}
 
 	private LocalDateTime buildEndDateTime() {
