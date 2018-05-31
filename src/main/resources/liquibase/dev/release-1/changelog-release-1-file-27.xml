@@ -6,7 +6,19 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
 
-    <changeSet id="media-eug-134" logicalFilePath="path-independent" author="eugene" context="dev">
+    <changeSet id="media-eug-134" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_work_list_headers" foreignKeyName="fk_media_work_list_headers_4" />
+        </preConditions>
+
+        <dropForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_work_list_headers"
+                constraintName="fk_media_work_list_headers_4" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-135" logicalFilePath="path-independent" author="eugene" context="dev">
         <preConditions onFail="MARK_RAN" >
             <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="at_batch_id" />
         </preConditions>
@@ -16,7 +28,8 @@
         <rollback/>
     </changeSet>
 
-    <changeSet id="media-eug-135" logicalFilePath="path-independent" author="eugene" context="dev">
+
+    <changeSet id="media-eug-136" logicalFilePath="path-independent" author="eugene" context="dev">
         <preConditions onFail="MARK_RAN" >
             <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="at_status" />
         </preConditions>
@@ -26,7 +39,20 @@
         <rollback/>
     </changeSet>
 
-    <changeSet id="media-eug-136" logicalFilePath="path-independent" author="eugene" context="dev">
+
+    <changeSet id="media-eug-137" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_work_list_headers" foreignKeyName="fk_media_work_list_headers_3" />
+        </preConditions>
+
+        <dropForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_work_list_headers"
+                constraintName="fk_media_work_list_headers_3" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-138" logicalFilePath="path-independent" author="eugene" context="dev">
         <preConditions onFail="MARK_RAN" >
             <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="pt_batch_id" />
         </preConditions>
@@ -36,7 +62,7 @@
         <rollback/>
     </changeSet>
 
-    <changeSet id="media-eug-137" logicalFilePath="path-independent" author="eugene" context="dev">
+    <changeSet id="media-eug-139" logicalFilePath="path-independent" author="eugene" context="dev">
         <preConditions onFail="MARK_RAN" >
             <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="pt_status" />
         </preConditions>
@@ -46,7 +72,7 @@
         <rollback/>
     </changeSet>
 
-    <changeSet id="media-eug-138" logicalFilePath="path-independent" author="eugene" context="dev">
+    <changeSet id="media-eug-140" logicalFilePath="path-independent" author="eugene" context="dev">
         <comment>add Column into table: media_work_list_headers</comment>
         <addColumn schemaName="apps" tableName="media_work_list_headers">
             <column name="batch_id" type="number" remarks="Идентификатора пакета">
@@ -55,7 +81,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="media-eug-139" logicalFilePath="path-independent" author="eugene" context="dev">
+    <changeSet id="media-eug-141" logicalFilePath="path-independent" author="eugene" context="dev">
         <comment>add Column into table: media_work_list_headers</comment>
         <addColumn schemaName="apps" tableName="media_work_list_headers">
             <column name="status" type="varchar(20)" remarks="Статус рабочего списка">
@@ -64,7 +90,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="media-eug-140" logicalFilePath="path-independent" author="eugene" context="dev">
+    <changeSet id="media-eug-142" logicalFilePath="path-independent" author="eugene" context="dev">
         <preConditions onFail="MARK_RAN" >
             <columnExists schemaName="apps" tableName="media_parameters" columnName="param_type" />
         </preConditions>
@@ -74,7 +100,7 @@
         <rollback/>
     </changeSet>
 
-    <changeSet id="media-eug-141" logicalFilePath="path-independent" author="eugene">
+    <changeSet id="media-eug-143" logicalFilePath="path-independent" author="eugene">
         <comment>Creating table: media_last_requested_dates</comment>
         <createTable tableName="media_last_requested_dates" schemaName="apps" remarks="Дата и время последнего запроса данных">
             <column name="id" type="number" remarks="Идентификатор записи">
@@ -95,7 +121,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="media-eug-142" logicalFilePath="path-independent" author="eugene">
+    <changeSet id="media-eug-144" logicalFilePath="path-independent" author="eugene">
         <comment>Creating primary key for table: media_last_requested_dates</comment>
         <addPrimaryKey
                 columnNames="id"
@@ -104,7 +130,7 @@
                 tableName="media_last_requested_dates"/>
     </changeSet>
 
-    <changeSet id="media-eug-143" logicalFilePath="path-independent" author="eugene">
+    <changeSet id="media-eug-145" logicalFilePath="path-independent" author="eugene">
         <comment>Creating sequence for table: media_last_requested_dates</comment>
         <createSequence
                 incrementBy="1"
@@ -113,7 +139,7 @@
                 startValue="1"/>
     </changeSet>
 
-    <changeSet id="media-eug-144" logicalFilePath="path-independent" author="eugene">
+    <changeSet id="media-eug-146" logicalFilePath="path-independent" author="eugene">
         <comment>add column in table: media_parameters</comment>
         <addColumn schemaName="apps" tableName="media_parameters">
             <column name="is_at" type="number"/>
@@ -123,7 +149,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="media-eug-145" logicalFilePath="path-independent" author="eugene">
+    <changeSet id="media-eug-147" logicalFilePath="path-independent" author="eugene">
         <comment>add column in table: media_parameter_conf</comment>
         <addColumn schemaName="apps" tableName="media_parameter_conf">
             <column name="metering_point_id" type="number">
@@ -132,7 +158,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="media-eug-146" logicalFilePath="path-independent" author="eugene">
+    <changeSet id="media-eug-148" logicalFilePath="path-independent" author="eugene">
         <comment>add column in table: media_period_time_values_raw</comment>
         <addColumn schemaName="apps" tableName="media_period_time_values_raw">
             <column name="metering_point_id" type="number">
@@ -141,7 +167,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="media-eug-147" logicalFilePath="path-independent" author="eugene">
+    <changeSet id="media-eug-149" logicalFilePath="path-independent" author="eugene">
         <comment>add column in table: media_at_time_values_raw</comment>
         <addColumn schemaName="apps" tableName="media_at_time_values_raw">
             <column name="metering_point_id" type="number">
@@ -150,7 +176,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="media-eug-148" logicalFilePath="path-independent" author="eugene">
+    <changeSet id="media-eug-150" logicalFilePath="path-independent" author="eugene">
         <comment>add column in table: media_last_load_info</comment>
         <addColumn schemaName="apps" tableName="media_last_load_info">
             <column name="metering_point_id" type="number">
@@ -159,7 +185,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="media-eug-149" logicalFilePath="path-independent" author="eugene">
+    <changeSet id="media-eug-151" logicalFilePath="path-independent" author="eugene">
         <comment>add column in table: media_parameter_conf</comment>
         <addColumn schemaName="apps" tableName="media_parameter_conf">
             <column name="source_metering_point_code" type="varchar(18)">
@@ -168,7 +194,19 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="media-eug-150" logicalFilePath="path-independent" author="eugene">
+    <changeSet id="media-eug-152" logicalFilePath="path-independent" author="eugene">
+        <preConditions>
+            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_work_list_lines" foreignKeyName="fk_media_work_list_lines_2" />
+        </preConditions>
+
+        <dropForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_work_list_lines"
+                constraintName="fk_media_work_list_lines_2" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-153" logicalFilePath="path-independent" author="eugene">
         <preConditions onFail="MARK_RAN" >
             <columnExists schemaName="apps" tableName="media_work_list_lines" columnName="param_id" />
         </preConditions>
@@ -176,5 +214,93 @@
         <comment>Dropping columns from table media_work_list_lines</comment>
         <dropColumn schemaName="apps" tableName="media_work_list_lines" columnName="param_id" />
         <rollback/>
+    </changeSet>
+
+
+
+    <changeSet id="media-eug-154" logicalFilePath="path-independent" author="eugene">
+        <comment>add Column into table: media_source_types</comment>
+        <addColumn schemaName="apps" tableName="media_source_types">
+            <column name="priority" type="number" remarks="Приоритет">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="is_oper" type="number" remarks="Подходит для оперативного расчёта">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="is_final" type="number" remarks="Подходит для окончательного расчёта">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-155" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <columnExists schemaName="apps" tableName="media_period_time_values" columnName="source_metering_point_code" />
+        </preConditions>
+
+        <comment>Dropping columns from table media_period_time_values</comment>
+        <dropColumn schemaName="apps" tableName="media_period_time_values" columnName="source_metering_point_code" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-156" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <columnExists schemaName="apps" tableName="media_period_time_values" columnName="source_param_code" />
+        </preConditions>
+
+        <comment>Dropping columns from table media_period_time_values</comment>
+        <dropColumn schemaName="apps" tableName="media_period_time_values" columnName="source_param_code" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-157" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <columnExists schemaName="apps" tableName="media_period_time_values" columnName="source_unit_code" />
+        </preConditions>
+
+        <comment>Dropping columns from table media_period_time_values</comment>
+        <dropColumn schemaName="apps" tableName="media_period_time_values" columnName="source_unit_code" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-158" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <columnExists schemaName="apps" tableName="media_at_time_values" columnName="source_metering_point_code" />
+        </preConditions>
+
+        <comment>Dropping columns from table media_at_time_values</comment>
+        <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="source_metering_point_code" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-159" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <columnExists schemaName="apps" tableName="media_at_time_values" columnName="source_param_code" />
+        </preConditions>
+
+        <comment>Dropping columns from table media_at_time_values</comment>
+        <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="source_param_code" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-160" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <columnExists schemaName="apps" tableName="media_at_time_values" columnName="source_unit_code" />
+        </preConditions>
+
+        <comment>Dropping columns from table media_at_time_values</comment>
+        <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="source_unit_code" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-eug-161" logicalFilePath="path-independent" author="eugene">
+        <comment>add column in table: media_parameter_conf</comment>
+        <addColumn schemaName="apps" tableName="media_parameter_conf">
+            <column name="param_type" type="varchar(20)" defaultValue="PT">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

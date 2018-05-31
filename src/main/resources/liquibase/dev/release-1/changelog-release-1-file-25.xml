@@ -90,6 +90,8 @@
             <column name="receiving_method"     type="varchar(20)"  value="SERVICE" />
             <column name="is_active"            type="number"       value="1" />
         </insert>
+
+        <rollback/>
     </changeSet>
 
     <changeSet id="media-eug-108" logicalFilePath="path-independent" author="eugene">

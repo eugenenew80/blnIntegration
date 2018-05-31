@@ -5,7 +5,16 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
-    
+
+    <changeSet id="media-eug-0" logicalFilePath="path-independent" author="eugene">
+        <comment>Creating table: media_directions</comment>
+        <createTable tableName="media_connection_protocol" schemaName="apps" remarks="Справочник протоколов передачи данных">
+            <column name="code" type="varchar2(20)" remarks="Код">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
     <changeSet id="media-eug-1" logicalFilePath="path-independent" author="eugene">
         <comment>Creating table: media_period_time_values</comment>
         <createTable tableName="media_period_time_values" schemaName="apps" remarks="Исходные измерения значений за период">

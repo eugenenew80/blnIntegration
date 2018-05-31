@@ -42,6 +42,7 @@
                 referencedTableName="media_param_types"
                 referencedColumnNames="code"
         />
+        <rollback/>
     </changeSet>
 
 
@@ -60,6 +61,7 @@
                 referencedTableName="dict_data_sources"
                 referencedColumnNames="code"
         />
+        <rollback/>
     </changeSet>
 
 
@@ -78,6 +80,7 @@
                 referencedTableName="dict_data_sources"
                 referencedColumnNames="code"
         />
+        <rollback/>
     </changeSet>
 
 
@@ -239,6 +242,7 @@
                 referencedTableName="media_input_methods"
                 referencedColumnNames="code"
         />
+        <rollback/>
     </changeSet>
 
 
@@ -257,6 +261,7 @@
                 referencedTableName="media_input_methods"
                 referencedColumnNames="code"
         />
+        <rollback/>
     </changeSet>
 
 
@@ -311,6 +316,7 @@
                 referencedTableName="media_receiving_method"
                 referencedColumnNames="code"
         />
+        <rollback/>
     </changeSet>
 
 
@@ -329,6 +335,7 @@
                 referencedTableName="media_receiving_method"
                 referencedColumnNames="code"
         />
+        <rollback/>
     </changeSet>
 
 
@@ -364,6 +371,7 @@
                 referencedTableName="media_batch_statuses"
                 referencedColumnNames="code"
         />
+        <rollback/>
     </changeSet>
 
     <changeSet id="media-rus-55" logicalFilePath="path-independent" author="ruslan" context="dev">
@@ -381,6 +389,7 @@
                 referencedTableName="media_batch_statuses"
                 referencedColumnNames="code"
         />
+        <rollback/>
     </changeSet>
 
 
@@ -505,6 +514,7 @@
                 referencedTableName="media_parameters"
                 referencedColumnNames="id"
         />
+        <rollback/>
     </changeSet>
 
 
