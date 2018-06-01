@@ -106,6 +106,7 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 
 						LogPointCfg lpc = new LogPointCfg();
 						lpc.setMeteringPointId(p.getMeteringPoint().getId());
+						lpc.setParamId(p.getParam().getId());
 						lpc.setLogPointId(Long.parseLong(p.getSourceMeteringPointCode()));
 						lpc.setParamCode(p.getSourceParamCode());
 						lpc.setUnitCode(p.getSourceUnitCode());
