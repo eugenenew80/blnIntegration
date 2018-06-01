@@ -303,4 +303,22 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="media-eug-162" logicalFilePath="path-independent" author="eugene">
+        <comment>add column in table: media_period_time_values_raw</comment>
+        <addColumn schemaName="apps" tableName="media_period_time_values_raw">
+            <column name="param_id" type="number">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-163" logicalFilePath="path-independent" author="eugene">
+        <comment>add column in table: media_at_time_values_raw</comment>
+        <addColumn schemaName="apps" tableName="media_at_time_values_raw">
+            <column name="param_id" type="number">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

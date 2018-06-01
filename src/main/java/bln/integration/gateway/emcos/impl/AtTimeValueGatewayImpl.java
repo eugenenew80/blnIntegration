@@ -89,6 +89,7 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
                 if (point!=null) {
                     l.setMeteringPointId(point.getMeteringPointId());
                     l.setSourceUnitCode(point.getSourceUnitCode());
+                    l.setParamId(point.getParamId());
                 }
             });
 

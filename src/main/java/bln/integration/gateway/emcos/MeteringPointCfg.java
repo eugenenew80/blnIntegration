@@ -13,6 +13,7 @@ public class MeteringPointCfg {
 	private String sourceParamCode;
 	private String sourceUnitCode;
 	private String paramCode;
+	private Long paramId;
 	private Integer interval;
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
@@ -26,6 +27,7 @@ public class MeteringPointCfg {
 		mpc.setMeteringPointId(parameterConf.getMeteringPoint().getId());
 		mpc.setInterval(parameterConf.getInterval());
 		mpc.setParamCode(parameterConf.getParam().getCode());
+		mpc.setParamId(parameterConf.getParam().getId());
 		return mpc;
 	}
 }

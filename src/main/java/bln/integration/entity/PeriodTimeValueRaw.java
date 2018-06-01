@@ -68,4 +68,7 @@ public class PeriodTimeValueRaw  {
 
 	@Column(name = "metering_point_id")
 	private Long meteringPointId;
+
+	@Column(name = "param_id")
+	private Long paramId;
 }

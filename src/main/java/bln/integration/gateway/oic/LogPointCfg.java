@@ -8,9 +8,11 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of= {"logTi"})
 public class LogPointCfg {
     private Long meteringPointId;
-    private Long logPointId;
+    private Long paramId;
     private String paramCode;
     private String unitCode;
+
+    private Long logPointId;
     private LocalDateTime start;
     private LocalDateTime end;
 }

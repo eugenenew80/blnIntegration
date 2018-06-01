@@ -89,6 +89,7 @@ public class PeriodTimeValueImpGatewayImpl implements PeriodTimeValueImpGateway 
                 if (point!=null) {
                     l.setMeteringPointId(point.getMeteringPointId());
                     l.setSourceUnitCode(point.getSourceUnitCode());
+                    l.setParamId(point.getParamId());
                     l.setInterval(point.getInterval());
                 }
             });

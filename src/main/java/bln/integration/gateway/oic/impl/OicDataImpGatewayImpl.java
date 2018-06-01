@@ -101,6 +101,7 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
                     pt.setSourceUnitCode(logPointCfg.getUnitCode());
                     pt.setSourceParamCode(logPointCfg.getParamCode());
                     pt.setMeteringPointId(logPointCfg.getMeteringPointId());
+                    pt.setParamId(logPointCfg.getParamId());
                 }
 
                 return pt;
