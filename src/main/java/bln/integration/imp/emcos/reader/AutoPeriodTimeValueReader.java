@@ -32,7 +32,7 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 		logger.info("headerId: " + headerId);
 
 		WorkListHeader header = headerRepository.findOne(headerId);
-		if (header==null) {
+		if (header == null) {
 			logger.info("Work list not found");
 			return;
 		}
