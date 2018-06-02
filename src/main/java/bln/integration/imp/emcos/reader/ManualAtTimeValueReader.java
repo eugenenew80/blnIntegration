@@ -75,6 +75,7 @@ public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
 			ParamTypeEnum.AT
 		);
 
+		@SuppressWarnings("Duplicates")
 		List<MeteringPointCfg> points = lines.stream()
 			.flatMap(line ->
 				parameters.stream()

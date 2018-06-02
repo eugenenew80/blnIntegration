@@ -75,6 +75,7 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 			ParamTypeEnum.PT
 		);
 
+		@SuppressWarnings("Duplicates")
 		List<MeteringPointCfg> points = lines.stream()
 			.flatMap(line ->
 				parameters.stream()
