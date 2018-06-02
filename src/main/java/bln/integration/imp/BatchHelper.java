@@ -140,7 +140,7 @@ public class BatchHelper {
         logger.info("ptLoad completed");
     }
 
-    @Transactional(propagation=Propagation.REQUIRED, readOnly = true)
+    @Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
     public List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, Function<LastLoadInfo, LocalDateTime> buildStartTime, Supplier<LocalDateTime> buildEndTime) {
         List<ParameterConf> parameters = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
             header.getSourceSystemCode(),
@@ -185,7 +185,7 @@ public class BatchHelper {
         return points;
     }
 
-    @Transactional(propagation=Propagation.REQUIRED, readOnly = true)
+    @Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
     public LastRequestedDate getLastRequestedDate(WorkListHeader header) {
         return  lastRequestedDateRepository.findAllByWorkListHeaderId(header.getId())
             .stream()
