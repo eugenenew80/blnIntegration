@@ -106,16 +106,27 @@ public class BatchHelper {
         logger.info("updateLastRequestedDate completed");
     }
 
-    @SuppressWarnings("Duplicates")
     @Transactional(propagation=Propagation.REQUIRES_NEW)
-    public void atSave(List<AtTimeValueRaw> list, Batch batch) {
+    public void atSave(List<AtTimeValueRaw> atList, Batch batch) {
         logger.info("saving records started");
         LocalDateTime now = LocalDateTime.now();
-        list.forEach(t -> {
+        atList.forEach(t -> {
             t.setBatch(batch);
             t.setCreateDate(now);
         });
-        atValueRepository.save(list);
+        atValueRepository.save(atList);
+        logger.info("saving records completed");
+    }
+
+    @Transactional(propagation=Propagation.REQUIRES_NEW)
+    public void ptSave(List<PeriodTimeValueRaw> ptList, Batch batch) {
+        logger.info("saving records started");
+        LocalDateTime now = LocalDateTime.now();
+        ptList.forEach(t -> {
+            t.setBatch(batch);
+            t.setCreateDate(now);
+        });
+        ptValueRepository.save(ptList);
         logger.info("saving records completed");
     }
 
@@ -126,26 +137,12 @@ public class BatchHelper {
         logger.info("ptLoad completed");
     }
 
-    @SuppressWarnings("Duplicates")
-    @Transactional(propagation=Propagation.REQUIRES_NEW)
-    public void ptSave(List<PeriodTimeValueRaw> list, Batch batch) {
-        logger.info("saving records started");
-        LocalDateTime now = LocalDateTime.now();
-        list.forEach(t -> {
-            t.setBatch(batch);
-            t.setCreateDate(now);
-        });
-        ptValueRepository.save(list);
-        logger.info("saving records completed");
-    }
-
     @Transactional(propagation=Propagation.REQUIRES_NEW)
     public void ptLoad(Batch batch) {
         logger.info("ptLoad started");
         ptValueRepository.load(batch.getId());
         logger.info("ptLoad completed");
     }
-
 
     @Transactional(propagation=Propagation.REQUIRED, readOnly = true)
     public List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, Function<LastLoadInfo, LocalDateTime> buildStartTime, Supplier<LocalDateTime> buildEndTime) {
