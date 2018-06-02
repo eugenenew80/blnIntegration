@@ -1,6 +1,5 @@
 package bln.integration.entity;
 
-import bln.integration.entity.enums.ParamTypeEnum;
 import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,10 +17,6 @@ public class LastRequestedDate {
     @ManyToOne
     @JoinColumn(name="work_list_header_id")
     private WorkListHeader workListHeader;
-
-    @Column(name="param_type")
-    @Enumerated(EnumType.STRING)
-    private ParamTypeEnum paramType;
 
     @Column(name = "last_requested_date")
     private LocalDateTime lastRequestedDate;
