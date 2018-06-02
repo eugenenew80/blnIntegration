@@ -48,7 +48,7 @@ public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
 		logger.info("url: " + header.getConfig().getUrl());
 		logger.info("user: " + header.getConfig().getUserName());
 
-		Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.AT));
+		Batch batch = batchHelper.createBatch(new Batch(header));
 		try {
 			List<AtTimeValueRaw> list = valueGateway.request(header.getConfig(), points);
 			batchHelper.atSave(list, batch);

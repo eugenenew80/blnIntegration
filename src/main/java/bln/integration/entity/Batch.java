@@ -13,11 +13,11 @@ import java.time.LocalDateTime;
 @DynamicUpdate
 @NoArgsConstructor
 public class Batch  {
-    public Batch(WorkListHeader header, ParamTypeEnum paramTypeEnum) {
+    public Batch(WorkListHeader header) {
         this.workListHeader = header;
         this.sourceSystemCode = header.getSourceSystemCode();
         this.direction = header.getDirection();
-        this.paramType = paramTypeEnum;
+        this.paramType = header.getParamType();
         this.status = BatchStatusEnum.P;
         this.startDate = LocalDateTime.now();
     }

@@ -57,7 +57,7 @@ public class SoapPeriodTimeValueSender implements Sender<PeriodTimeValueRaw> {
 					return;
 				}
 
-				Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.PT));
+				Batch batch = batchHelper.createBatch(new Batch(header));
 				try {
 					ptGateway
 						.config(header.getConfig())

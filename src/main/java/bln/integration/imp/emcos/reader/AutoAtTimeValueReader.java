@@ -16,8 +16,6 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-import static java.util.Collections.emptyList;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -50,7 +48,9 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 			return;
 		}
 
-		LocalDateTime endDateTime = buildEndDateTime();
+		LocalDateTime endDateTime = LocalDate.now(ZoneId.of(header.getTimeZone()))
+			.atStartOfDay();
+
 		List<MeteringPointCfg> points = buildPointsCfg(header, endDateTime);
 		if (points.size() == 0) {
 			logger.info("List of points is empty, import data stopped");
@@ -73,7 +73,7 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 			points = buildPointsCfg(header, requestedDateTime);
 			List<List<MeteringPointCfg>> groupsPoints = batchHelper.splitPointsCfg(points, groupCount);
 
-			Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.AT));
+			Batch batch = batchHelper.createBatch(new Batch(header));
 			Long recCount = 0l;
 			try {
 				for (int i = 0; i < groupsPoints.size(); i++) {
@@ -112,21 +112,19 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
     }
 
 	private List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, LocalDateTime endDateTime) {
-		return batchHelper.buildPointsCfg(header, l -> buildStartDateTime(l), () -> endDateTime);
-	}
-
-	private LocalDateTime buildStartDateTime(LastLoadInfo lastLoadInfo) {
-		if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate()!=null)
-			return lastLoadInfo.getLastLoadDate()
-				.plusDays(1)
-				.truncatedTo(ChronoUnit.DAYS);
-
-		LocalDate now = LocalDate.now(ZoneId.of("UTC+1"));
-		return now.minusDays(now.getDayOfMonth()).atStartOfDay();
-	}
-
-	private LocalDateTime buildEndDateTime() {
-		LocalDateTime endDateTime = LocalDate.now(ZoneId.of("UTC+1")).atStartOfDay();
-		return endDateTime;
+		return batchHelper.buildPointsCfg(
+			header,
+			lastLoadInfo -> {
+				if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate()!=null) {
+					return lastLoadInfo.getLastLoadDate()
+						.plusDays(1)
+						.truncatedTo(ChronoUnit.DAYS);
+				}
+				return LocalDate.now(ZoneId.of(header.getTimeZone()))
+					.withDayOfMonth(1)
+					.atStartOfDay();
+			},
+			() -> endDateTime
+		);
 	}
 }

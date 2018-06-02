@@ -1,7 +1,6 @@
 package bln.integration.imp.emcos.reader;
 
 import bln.integration.entity.*;
-import bln.integration.entity.enums.*;
 import bln.integration.gateway.emcos.*;
 import bln.integration.imp.BatchHelper;
 import bln.integration.imp.Reader;
@@ -48,7 +47,10 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 			return;
 		}
 
-		LocalDateTime endDateTime = buildEndDateTime();
+		LocalDateTime endDateTime = LocalDateTime.now(ZoneId.of(header.getTimeZone()))
+			.minusMinutes(15)
+			.truncatedTo(ChronoUnit.HOURS);
+
 		List<MeteringPointCfg> points = buildPointsCfg(header, endDateTime);
 		if (points.size() == 0) {
 			logger.info("List of points is empty, import data stopped");
@@ -71,7 +73,7 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 			points = buildPointsCfg(header, requestedDateTime);
 			List<List<MeteringPointCfg>> groupsPoints = batchHelper.splitPointsCfg(points, groupCount);
 
-			Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.PT));
+			Batch batch = batchHelper.createBatch(new Batch(header));
 			Long recCount = 0l;
 			try {
 				for (int i = 0; i < groupsPoints.size(); i++) {
@@ -110,22 +112,19 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	}
 
 	private List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, LocalDateTime endDateTime) {
-		return batchHelper.buildPointsCfg(header, l -> buildStartDateTime(l), () -> endDateTime);
-	}
-
-	private LocalDateTime buildStartDateTime(LastLoadInfo lastLoadInfo) {
-		if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate() !=null) {
-			LocalDateTime lastLoadDate = lastLoadInfo.getLastLoadDate();
-			return lastLoadDate.getMinute() < 45
-				? lastLoadDate.truncatedTo(ChronoUnit.HOURS)
-				: lastLoadDate.plusMinutes(15);
-		}
-
-		LocalDate now = LocalDate.now(ZoneId.of("UTC+1"));
-		return now.minusDays(now.getDayOfMonth()-1).atStartOfDay();
-	}
-
-	private LocalDateTime buildEndDateTime() {
-		return LocalDateTime.now(ZoneId.of("UTC+1")).minusMinutes(15).truncatedTo(ChronoUnit.HOURS);
+		return batchHelper.buildPointsCfg(
+			header,
+			lastLoadInfo -> {
+				if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate() !=null) {
+					return lastLoadInfo.getLastLoadDate().getMinute() == 45
+						? lastLoadInfo.getLastLoadDate().plusMinutes(15)
+						: lastLoadInfo.getLastLoadDate().truncatedTo(ChronoUnit.HOURS);
+				}
+				return LocalDate.now(ZoneId.of(header.getTimeZone()))
+					.withDayOfMonth(1)
+					.atStartOfDay();
+			},
+			() -> endDateTime
+		);
 	}
 }

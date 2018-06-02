@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -48,7 +49,9 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 			return;
 		}
 
-		LocalDateTime endDateTime = buildEndDateTime();
+		LocalDateTime endDateTime = LocalDateTime.now(ZoneId.of(header.getTimeZone()))
+			.truncatedTo(ChronoUnit.HOURS);
+
 		List<MeteringPointCfg> points = buildPointsCfg(header, endDateTime);
 		if (points.size()==0) {
 			logger.info("List of points is empty, import data stopped");
@@ -58,7 +61,7 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 		logger.info("url: " + header.getConfig().getUrl());
 		logger.info("user: " + header.getConfig().getUserName());
 
-		Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.PT));
+		Batch batch = batchHelper.createBatch(new Batch(header));
 		try {
 			List<PeriodTimeValueRaw> list = oicImpGateway.request(header.getConfig(), points, header.getInterval());
 			batchHelper.ptSave(list, batch);
@@ -78,20 +81,17 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
     }
 
 	private List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, LocalDateTime endDateTime) {
-		return batchHelper.buildPointsCfg(header, l -> buildStartDateTime(l), () -> endDateTime);
-	}
-
-	private LocalDateTime buildStartDateTime(LastLoadInfo lastLoadInfo) {
-		if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate() !=null) {
-			LocalDateTime lastLoadDate = lastLoadInfo.getLastLoadDate();
-			return lastLoadDate.truncatedTo(ChronoUnit.HOURS).plusHours(1);
-		}
-
-		LocalDate now = LocalDate.now();
-		return now.minusDays(now.getDayOfMonth()-1).atStartOfDay();
-	}
-
-	private LocalDateTime buildEndDateTime() {
-		return LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
+		return batchHelper.buildPointsCfg(
+			header,
+			lastLoadInfo -> {
+				if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate()!=null) {
+					LocalDateTime lastLoadDate = lastLoadInfo.getLastLoadDate();
+					return lastLoadDate.truncatedTo(ChronoUnit.HOURS).plusHours(1);
+				}
+				LocalDate now = LocalDate.now(ZoneId.of(header.getTimeZone()));
+				return now.minusDays(now.getDayOfMonth()-1).atStartOfDay();
+			},
+			() -> endDateTime
+		);
 	}
 }

@@ -2,8 +2,6 @@ package bln.integration.imp;
 
 import bln.integration.entity.*;
 import bln.integration.entity.enums.BatchStatusEnum;
-import bln.integration.entity.enums.ParamTypeEnum;
-import bln.integration.entity.enums.SourceSystemEnum;
 import bln.integration.entity.enums.WorkListTypeEnum;
 import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.repo.*;
@@ -14,17 +12,14 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
@@ -192,9 +187,13 @@ public class BatchHelper {
             .stream()
             .findFirst()
             .orElseGet(() -> {
+                LocalDateTime now = LocalDate.now(ZoneId.of(header.getTimeZone()))
+                    .withDayOfMonth(1)
+                    .atStartOfDay();
+
                 LastRequestedDate d = new LastRequestedDate();
                 d.setWorkListHeader(header);
-                d.setLastRequestedDate(buildEndDateTimeDef());
+                d.setLastRequestedDate(now);
                 return d;
             });
     }
@@ -210,10 +209,5 @@ public class BatchHelper {
                     .map(points::get)
                     .collect(toList()))
             .collect(toList());
-    }
-
-    private LocalDateTime buildEndDateTimeDef() {
-        LocalDate now = LocalDate.now(ZoneId.of("UTC+1"));
-        return now.minusDays(now.getDayOfMonth()-1).atStartOfDay();
     }
 }

@@ -48,7 +48,7 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 		logger.info("url: " + header.getConfig().getUrl());
 		logger.info("user: " + header.getConfig().getUserName());
 
-		Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.PT));
+		Batch batch = batchHelper.createBatch(new Batch(header));
 		try {
 			List<PeriodTimeValueRaw> list = valueGateway.request(header.getConfig(), points);
 			batchHelper.ptSave(list, batch);
