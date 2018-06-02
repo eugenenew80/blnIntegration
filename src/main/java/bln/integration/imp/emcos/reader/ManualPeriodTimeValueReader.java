@@ -6,7 +6,6 @@ import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.gateway.emcos.PeriodTimeValueImpGateway;
 import bln.integration.imp.BatchHelper;
 import bln.integration.imp.Reader;
-import bln.integration.repo.ParameterConfRepository;
 import bln.integration.repo.WorkListHeaderRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -15,13 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
 public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
     private static final Logger logger = LoggerFactory.getLogger(ManualPeriodTimeValueReader.class);
-    private final ParameterConfRepository parameterConfRepository;
 	private final WorkListHeaderRepository headerRepository;
     private final PeriodTimeValueImpGateway valueGateway;
     private final BatchHelper batchHelper;
@@ -30,22 +27,20 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	public void read(Long headerId) {
 		WorkListHeader header = headerRepository.findOne(headerId);
 
-		logger.debug("read started");
-		logger.info("Import media started");
-		logger.info("headerId: " + header.getId());
-
 		List<WorkListLine> lines = header.getLines();
 		if (lines.size()==0) {
-			logger.info("List of points is empty, import media stopped");
+			logger.debug("List of points is empty, import data stopped");
 			return;
 		}
 
-		List<MeteringPointCfg> points = buildPointsCfg(lines, 900);
+		List<MeteringPointCfg> points = buildPointsCfg(header);
 		if (points.size()==0) {
-			logger.info("Import media is not required, import media stopped");
+			logger.debug("Import data is not required, import data stopped");
 			return;
 		}
 
+		logger.info("read started");
+		logger.info("headerId: " + header.getId());
 		logger.info("url: " + header.getConfig().getUrl());
 		logger.info("user: " + header.getConfig().getUserName());
 
@@ -65,34 +60,10 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 			System.gc();
 		}
 
-		logger.debug("read completed");
+		logger.info("read completed");
 	}
 
-	@Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
-	List<MeteringPointCfg> buildPointsCfg(List<WorkListLine> lines, Integer interval) {
-		List<ParameterConf> parameters = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
-			SourceSystemEnum.EMCOS,
-			ParamTypeEnum.PT
-		);
-
-		@SuppressWarnings("Duplicates")
-		List<MeteringPointCfg> points = lines.stream()
-			.flatMap(line ->
-				parameters.stream()
-					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
-					.filter(c -> c.getInterval().equals(interval))
-					.map(parameterConf -> {
-						MeteringPointCfg mpc = MeteringPointCfg.fromLine(parameterConf);
-						mpc.setStartTime(line.getStartDate());
-						mpc.setEndTime(line.getEndDate());
-						return !mpc.getEndTime().isBefore(mpc.getStartTime()) ? mpc : null;
-					})
-					.filter(mpc -> mpc != null)
-					.collect(toList())
-					.stream()
-			)
-			.collect(toList());
-
-		return points;
+	private List<MeteringPointCfg> buildPointsCfg(WorkListHeader header) {
+		return batchHelper.buildPointsCfg(header, (l) -> header.getStartDate(), () -> header.getEndDate());
 	}
 }

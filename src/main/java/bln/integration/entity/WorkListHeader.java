@@ -1,9 +1,6 @@
 package bln.integration.entity;
 
-import bln.integration.entity.enums.BatchStatusEnum;
-import bln.integration.entity.enums.DirectionEnum;
-import bln.integration.entity.enums.SourceSystemEnum;
-import bln.integration.entity.enums.WorkListTypeEnum;
+import bln.integration.entity.enums.*;
 import bln.integration.jpa.BooleanToIntConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -70,4 +67,11 @@ public class WorkListHeader {
 
     @Column(name = "end_date")
     private LocalDateTime endDate;
+
+    @Column(name="param_type")
+    @Enumerated(EnumType.STRING)
+    private ParamTypeEnum paramType;
+
+    @Column
+    private Integer interval;
 }

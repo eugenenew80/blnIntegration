@@ -27,7 +27,7 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
     private static final Logger logger = LoggerFactory.getLogger(OicDataImpGatewayImpl.class);
 
     @Override
-    public List<PeriodTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points, String arcType) throws Exception {
+    public List<PeriodTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points, Integer interval)  {
         logger.info("request started");
 
         if (config == null) {
@@ -39,6 +39,14 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
             logger.warn("List of points is empty, request terminated");
             return emptyList();
         }
+
+        String arcType = "";
+        if (interval == 3600)
+            arcType = "MIN-60";
+        else if (interval == 900)
+            arcType = "MIN-15";
+        else if (interval == 180)
+            arcType = "MIN-3";
 
         List<LogPointCfg> logPoints = points.stream()
             .map(p -> {
@@ -67,9 +75,8 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
                 new ParameterizedTypeReference<List<TelemetryDto>>() {}
             );
 
-            list = mapToValue(responseEntity.getBody(), arcType, points);
+            list = mapToValue(responseEntity.getBody(), interval, points);
             logger.info("parseAnswer completed, count of rows: " + list.size());
-
             logger.info("request successfully completed");
         }
 
@@ -81,20 +88,11 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
         return list;
     }
 
-    private List<PeriodTimeValueRaw> mapToValue(List<TelemetryDto> telemetryList, String arcType, List<MeteringPointCfg> points) {
-        Integer interval = null;
-        if (arcType.equals("MIN-60"))
-            interval=3600;
-        else if (arcType.equals("MIN-15"))
-            interval = 900;
-        else if (arcType.equals("MIN-3"))
-            interval = 180;
-
-        Integer finalInterval = interval;
+    private List<PeriodTimeValueRaw> mapToValue(List<TelemetryDto> telemetryList, Integer interval, List<MeteringPointCfg> points) {
         return telemetryList.stream()
             .map(t -> {
                 PeriodTimeValueRaw pt = new PeriodTimeValueRaw();
-                pt.setInterval(finalInterval);
+                pt.setInterval(interval);
                 pt.setSourceMeteringPointCode(t.getLogPointId().toString());
                 pt.setMeteringDate(t.getDateTime());
                 pt.setVal(t.getVal());

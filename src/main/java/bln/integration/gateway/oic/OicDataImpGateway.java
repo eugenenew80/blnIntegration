@@ -6,5 +6,5 @@ import bln.integration.gateway.emcos.MeteringPointCfg;
 import java.util.List;
 
 public interface OicDataImpGateway {
-    List<PeriodTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points, String arcType) throws Exception;
+    List<PeriodTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points, Integer interval);
 }
