@@ -1,10 +1,8 @@
 package bln.integration.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.Immutable;
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(of= {"id"})
@@ -24,10 +22,4 @@ public class WorkListLine  {
     @ManyToOne
     @JoinColumn(name="metering_point_id")
     private MeteringPoint meteringPoint;
-
-    @Column(name = "start_date")
-    private LocalDateTime startDate;
-
-    @Column(name = "end_date")
-    private LocalDateTime endDate;
 }

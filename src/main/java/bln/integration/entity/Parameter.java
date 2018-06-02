@@ -1,8 +1,7 @@
 package bln.integration.entity;
 
 import bln.integration.jpa.BooleanToIntConverter;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.Immutable;
 import javax.persistence.*;
 

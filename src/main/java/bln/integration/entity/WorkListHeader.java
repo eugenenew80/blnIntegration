@@ -2,12 +2,10 @@ package bln.integration.entity;
 
 import bln.integration.entity.enums.*;
 import bln.integration.jpa.BooleanToIntConverter;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;

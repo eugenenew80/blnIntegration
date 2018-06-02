@@ -1,9 +1,7 @@
 package bln.integration.entity;
 
-import bln.integration.entity.enums.ParamTypeEnum;
-import bln.integration.entity.enums.SourceSystemEnum;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import bln.integration.entity.enums.*;
+import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
