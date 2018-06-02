@@ -52,7 +52,7 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 		}
 
 		LocalDateTime endDateTime = buildEndDateTime();
-		List<MeteringPointCfg> points = buildPointsCfg(lines, endDateTime);
+		List<MeteringPointCfg> points = buildPointsCfg(lines, endDateTime, 900);
 		if (points.size() == 0) {
 			logger.info("List of points is empty, import data stopped");
 			return;
@@ -80,7 +80,7 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 		while (!endDateTime.isBefore(requestedDateTime)) {
 			logger.info("batch requested date: " + requestedDateTime);
 
-			points = buildPointsCfg(lines, requestedDateTime);
+			points = buildPointsCfg(lines, requestedDateTime, 900);
 			final List<List<MeteringPointCfg>> groupsPoints = splitPointsCfg(points);
 
 			Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.PT));
@@ -122,7 +122,7 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	}
 
 	@Transactional(propagation=Propagation.REQUIRED, readOnly = true)
-	List<MeteringPointCfg> buildPointsCfg(List<WorkListLine> lines, LocalDateTime endDateTime) {
+	List<MeteringPointCfg> buildPointsCfg(List<WorkListLine> lines, LocalDateTime endDateTime, Integer interval) {
 		List<ParameterConf> parameters = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
 			SourceSystemEnum.EMCOS,
 			ParamTypeEnum.PT
@@ -132,23 +132,25 @@ public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 		List<LastLoadInfo> lastLoadInfos = lastLoadInfoRepository
 			.findAllBySourceSystemCode(SourceSystemEnum.EMCOS);
 
+		@SuppressWarnings("Duplicates")
 		List<MeteringPointCfg> points = lines.stream()
 			.flatMap(line ->
 				parameters.stream()
 					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
-					.filter(c -> c.getInterval().equals(900))
-					.map(parameterConf -> {
+					.filter(c -> c.getInterval().equals(interval))
+					.map(p -> {
 						LastLoadInfo lastLoadInfo = lastLoadInfos.stream()
-							.filter(l -> l.getMeteringPoint().equals(parameterConf.getMeteringPoint()))
-							.filter(l -> l.getSourceMeteringPointCode().equals(parameterConf.getSourceMeteringPointCode()))
-							.filter(l -> l.getSourceParamCode().equals(parameterConf.getSourceParamCode()))
+							.filter(l -> l.getMeteringPoint().equals(p.getMeteringPoint()))
+							.filter(l -> l.getParam().equals(p.getParam()))
+							.filter(l -> l.getInterval().equals(p.getInterval()))
+							.filter(l -> l.getParamType()==p.getParamType())
 							.findFirst()
 							.orElse(null);
 
-						MeteringPointCfg mpc = MeteringPointCfg.fromLine(parameterConf);
+						MeteringPointCfg mpc = MeteringPointCfg.fromLine(p);
 						mpc.setStartTime(buildStartDateTime(lastLoadInfo));
 						mpc.setEndTime(endDateTime);
-						return mpc.getEndTime().isAfter(mpc.getStartTime()) ? mpc : null;
+						return !mpc.getEndTime().isBefore(mpc.getStartTime()) ? mpc : null;
 					})
 					.filter(mpc -> mpc != null)
 					.collect(toList())

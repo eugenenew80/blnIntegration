@@ -6,6 +6,7 @@ import bln.integration.entity.enums.InputMethodEnum;
 import bln.integration.entity.enums.ProcessingStatusEnum;
 import bln.integration.entity.enums.ReceivingMethodEnum;
 import bln.integration.entity.enums.SourceSystemEnum;
+import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.gateway.oic.LogPointCfg;
 import bln.integration.gateway.oic.OicDataImpGateway;
 import bln.integration.gateway.oic.TelemetryDto;
@@ -26,7 +27,7 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
     private static final Logger logger = LoggerFactory.getLogger(OicDataImpGatewayImpl.class);
 
     @Override
-    public List<PeriodTimeValueRaw> request(ConnectionConfig config, List<LogPointCfg> points, String arcType) throws Exception {
+    public List<PeriodTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points, String arcType) throws Exception {
         logger.info("request started");
 
         if (config == null) {
@@ -39,6 +40,16 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
             return emptyList();
         }
 
+        List<LogPointCfg> logPoints = points.stream()
+            .map(p -> {
+                LogPointCfg lpc = new LogPointCfg();
+                lpc.setLogPointId(Long.parseLong(p.getSourceMeteringPointCode()));
+                lpc.setStart(p.getStartTime());
+                lpc.setEnd(p.getEndTime());
+                return lpc;
+            })
+            .collect(toList());
+
         List<PeriodTimeValueRaw> list;
         try {
             RestTemplate restTemplate = new RestTemplateBuilder().build();
@@ -47,7 +58,7 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
             String url = config.getUrl() + "/" + arcType;
-            HttpEntity<List<LogPointCfg>> requestEntity = new HttpEntity<>(points, headers);
+            HttpEntity<List<LogPointCfg>> requestEntity = new HttpEntity<>(logPoints, headers);
 
             ResponseEntity<List<TelemetryDto>> responseEntity = restTemplate.exchange(
                 url,
@@ -70,7 +81,7 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
         return list;
     }
 
-    private List<PeriodTimeValueRaw> mapToValue(List<TelemetryDto> telemetryList, String arcType, List<LogPointCfg> points) {
+    private List<PeriodTimeValueRaw> mapToValue(List<TelemetryDto> telemetryList, String arcType, List<MeteringPointCfg> points) {
         Integer interval = null;
         if (arcType.equals("MIN-60"))
             interval=3600;
@@ -92,16 +103,16 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
                 pt.setInputMethod(InputMethodEnum.AUTO);
                 pt.setReceivingMethod(ReceivingMethodEnum.SERVICE);
 
-                LogPointCfg logPointCfg = points.stream()
-                    .filter(p -> p.getLogPointId().equals(t.getLogPointId()))
+                MeteringPointCfg pointCfg = points.stream()
+                    .filter(p -> p.getSourceMeteringPointCode().equals(t.getLogPointId().toString()))
                     .findFirst()
                     .orElse(null);
 
-                if (logPointCfg!=null) {
-                    pt.setSourceUnitCode(logPointCfg.getUnitCode());
-                    pt.setSourceParamCode(logPointCfg.getParamCode());
-                    pt.setMeteringPointId(logPointCfg.getMeteringPointId());
-                    pt.setParamId(logPointCfg.getParamId());
+                if (pointCfg!=null) {
+                    pt.setSourceUnitCode(pointCfg.getSourceUnitCode());
+                    pt.setSourceParamCode(pointCfg.getSourceParamCode());
+                    pt.setMeteringPointId(pointCfg.getMeteringPointId());
+                    pt.setParamId(pointCfg.getParamId());
                 }
 
                 return pt;

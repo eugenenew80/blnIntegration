@@ -40,7 +40,7 @@ public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
 			return;
 		}
 
-		List<MeteringPointCfg> points = buildPointsCfg(lines);
+		List<MeteringPointCfg> points = buildPointsCfg(lines, 86400);
 		if (points.size()==0) {
 			logger.info("Import media is not required, import media stopped");
 			return;
@@ -69,7 +69,7 @@ public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
 	}
 
 	@Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
-	List<MeteringPointCfg> buildPointsCfg(List<WorkListLine> lines) {
+	List<MeteringPointCfg> buildPointsCfg(List<WorkListLine> lines, Integer interval) {
 		List<ParameterConf> parameters = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
 			SourceSystemEnum.EMCOS,
 			ParamTypeEnum.AT
@@ -79,6 +79,7 @@ public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
 			.flatMap(line ->
 				parameters.stream()
 					.filter(p -> p.getMeteringPoint().equals(line.getMeteringPoint()))
+					.filter(c -> c.getInterval().equals(interval))
 					.map(p -> {
 						MeteringPointCfg mpc = MeteringPointCfg.fromLine(p);
 						mpc.setStartTime(line.getStartDate());

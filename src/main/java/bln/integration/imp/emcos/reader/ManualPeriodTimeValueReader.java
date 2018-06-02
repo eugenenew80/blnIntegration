@@ -40,7 +40,7 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 			return;
 		}
 
-		List<MeteringPointCfg> points = buildPointsCfg(lines);
+		List<MeteringPointCfg> points = buildPointsCfg(lines, 900);
 		if (points.size()==0) {
 			logger.info("Import media is not required, import media stopped");
 			return;
@@ -69,7 +69,7 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	}
 
 	@Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
-	List<MeteringPointCfg> buildPointsCfg(List<WorkListLine> lines) {
+	List<MeteringPointCfg> buildPointsCfg(List<WorkListLine> lines, Integer interval) {
 		List<ParameterConf> parameters = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
 			SourceSystemEnum.EMCOS,
 			ParamTypeEnum.PT
@@ -79,7 +79,7 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 			.flatMap(line ->
 				parameters.stream()
 					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
-					.filter(c -> c.getInterval().equals(900))
+					.filter(c -> c.getInterval().equals(interval))
 					.map(parameterConf -> {
 						MeteringPointCfg mpc = MeteringPointCfg.fromLine(parameterConf);
 						mpc.setStartTime(line.getStartDate());

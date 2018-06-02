@@ -2,6 +2,7 @@ package bln.integration.imp.oic.reader;
 
 import bln.integration.entity.*;
 import bln.integration.entity.enums.*;
+import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.gateway.oic.LogPointCfg;
 import bln.integration.gateway.oic.OicDataImpGateway;
 import bln.integration.imp.BatchHelper;
@@ -52,7 +53,7 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 		}
 
 		LocalDateTime endDateTime = buildEndDateTime();
-		List<LogPointCfg> points = buildPointsCfg(lines, endDateTime);
+		List<MeteringPointCfg> points = buildPointsCfg(lines, endDateTime, 3600);
 		if (points.size()==0) {
 			logger.info("List of points is empty, import data stopped");
 			return;
@@ -81,7 +82,7 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
     }
 
 	@Transactional(propagation=Propagation.REQUIRED, readOnly = true)
-	List<LogPointCfg> buildPointsCfg(List<WorkListLine> lines, LocalDateTime endDateTime) {
+	List<MeteringPointCfg> buildPointsCfg(List<WorkListLine> lines, LocalDateTime endDateTime, Integer interval) {
 		List<ParameterConf> parameters = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
 			SourceSystemEnum.OIC,
 			ParamTypeEnum.PT
@@ -91,29 +92,25 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 		List<LastLoadInfo> lastLoadInfos = lastLoadInfoRepository
 			.findAllBySourceSystemCode(SourceSystemEnum.OIC);
 
-		List<LogPointCfg> points = lines.stream()
+		@SuppressWarnings("Duplicates")
+		List<MeteringPointCfg> points = lines.stream()
 			.flatMap(line ->
 				parameters.stream()
 					.filter(p -> p.getMeteringPoint().equals(line.getMeteringPoint()))
-					.filter(p -> p.getInterval().equals(3600))
+					.filter(p -> p.getInterval().equals(interval))
 					.map(p -> {
 						LastLoadInfo lastLoadInfo = lastLoadInfos.stream()
 							.filter(l -> l.getMeteringPoint().equals(p.getMeteringPoint()))
-							.filter(l -> l.getSourceMeteringPointCode().equals(p.getSourceMeteringPointCode()))
-							.filter(l -> l.getSourceParamCode().equals(p.getSourceParamCode()))
+							.filter(l -> l.getParam().equals(p.getParam()))
+							.filter(l -> l.getInterval().equals(p.getInterval()))
+							.filter(l -> l.getParamType()==p.getParamType())
 							.findFirst()
 							.orElse(null);
 
-						LogPointCfg lpc = new LogPointCfg();
-						lpc.setMeteringPointId(p.getMeteringPoint().getId());
-						lpc.setParamId(p.getParam().getId());
-						lpc.setLogPointId(Long.parseLong(p.getSourceMeteringPointCode()));
-						lpc.setParamCode(p.getSourceParamCode());
-						lpc.setUnitCode(p.getSourceUnitCode());
-						lpc.setStart(buildStartDateTime(lastLoadInfo));
-						lpc.setEnd(endDateTime);
-
-						return !lpc.getEnd().isBefore(lpc.getStart()) ? lpc : null;
+						MeteringPointCfg mpc = MeteringPointCfg.fromLine(p);
+						mpc.setStartTime(buildStartDateTime(lastLoadInfo));
+						mpc.setEndTime(endDateTime);
+						return !mpc.getEndTime().isBefore(mpc.getStartTime()) ? mpc : null;
 					})
 					.filter(lpc -> lpc!=null)
 					.collect(toList())

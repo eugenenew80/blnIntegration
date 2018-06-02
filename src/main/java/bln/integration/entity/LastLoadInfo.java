@@ -1,5 +1,6 @@
 package bln.integration.entity;
 
+import bln.integration.entity.enums.ParamTypeEnum;
 import bln.integration.entity.enums.SourceSystemEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,7 +13,8 @@ import java.time.LocalDateTime;
 @Table(name = "media_last_load_info")
 
 @NamedEntityGraph(name="LastLoadInfo.allJoins", attributeNodes = {
-    @NamedAttributeNode("meteringPoint")
+    @NamedAttributeNode("meteringPoint"),
+    @NamedAttributeNode("param")
 })
 
 @NamedStoredProcedureQueries({
@@ -38,15 +40,20 @@ public class LastLoadInfo {
     @Enumerated(EnumType.STRING)
     private SourceSystemEnum sourceSystemCode;
 
-    @Column(name = "source_metering_point_code")
-    private String sourceMeteringPointCode;
-
-    @Column(name = "source_param_code")
-    private String sourceParamCode;
-
     @ManyToOne
     @JoinColumn(name="metering_point_id")
     private MeteringPoint meteringPoint;
+
+    @ManyToOne
+    @JoinColumn(name="param_id")
+    private Parameter param;
+
+    @Column(name="param_type")
+    @Enumerated(EnumType.STRING)
+    private ParamTypeEnum paramType;
+
+    @Column
+    private Integer interval;
 
     @Column(name = "last_load_date")
     private LocalDateTime lastLoadDate;

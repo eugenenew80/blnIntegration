@@ -53,7 +53,7 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 		}
 
 		LocalDateTime endDateTime = buildEndDateTime();
-		List<MeteringPointCfg> points = buildPointsCfg(lines, endDateTime);
+		List<MeteringPointCfg> points = buildPointsCfg(lines, endDateTime, 86400);
 
 		if (points.size() == 0) {
 			logger.info("List of points is empty, import data stopped");
@@ -82,7 +82,7 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 		while (!endDateTime.isBefore(requestedDateTime)) {
 			logger.info("batch requested date: " + requestedDateTime);
 
-			points = buildPointsCfg(lines, requestedDateTime);
+			points = buildPointsCfg(lines, requestedDateTime, 86400);
 			final List<List<MeteringPointCfg>> groupsPoints = splitPointsCfg(points);
 
 			Batch batch = batchHelper.createBatch(new Batch(header, ParamTypeEnum.AT));
@@ -124,7 +124,7 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
     }
 
 	@Transactional(propagation=Propagation.REQUIRED, readOnly = true)
-	List<MeteringPointCfg> buildPointsCfg(List<WorkListLine> lines, LocalDateTime endDateTime) {
+	List<MeteringPointCfg> buildPointsCfg(List<WorkListLine> lines, LocalDateTime endDateTime, Integer interval) {
 		List<ParameterConf> parameters = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
 			SourceSystemEnum.EMCOS,
 			ParamTypeEnum.AT
@@ -134,15 +134,18 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 		List<LastLoadInfo> lastLoadInfos = lastLoadInfoRepository
 			.findAllBySourceSystemCode(SourceSystemEnum.EMCOS);
 
+		@SuppressWarnings("Duplicates")
 		List<MeteringPointCfg> points = lines.stream()
 			.flatMap(line ->
 				parameters.stream()
 					.filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
+					.filter(c -> c.getInterval().equals(interval))
 					.map(p -> {
 						LastLoadInfo lastLoadInfo = lastLoadInfos.stream()
 							.filter(l -> l.getMeteringPoint().equals(p.getMeteringPoint()))
-							.filter(l -> l.getSourceMeteringPointCode().equals(p.getSourceMeteringPointCode()))
-							.filter(l -> l.getSourceParamCode().equals(p.getSourceParamCode()))
+							.filter(l -> l.getParam().equals(p.getParam()))
+							.filter(l -> l.getInterval().equals(p.getInterval()))
+							.filter(l -> l.getParamType()==p.getParamType())
 							.findFirst()
 							.orElse(null);
 
