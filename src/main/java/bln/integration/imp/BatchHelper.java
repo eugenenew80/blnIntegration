@@ -2,6 +2,7 @@ package bln.integration.imp;
 
 import bln.integration.entity.*;
 import bln.integration.entity.enums.BatchStatusEnum;
+import bln.integration.entity.enums.ParamTypeEnum;
 import bln.integration.entity.enums.WorkListTypeEnum;
 import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.repo.*;
@@ -170,9 +171,12 @@ public class BatchHelper {
                         MeteringPointCfg mpc = MeteringPointCfg.fromLine(p);
                         mpc.setStartTime(buildStartTime.apply(lastLoadInfo));
                         mpc.setEndTime(buildEndTime.get());
-                        return !mpc.getEndTime().isBefore(mpc.getStartTime()) ? mpc : null;
+                        return mpc;
                     })
-                    .filter(mpc -> mpc != null)
+                    .filter(mpc ->
+                           (header.getParamType()==ParamTypeEnum.AT && !mpc.getEndTime().isBefore(mpc.getStartTime()))
+                        || (header.getParamType()==ParamTypeEnum.PT &&  mpc.getStartTime().isBefore(mpc.getEndTime()))
+                    )
                     .collect(toList())
                     .stream()
             )
