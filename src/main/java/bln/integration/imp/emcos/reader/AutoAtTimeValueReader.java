@@ -16,6 +16,8 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+import static java.util.Collections.emptyList;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -32,6 +34,11 @@ public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
 		logger.info("headerId: " + headerId);
 
 		WorkListHeader header = headerRepository.findOne(headerId);
+		if (header.getConfig() == null) {
+			logger.warn("Config is empty, request stopped");
+			return;
+		}
+
 		if (header == null) {
 			logger.info("Work list not found");
 			return;

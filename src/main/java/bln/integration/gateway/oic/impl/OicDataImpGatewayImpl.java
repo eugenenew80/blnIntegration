@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 import java.util.List;
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -29,16 +28,6 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
     @Override
     public List<PeriodTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points, Integer interval)  {
         logger.info("request started");
-
-        if (config == null) {
-            logger.warn("Config is empty, request terminated");
-            return emptyList();
-        }
-
-        if (points == null || points.isEmpty()) {
-            logger.warn("List of points is empty, request terminated");
-            return emptyList();
-        }
 
         String arcType = "";
         if (interval == 3600)

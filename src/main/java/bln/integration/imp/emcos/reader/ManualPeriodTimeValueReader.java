@@ -26,6 +26,10 @@ public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
 	@Transactional(propagation=Propagation.NOT_SUPPORTED, readOnly = true)
 	public void read(Long headerId) {
 		WorkListHeader header = headerRepository.findOne(headerId);
+		if (header.getConfig() == null) {
+			logger.warn("Config is empty, request stopped");
+			return;
+		}
 
 		List<WorkListLine> lines = header.getLines();
 		if (lines.size()==0) {

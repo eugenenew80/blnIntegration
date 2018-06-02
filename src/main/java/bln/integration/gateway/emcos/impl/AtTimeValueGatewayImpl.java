@@ -1,40 +1,24 @@
 package bln.integration.gateway.emcos.impl;
 
-import bln.integration.entity.ConnectionConfig;
-import bln.integration.entity.AtTimeValueRaw;
-import bln.integration.entity.enums.InputMethodEnum;
-import bln.integration.entity.enums.ProcessingStatusEnum;
-import bln.integration.entity.enums.ReceivingMethodEnum;
-import bln.integration.entity.enums.SourceSystemEnum;
-import bln.integration.gateway.emcos.AtTimeValueGateway;
-import bln.integration.gateway.emcos.MeteringPointCfg;
-import bln.integration.registry.TemplateRegistry;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import bln.integration.entity.*;
+import bln.integration.entity.enums.*;
+import bln.integration.gateway.emcos.*;
+import bln.integration.registry.*;
+import lombok.*;
+import org.slf4j.*;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.URL;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.time.*;
+import java.time.format.*;
+import java.util.*;
 import java.util.stream.Collectors;
-
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
+import java.net.URL;
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @RequiredArgsConstructor
@@ -44,18 +28,9 @@ public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HH:mm:'00000'");
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
+    @Override
     public List<AtTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points) throws Exception {
         logger.info("request started");
-
-        if (config == null) {
-            logger.warn("Config is empty, request terminated");
-            return emptyList();
-        }
-
-        if (points == null || points.isEmpty()) {
-            logger.warn("List of points is empty, request terminated");
-            return emptyList();
-        }
 
         List<AtTimeValueRaw> list;
         try {

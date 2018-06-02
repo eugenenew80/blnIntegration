@@ -32,6 +32,11 @@ public class AutoOicDataReader implements Reader<TelemetryRaw> {
 		logger.info("headerId: " + headerId);
 
 		WorkListHeader header = headerRepository.findOne(headerId);
+		if (header.getConfig() == null) {
+			logger.warn("Config is empty, request stopped");
+			return;
+		}
+
 		if (header==null) {
 			logger.info("Work list not found");
 			return;
