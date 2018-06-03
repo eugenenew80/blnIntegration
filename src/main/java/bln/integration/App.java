@@ -5,6 +5,7 @@ import bln.integration.imp.emcos.schedule.AutoEmcosImp;
 import bln.integration.imp.emcos.schedule.ManualEmcosImp;
 import bln.integration.imp.oic.schedule.AutoOicImp;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -30,18 +31,24 @@ public class App implements ApplicationListener<ApplicationReadyEvent> {
         taskScheduler.setPoolSize(5);
         taskScheduler.initialize();
 
-        CronTrigger autoEmcosImpCronTrigger = new CronTrigger("0 */5 */1 * * *");
-        taskScheduler.schedule(autoEmcosImp, autoEmcosImpCronTrigger);
-
-        CronTrigger manualEmcosImpCronTrigger = new CronTrigger("0 */1 * * * *");
-        taskScheduler.schedule(manualEmcosImp, manualEmcosImpCronTrigger);
-
-        CronTrigger autoOicImpCronTrigger = new CronTrigger("0 42 */1 * * *");
-        taskScheduler.schedule(autoOicImp, autoOicImpCronTrigger);
-
-        CronTrigger autoEmcosExpCronTrigger = new CronTrigger("0 */1 * * * *");
-        taskScheduler.schedule(autoEmcosExp, autoEmcosExpCronTrigger);
+        taskScheduler.schedule(autoEmcosImp, new CronTrigger(autoEmcosImpCronExpr));
+        taskScheduler.schedule(manualEmcosImp, new CronTrigger(manualEmcosImpCronExpr));
+        taskScheduler.schedule(autoOicImp, new CronTrigger(autoOicImpCronExpr));
+        taskScheduler.schedule(autoEmcosExp, new CronTrigger(autoEmcosExpCronExpr));
     }
+
+
+    @Value("${bln.integration.imp.emcos.schedule.autoEmcosImp.cron}")
+    private String autoEmcosImpCronExpr;
+
+    @Value("${bln.integration.imp.emcos.schedule.manualEmcosImp.cron}")
+    private String manualEmcosImpCronExpr;
+
+    @Value("${bln.integration.imp.oic.schedule.autoOicImp.cron}")
+    private String autoOicImpCronExpr;
+
+    @Value("${bln.integration.exp.emcos.schedule.autoEmcosExp.cron}")
+    private String autoEmcosExpCronExpr;
 
     @Autowired
     private AutoEmcosImp autoEmcosImp;
