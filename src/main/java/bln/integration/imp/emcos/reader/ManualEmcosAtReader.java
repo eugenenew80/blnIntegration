@@ -1,10 +1,10 @@
 package bln.integration.imp.emcos.reader;
 
 import bln.integration.entity.*;
+import bln.integration.imp.AbstractManualReader;
 import bln.integration.imp.gateway.ValueGateway;
 import bln.integration.imp.gateway.MeteringPointCfg;
 import bln.integration.imp.BatchHelper;
-import bln.integration.imp.Reader;
 import bln.integration.repo.WorkListHeaderRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -16,57 +16,39 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ManualEmcosAtReader implements Reader<AtTimeValueRaw> {
+public class ManualEmcosAtReader extends AbstractManualReader<AtTimeValueRaw> {
     private static final Logger logger = LoggerFactory.getLogger(ManualEmcosAtReader.class);
 	private final WorkListHeaderRepository headerRepository;
 	private final ValueGateway<AtTimeValueRaw> atEmcosImpGateway;
     private final BatchHelper batchHelper;
 
-	@Transactional(propagation=Propagation.NOT_SUPPORTED, readOnly = true)
+	@Override
+    @Transactional(propagation=Propagation.NOT_SUPPORTED, readOnly = true)
 	public void read(Long headerId) {
-		WorkListHeader header = headerRepository.findOne(headerId);
-		if (header.getConfig() == null) {
-			logger.warn("Config is empty, request stopped");
-			return;
-		}
-
-		List<WorkListLine> lines = header.getLines();
-		if (lines.size()==0) {
-			logger.debug("List of points is empty, import data stopped");
-			return;
-		}
-
-		List<MeteringPointCfg> points = buildPointsCfg(header);
-		if (points.size()==0) {
-			logger.debug("Import data is not required, import data stopped");
-			return;
-		}
-
-		logger.info("read started");
-		logger.info("headerId: " + header.getId());
-		logger.info("url: " + header.getConfig().getUrl());
-		logger.info("user: " + header.getConfig().getUserName());
-
-		Batch batch = batchHelper.createBatch(new Batch(header));
-		try {
-			List<AtTimeValueRaw> list = atEmcosImpGateway.request(header.getConfig(), points);
-			batchHelper.save(batch, list, null);
-			batchHelper.updateBatch(batch, (long) list.size());
-			batchHelper.updateLastDate(batch);
-			batchHelper.load(batch);
-		}
-		catch (Exception e) {
-			logger.error("read failed: " + e.getMessage());
-			batchHelper.errorBatch(batch, e);
-		}
-		finally {
-			System.gc();
-		}
-
-		logger.info("read completed");
+		super.read(headerId);
 	}
 
-	private List<MeteringPointCfg> buildPointsCfg(WorkListHeader header) {
+	@Override
+	protected List<AtTimeValueRaw> request(Batch batch, List<MeteringPointCfg> points) throws Exception {
+		return atEmcosImpGateway.request(batch.getWorkListHeader().getConfig(), points);
+	}
+
+	@Override
+	protected void save(Batch batch, List<AtTimeValueRaw> list) {
+		batchHelper.save(batch, list, null);
+	}
+
+	@Override
+	protected List<MeteringPointCfg> buildPointsCfg(WorkListHeader header) {
 		return batchHelper.buildPointsCfg(header, (l) -> header.getStartDate(), ()  -> header.getEndDate());
 	}
+
+	@Override
+	protected Logger logger() { return logger; }
+
+	@Override
+	protected BatchHelper batchHelper() { return batchHelper; }
+
+	@Override
+	protected WorkListHeaderRepository headerRepository() { return headerRepository; }
 }

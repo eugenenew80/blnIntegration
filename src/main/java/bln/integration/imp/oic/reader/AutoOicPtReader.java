@@ -1,7 +1,7 @@
 package bln.integration.imp.oic.reader;
 
 import bln.integration.entity.*;
-import bln.integration.imp.AbstractReader;
+import bln.integration.imp.AbstractAutoReader;
 import bln.integration.imp.gateway.ValueGateway;
 import bln.integration.imp.gateway.MeteringPointCfg;
 import bln.integration.imp.BatchHelper;
@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AutoOicPtReader extends AbstractReader<PeriodTimeValueRaw> {
+public class AutoOicPtReader extends AbstractAutoReader<PeriodTimeValueRaw> {
     private static final Logger logger = LoggerFactory.getLogger(AutoOicPtReader.class);
 	private final WorkListHeaderRepository headerRepository;
 	private final BatchHelper batchHelper;

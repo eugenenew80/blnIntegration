@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
-public abstract class AbstractReader<T> implements Reader<T> {
+public abstract class AbstractAutoReader<T> implements Reader<T> {
     @Override
     public void read(Long headerId) {
         logger().info("read started");

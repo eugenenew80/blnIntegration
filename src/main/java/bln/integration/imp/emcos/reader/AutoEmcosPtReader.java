@@ -1,7 +1,7 @@
 package bln.integration.imp.emcos.reader;
 
 import bln.integration.entity.*;
-import bln.integration.imp.AbstractReader;
+import bln.integration.imp.AbstractAutoReader;
 import bln.integration.imp.gateway.MeteringPointCfg;
 import bln.integration.imp.gateway.ValueGateway;
 import bln.integration.imp.BatchHelper;
@@ -19,7 +19,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AutoEmcosPtReader extends AbstractReader<PeriodTimeValueRaw> {
+public class AutoEmcosPtReader extends AbstractAutoReader<PeriodTimeValueRaw> {
     private static final Logger logger = LoggerFactory.getLogger(AutoEmcosPtReader.class);
 	private final WorkListHeaderRepository headerRepository;
 	private final BatchHelper batchHelper;
