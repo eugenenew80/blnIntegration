@@ -11,28 +11,41 @@ import java.util.List;
 public abstract class AbstractManualReader<T> implements Reader<T> {
     @Override
     public void read(Long headerId) {
+        logger().info("read started");
+        logger().info("headerId: " + headerId);
+
         WorkListHeader header = headerRepository().findOne(headerId);
         if (header.getConfig() == null) {
             logger().warn("Config is empty, request stopped");
             return;
         }
 
+        if (header.getStartDate() == null) {
+            logger().warn("Start Date is empty, request stopped");
+            return;
+        }
+
+        if (header.getEndDate() == null) {
+            logger().warn("End Date is empty, request stopped");
+            return;
+        }
+
         List<WorkListLine> lines = header.getLines();
         if (lines.size()==0) {
-            logger().debug("List of points is empty, import data stopped");
+            logger().warn("List of points is empty, import data stopped");
             return;
         }
 
         List<MeteringPointCfg> points = buildPointsCfg(header);
         if (points.size()==0) {
-            logger().debug("Import data is not required, import data stopped");
+            logger().warn("List of points is empty, import data stopped");
             return;
         }
 
-        logger().info("read started");
-        logger().info("headerId: " + header.getId());
         logger().info("url: " + header.getConfig().getUrl());
         logger().info("user: " + header.getConfig().getUserName());
+        logger().info("startDateTime: " + header.getStartDate());
+        logger().info("endDateTime: " + header.getEndDate());
 
         Batch batch = batchHelper().createBatch(new Batch(header));
         try {
@@ -53,11 +66,11 @@ public abstract class AbstractManualReader<T> implements Reader<T> {
         logger().info("read completed");
     }
 
-    protected abstract List<MeteringPointCfg> buildPointsCfg(WorkListHeader header);
-
     protected abstract List<T> request(Batch batch, List<MeteringPointCfg> points) throws Exception;
 
     protected abstract void save(Batch batch, List<T> list);
+
+    protected abstract List<MeteringPointCfg> buildPointsCfg(WorkListHeader header);
 
     protected abstract Logger logger();
 
