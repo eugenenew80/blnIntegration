@@ -1,9 +1,8 @@
 package bln.integration.imp.oic.schedule;
 
-import bln.integration.entity.TelemetryRaw;
-import bln.integration.entity.enums.DirectionEnum;
-import bln.integration.entity.enums.SourceSystemEnum;
-import bln.integration.entity.enums.WorkListTypeEnum;
+import bln.integration.entity.PeriodTimeValueRaw;
+import bln.integration.entity.WorkListHeader;
+import bln.integration.entity.enums.*;
 import bln.integration.imp.ImportRunner;
 import bln.integration.imp.Reader;
 import bln.integration.repo.WorkListHeaderRepository;
@@ -13,12 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import static java.util.stream.Collectors.toList;
@@ -26,9 +20,8 @@ import static java.util.stream.Collectors.toList;
 @Component
 @RequiredArgsConstructor
 public class AutoOicDataImp implements ImportRunner {
-	private final Reader<TelemetryRaw> reader;
+	private final Reader<PeriodTimeValueRaw> autoOicPtReader;
 	private final WorkListHeaderRepository headerRepository;
-
 	private static final Logger logger = LoggerFactory.getLogger(AutoOicDataImp.class);
 
 	@Value("${bln.integration.imp.oic.schedule.autoOicImp}")
@@ -39,29 +32,23 @@ public class AutoOicDataImp implements ImportRunner {
 	public void run() {
 		if (!enable) return;
 
-		List<Callable<Void>> callables = new ArrayList<>();
-		buildHeaderIds().stream()
-			.forEach(headerId -> callables.add( () -> { reader.read(headerId); return null; } ));
+		List<WorkListHeader> headers = headerRepository.findAllBySourceSystemCodeAndDirectionAndWorkListType(
+			SourceSystemEnum.OIC,
+			DirectionEnum.IMPORT,
+			WorkListTypeEnum.SYS
+		);
 
-		try {
-			ExecutorService executor = Executors.newFixedThreadPool(callables.size());
-			executor.invokeAll(callables);
-			executor.shutdown();
-		}
+		List<Runnable> tasks = headers.stream()
+			.filter(h -> h.getParamType() == ParamTypeEnum.PT && h.getActive() && h.getConfig() != null && h.getStatus()!=BatchStatusEnum.P)
+			.map(h -> (Runnable) () -> autoOicPtReader.read(h.getId()))
+			.collect(toList());
 
-		catch (Exception e) {
-			logger.error("run failed: " + e.getMessage());
-		}
+		submit(tasks);
 	}
 
-	@Transactional(propagation= Propagation.NOT_SUPPORTED, readOnly = true)
-	List<Long> buildHeaderIds() {
-		return headerRepository.findAllBySourceSystemCodeAndDirectionAndWorkListType(
-			SourceSystemEnum.OIC,  DirectionEnum.IMPORT, WorkListTypeEnum.SYS
-		)
-		.stream()
-		.filter(h-> h.getActive() && h.getConfig()!=null)
-		.map(h -> h.getId())
-		.collect(toList());
+	private void submit(List<Runnable> tasks) {
+		ExecutorService executor = Executors.newFixedThreadPool(tasks.size());
+		tasks.forEach(t -> executor.submit(t));
+		executor.shutdown();
 	}
 }

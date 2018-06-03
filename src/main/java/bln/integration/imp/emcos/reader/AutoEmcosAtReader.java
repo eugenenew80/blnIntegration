@@ -1,7 +1,6 @@
 package bln.integration.imp.emcos.reader;
 
 import bln.integration.entity.*;
-import bln.integration.entity.enums.*;
 import bln.integration.gateway.emcos.*;
 import bln.integration.imp.BatchHelper;
 import bln.integration.imp.Reader;
@@ -19,8 +18,8 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AutoAtTimeValueReader implements Reader<AtTimeValueRaw> {
-	private static final Logger logger = LoggerFactory.getLogger(AutoAtTimeValueReader.class);
+public class AutoEmcosAtReader implements Reader<AtTimeValueRaw> {
+	private static final Logger logger = LoggerFactory.getLogger(AutoEmcosAtReader.class);
 	private static final int groupCount = 500;
 	private final WorkListHeaderRepository headerRepository;
 	private final AtTimeValueGateway valueGateway;

@@ -1,7 +1,6 @@
 package bln.integration.imp.oic.reader;
 
 import bln.integration.entity.*;
-import bln.integration.entity.enums.*;
 import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.gateway.oic.OicDataImpGateway;
 import bln.integration.imp.BatchHelper;
@@ -21,8 +20,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AutoOicDataReader implements Reader<TelemetryRaw> {
-    private static final Logger logger = LoggerFactory.getLogger(AutoOicDataReader.class);
+public class AutoOicPtReader implements Reader<PeriodTimeValueRaw> {
+    private static final Logger logger = LoggerFactory.getLogger(AutoOicPtReader.class);
 	private final WorkListHeaderRepository headerRepository;
     private final OicDataImpGateway oicImpGateway;
     private final BatchHelper batchHelper;

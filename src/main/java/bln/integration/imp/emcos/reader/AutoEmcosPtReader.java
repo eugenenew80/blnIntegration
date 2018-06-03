@@ -18,8 +18,8 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AutoPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
-    private static final Logger logger = LoggerFactory.getLogger(AutoPeriodTimeValueReader.class);
+public class AutoEmcosPtReader implements Reader<PeriodTimeValueRaw> {
+    private static final Logger logger = LoggerFactory.getLogger(AutoEmcosPtReader.class);
     private static final int groupCount = 300;
 	private final WorkListHeaderRepository headerRepository;
 	private final PeriodTimeValueImpGateway valueGateway;

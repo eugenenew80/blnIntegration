@@ -106,10 +106,10 @@ public class BatchHelper {
     public void atSave(List<AtTimeValueRaw> atList, Batch batch) {
         logger.info("saving records started");
         LocalDateTime now = LocalDateTime.now();
-        atList.forEach(t -> {
+        for (AtTimeValueRaw t : atList) {
             t.setBatch(batch);
             t.setCreateDate(now);
-        });
+        }
         atValueRepository.save(atList);
         logger.info("saving records completed");
     }
@@ -118,10 +118,10 @@ public class BatchHelper {
     public void ptSave(List<PeriodTimeValueRaw> ptList, Batch batch) {
         logger.info("saving records started");
         LocalDateTime now = LocalDateTime.now();
-        ptList.forEach(t -> {
+        for (PeriodTimeValueRaw t : ptList) {
             t.setBatch(batch);
             t.setCreateDate(now);
-        });
+        }
         ptValueRepository.save(ptList);
         logger.info("saving records completed");
     }
@@ -142,28 +142,29 @@ public class BatchHelper {
 
     @Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
     public List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, Function<LastLoadInfo, LocalDateTime> buildStartTime, Supplier<LocalDateTime> buildEndTime) {
-        List<ParameterConf> parameters = parameterConfRepository.findAllBySourceSystemCodeAndParamType(
-            header.getSourceSystemCode(),
-            header.getParamType()
-        );
-
         entityManager.clear();
-        List<LastLoadInfo> lastLoadInfoList = lastLoadInfoRepository
-            .findAllBySourceSystemCode(header.getSourceSystemCode());
+
+        List<ParameterConf> parameters = parameterConfRepository.findAllBySourceSystemCodeAndParamTypeAAndInterval(
+            header.getSourceSystemCode(),
+            header.getParamType(),
+            header.getInterval()
+        );
+        List<LastLoadInfo> lastLoadInfoList = lastLoadInfoRepository.findAllBySourceSystemCodeAAndParamTypeAAndInterval(
+            header.getSourceSystemCode(),
+            header.getParamType(),
+            header.getInterval()
+        );
 
         List<MeteringPointCfg> points = header.getLines().stream()
             .flatMap(line ->
                 parameters.stream()
                     .filter(c -> c.getMeteringPoint().equals(line.getMeteringPoint()))
-                    .filter(c -> c.getInterval().equals(header.getInterval()))
                     .map(p -> {
                         LastLoadInfo lastLoadInfo = null;
                         if (header.getWorkListType()==WorkListTypeEnum.SYS) {
                             lastLoadInfo = lastLoadInfoList.stream()
                                 .filter(l -> l.getMeteringPoint().equals(p.getMeteringPoint()))
                                 .filter(l -> l.getParam().equals(p.getParam()))
-                                .filter(l -> l.getInterval().equals(p.getInterval()))
-                                .filter(l -> l.getParamType() == p.getParamType())
                                 .findFirst()
                                 .orElse(null);
                         }

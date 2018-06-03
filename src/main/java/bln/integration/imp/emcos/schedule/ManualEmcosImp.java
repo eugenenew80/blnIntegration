@@ -2,10 +2,8 @@ package bln.integration.imp.emcos.schedule;
 
 import bln.integration.entity.AtTimeValueRaw;
 import bln.integration.entity.PeriodTimeValueRaw;
-import bln.integration.entity.enums.BatchStatusEnum;
-import bln.integration.entity.enums.DirectionEnum;
-import bln.integration.entity.enums.SourceSystemEnum;
-import bln.integration.entity.enums.WorkListTypeEnum;
+import bln.integration.entity.WorkListHeader;
+import bln.integration.entity.enums.*;
 import bln.integration.imp.ImportRunner;
 import bln.integration.imp.Reader;
 import bln.integration.repo.WorkListHeaderRepository;
@@ -15,12 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import static java.util.stream.Collectors.toList;
@@ -28,8 +21,8 @@ import static java.util.stream.Collectors.toList;
 @Component
 @RequiredArgsConstructor
 public class ManualEmcosImp implements ImportRunner {
-	private final Reader<AtTimeValueRaw> manualAtTimeValueReader;
-	private final Reader<PeriodTimeValueRaw> manualPeriodTimeValueReader;
+	private final Reader<AtTimeValueRaw> manualEmcosAtReader;
+	private final Reader<PeriodTimeValueRaw> manualEmcosPtReader;
 	private final WorkListHeaderRepository headerRepository;
 	private static final Logger logger = LoggerFactory.getLogger(ManualEmcosImp.class);
 
@@ -41,33 +34,29 @@ public class ManualEmcosImp implements ImportRunner {
 	public void run() {
 		if (!enable) return;
 
-		List<Callable<Void>> callables = new ArrayList<>();
-		buildHeaderIds().stream()
-			.forEach(headerId -> callables.add( () -> {
-                manualAtTimeValueReader.read(headerId);
-                manualPeriodTimeValueReader.read(headerId);
-                return null;
-            }));
+		List<WorkListHeader> headers = headerRepository.findAllBySourceSystemCodeAndDirectionAndWorkListType(
+			SourceSystemEnum.EMCOS,
+			DirectionEnum.IMPORT,
+			WorkListTypeEnum.USER
+		);
 
-		try {
-			ExecutorService executor = Executors.newFixedThreadPool(callables.size());
-			executor.invokeAll(callables);
-			executor.shutdown();
-		}
+		List<Runnable> atTasks = headers.stream()
+			.filter(h -> h.getParamType() == ParamTypeEnum.AT && h.getActive() && h.getConfig() != null && h.getStatus()==BatchStatusEnum.W)
+			.map(h -> (Runnable) () -> manualEmcosAtReader.read(h.getId()))
+			.collect(toList());
 
-		catch (Exception e) {
-			logger.error("run failed: " + e.getMessage());
-		}
+		List<Runnable> ptTasks = headers.stream()
+			.filter(h -> h.getParamType() == ParamTypeEnum.AT && h.getActive() && h.getConfig() != null && h.getStatus()==BatchStatusEnum.W)
+			.map(h -> (Runnable) () -> manualEmcosPtReader.read(h.getId()))
+			.collect(toList());
+
+		submit(atTasks);
+		submit(ptTasks);
     }
 
-	@Transactional(propagation= Propagation.NOT_SUPPORTED, readOnly = true)
-	private List<Long> buildHeaderIds() {
-		return headerRepository.findAllBySourceSystemCodeAndDirectionAndWorkListType(
-			SourceSystemEnum.EMCOS,  DirectionEnum.IMPORT, WorkListTypeEnum.SYS
-		)
-		.stream()
-		.filter(h-> h.getActive() && h.getConfig()!=null && h.getStatus()== BatchStatusEnum.W && h.getStatus()==BatchStatusEnum.W)
-		.map(h -> h.getId())
-		.collect(toList());
+	private void submit(List<Runnable> tasks) {
+		ExecutorService executor = Executors.newFixedThreadPool(tasks.size());
+		tasks.forEach(t -> executor.submit(t));
+		executor.shutdown();
 	}
 }

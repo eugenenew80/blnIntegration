@@ -1,7 +1,6 @@
 package bln.integration.imp.emcos.reader;
 
 import bln.integration.entity.*;
-import bln.integration.entity.enums.*;
 import bln.integration.gateway.emcos.AtTimeValueGateway;
 import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.imp.BatchHelper;
@@ -17,8 +16,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ManualAtTimeValueReader implements Reader<AtTimeValueRaw> {
-    private static final Logger logger = LoggerFactory.getLogger(ManualAtTimeValueReader.class);
+public class ManualEmcosAtReader implements Reader<AtTimeValueRaw> {
+    private static final Logger logger = LoggerFactory.getLogger(ManualEmcosAtReader.class);
 	private final WorkListHeaderRepository headerRepository;
     private final AtTimeValueGateway valueGateway;
     private final BatchHelper batchHelper;

@@ -1,7 +1,6 @@
 package bln.integration.imp.emcos.reader;
 
 import bln.integration.entity.*;
-import bln.integration.entity.enums.*;
 import bln.integration.gateway.emcos.MeteringPointCfg;
 import bln.integration.gateway.emcos.PeriodTimeValueImpGateway;
 import bln.integration.imp.BatchHelper;
@@ -17,8 +16,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ManualPeriodTimeValueReader implements Reader<PeriodTimeValueRaw> {
-    private static final Logger logger = LoggerFactory.getLogger(ManualPeriodTimeValueReader.class);
+public class ManualEmcosPtReader implements Reader<PeriodTimeValueRaw> {
+    private static final Logger logger = LoggerFactory.getLogger(ManualEmcosPtReader.class);
 	private final WorkListHeaderRepository headerRepository;
     private final PeriodTimeValueImpGateway valueGateway;
     private final BatchHelper batchHelper;

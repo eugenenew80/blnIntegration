@@ -12,8 +12,9 @@ import java.util.List;
 @Repository
 public interface ParameterConfRepository extends JpaRepository<ParameterConf, Long> {
     @EntityGraph(value = "ParameterConf.allJoins" , type= EntityGraph.EntityGraphType.FETCH)
-    List<ParameterConf> findAllBySourceSystemCodeAndParamType(
+    List<ParameterConf> findAllBySourceSystemCodeAndParamTypeAAndInterval(
         SourceSystemEnum sourceSystemCode,
-        ParamTypeEnum paramType
+        ParamTypeEnum paramType,
+        Integer interval
     );
 }
