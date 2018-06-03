@@ -135,7 +135,6 @@ public class BatchHelper {
         logger.info("saving records completed");
     }
 
-
     @Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
     public List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, Function<LastLoadInfo, LocalDateTime> buildStartTime, Supplier<LocalDateTime> buildEndTime) {
         entityManager.clear();
@@ -145,6 +144,7 @@ public class BatchHelper {
             header.getParamType(),
             header.getInterval()
         );
+
         List<LastLoadInfo> lastLoadInfoList = lastLoadInfoRepository.findAllBySourceSystemCodeAndParamTypeAndInterval(
             header.getSourceSystemCode(),
             header.getParamType(),
@@ -165,14 +165,14 @@ public class BatchHelper {
                                 .orElse(null);
                         }
 
-                        MeteringPointCfg mpc = MeteringPointCfg.fromLine(p);
-                        mpc.setStartTime(buildStartTime.apply(lastLoadInfo));
-                        mpc.setEndTime(buildEndTime.get());
-                        return mpc;
+                        MeteringPointCfg point = MeteringPointCfg.fromParameterConf(p);
+                        point.setStartTime(buildStartTime.apply(lastLoadInfo));
+                        point.setEndTime(buildEndTime.get());
+                        return point;
                     })
-                    .filter(mpc ->
-                           (header.getParamType()==ParamTypeEnum.AT && !mpc.getEndTime().isBefore(mpc.getStartTime()))
-                        || (header.getParamType()==ParamTypeEnum.PT &&  mpc.getStartTime().isBefore(mpc.getEndTime()))
+                    .filter(point ->
+                           (header.getParamType()==ParamTypeEnum.AT && !point.getEndTime().isBefore(point.getStartTime()))
+                        || (header.getParamType()==ParamTypeEnum.PT &&  point.getStartTime().isBefore(point.getEndTime()))
                     )
                     .collect(toList())
                     .stream()

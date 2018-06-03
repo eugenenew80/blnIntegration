@@ -42,7 +42,7 @@ public class AtEmcosImpGateway implements ValueGateway<AtTimeValueRaw> {
                 return emptyList();
             }
 
-            byte[] byteAnswer = new HttpGatewayImpl.Builder()
+            byte[] byteAnswer = HttpGatewayImpl.builder()
                 .url(new URL(config.getUrl()))
                 .method("POST")
                 .body(body)

@@ -1,5 +1,6 @@
 package bln.integration.http;
 
+import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
@@ -9,18 +10,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+@Builder
 public class HttpGatewayImpl implements HttpGateway {
 	private static Logger logger = LoggerFactory.getLogger(HttpGatewayImpl.class);
 	private final URL url;
 	private final String method;
 	private final byte[] body;
-	
-	private HttpGatewayImpl(Builder builder) {
-		this.url = builder.url;
-		this.method = builder.method;
-		this.body = builder.body;
-	}
-	
+
     public byte[] doRequest() throws IOException {
 		logger.info("doRequest started");
 		logger.info("url: " + url);
@@ -62,29 +58,4 @@ public class HttpGatewayImpl implements HttpGateway {
 
 		return response.toString().getBytes();
 	}
-
-    public static class Builder {
-    	private URL url;
-    	private String method;
-    	private byte[] body;
-    	
-    	public Builder url(final URL url) {
-    		this.url = url;
-    		return this;
-    	}
-    	    	
-    	public Builder method(final String method) {
-    		this.method = method;
-    		return this;
-    	}    	
-
-    	public Builder body(final byte[] body) {
-    		this.body = body;
-    		return this;
-    	}        
-    	
-    	public HttpGateway build() {
-    		return new HttpGatewayImpl(this); 
-    	}
-    }
 }
