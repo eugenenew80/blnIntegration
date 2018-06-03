@@ -51,7 +51,7 @@ public class ManualEmcosPtReader implements Reader<PeriodTimeValueRaw> {
 		//noinspection Duplicates
 		try {
 			List<PeriodTimeValueRaw> list = ptEmcosImpGateway.request(header.getConfig(), points);
-			batchHelper.ptSave(list, batch);
+			batchHelper.save(batch, null, list);
 			batchHelper.updateBatch(batch, (long) list.size());
 			batchHelper.updateLastDate(batch);
 			batchHelper.load(batch);

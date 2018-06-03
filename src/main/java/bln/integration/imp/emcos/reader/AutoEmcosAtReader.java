@@ -28,18 +28,18 @@ public class AutoEmcosAtReader extends AbstractReader<AtTimeValueRaw> {
 
 	@Override
 	@Transactional(propagation=Propagation.NOT_SUPPORTED, readOnly = true)
-	public void read(Long headerId) { super.read(headerId); }
+	public void read(Long headerId) {
+		super.read(headerId);
+	}
 
 	@Override
-	protected Long request(List<List<MeteringPointCfg>> groupsPoints, Batch batch) throws Exception {
-		Long recCount = 0l;
-		for (int i = 0; i < groupsPoints.size(); i++) {
-			logger.info("group of points: " + (i + 1));
-			List<AtTimeValueRaw> list = atEmcosImpGateway.request(batch.getWorkListHeader().getConfig(), groupsPoints.get(i));
-			batchHelper.atSave(list, batch);
-			recCount = recCount + list.size();
-		}
-		return recCount;
+	protected List<AtTimeValueRaw> request(Batch batch, List<MeteringPointCfg> points) throws Exception {
+		return atEmcosImpGateway.request(batch.getWorkListHeader().getConfig(), points);
+	}
+
+	@Override
+	protected void save(Batch batch, List<AtTimeValueRaw> list) {
+		batchHelper.save(batch, list, null);
 	}
 
 	@Override
@@ -47,11 +47,11 @@ public class AutoEmcosAtReader extends AbstractReader<AtTimeValueRaw> {
 		return batchHelper.buildPointsCfg(
 			header,
 			lastLoadInfo -> {
-				if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate()!=null) {
+				if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate()!=null)
 					return lastLoadInfo.getLastLoadDate()
 						.plusDays(1)
 						.truncatedTo(ChronoUnit.DAYS);
-				}
+
 				return LocalDate.now(ZoneId.of(header.getTimeZone()))
 					.withDayOfMonth(1)
 					.atStartOfDay();

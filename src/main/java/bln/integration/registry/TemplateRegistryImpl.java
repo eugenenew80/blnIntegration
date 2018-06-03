@@ -1,8 +1,6 @@
-package bln.integration.registry.impl;
+package bln.integration.registry;
 
-import bln.integration.registry.TemplateRegistry;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
@@ -180,15 +178,12 @@ public class TemplateRegistryImpl implements TemplateRegistry {
 		registerTemplate("EMCOS_EEML_BODY", template);
 	}
 	
-	
+	@Override
 	public void registerTemplate(String key, String template) {
 		templates.put(key, template);
 	}
 
-	public void unRegisterTemplate(String key, String template) {
-		templates.remove(key);
-	}
-		
+	@Override
 	public String getTemplate(String key) {
 		return templates.get(key);
 	}

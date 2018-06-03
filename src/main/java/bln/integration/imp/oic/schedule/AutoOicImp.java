@@ -22,7 +22,6 @@ public class AutoOicImp implements Runnable {
 	@Value("${bln.integration.imp.oic.schedule.autoOicImp}")
 	private boolean enable;
 
-	@SuppressWarnings("Duplicates")
 	public void run() {
 		if (!enable) return;
 
@@ -33,11 +32,11 @@ public class AutoOicImp implements Runnable {
 		);
 
 		List<Runnable> tasks = headers.stream()
-			.filter(h -> h.getParamType() == ParamTypeEnum.PT && h.getActive() && h.getConfig() != null && h.getStatus()!=BatchStatusEnum.P)
+			.filter(h -> h.getParamType() == ParamTypeEnum.PT && h.getActive() && h.getConfig()!= null && h.getStatus()!=BatchStatusEnum.P)
 			.map(h -> (Runnable) () -> autoOicPtReader.read(h.getId()))
 			.collect(toList());
 
-		submit(tasks);
+		if (!tasks.isEmpty()) submit(tasks);
 	}
 
 	private void submit(List<Runnable> tasks) {

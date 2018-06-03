@@ -39,12 +39,12 @@ public class ManualEmcosImp implements Runnable {
 			.collect(toList());
 
 		List<Runnable> ptTasks = headers.stream()
-			.filter(h -> h.getParamType() == ParamTypeEnum.AT && h.getActive() && h.getConfig() != null && h.getStatus()==BatchStatusEnum.W)
+			.filter(h -> h.getParamType() == ParamTypeEnum.PT && h.getActive() && h.getConfig() != null && h.getStatus()==BatchStatusEnum.W)
 			.map(h -> (Runnable) () -> manualEmcosPtReader.read(h.getId()))
 			.collect(toList());
 
-		submit(atTasks);
-		submit(ptTasks);
+		if (!atTasks.isEmpty()) submit(atTasks);
+		if (!ptTasks.isEmpty()) submit(ptTasks);
     }
 
 	private void submit(List<Runnable> tasks) {

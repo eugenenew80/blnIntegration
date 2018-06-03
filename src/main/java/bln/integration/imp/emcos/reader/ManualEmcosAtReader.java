@@ -50,7 +50,7 @@ public class ManualEmcosAtReader implements Reader<AtTimeValueRaw> {
 		Batch batch = batchHelper.createBatch(new Batch(header));
 		try {
 			List<AtTimeValueRaw> list = atEmcosImpGateway.request(header.getConfig(), points);
-			batchHelper.atSave(list, batch);
+			batchHelper.save(batch, list, null);
 			batchHelper.updateBatch(batch, (long) list.size());
 			batchHelper.updateLastDate(batch);
 			batchHelper.load(batch);

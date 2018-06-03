@@ -114,28 +114,27 @@ public class BatchHelper {
     }
 
     @Transactional(propagation=Propagation.REQUIRES_NEW)
-    public void atSave(List<AtTimeValueRaw> atList, Batch batch) {
+    public void save(Batch batch, List<AtTimeValueRaw> atList, List<PeriodTimeValueRaw> ptList) {
         logger.info("saving records started");
+
         LocalDateTime now = LocalDateTime.now();
-        for (AtTimeValueRaw t : atList) {
-            t.setBatch(batch);
-            t.setCreateDate(now);
+        if (batch.getParamType()==ParamTypeEnum.AT) {
+            for (AtTimeValueRaw t : atList) {
+                t.setBatch(batch);
+                t.setCreateDate(now);
+            }
+            atValueRepository.save(atList);
         }
-        atValueRepository.save(atList);
+        if (batch.getParamType()==ParamTypeEnum.PT) {
+            for (PeriodTimeValueRaw t : ptList) {
+                t.setBatch(batch);
+                t.setCreateDate(now);
+            }
+            ptValueRepository.save(ptList);
+        }
         logger.info("saving records completed");
     }
 
-    @Transactional(propagation=Propagation.REQUIRES_NEW)
-    public void ptSave(List<PeriodTimeValueRaw> ptList, Batch batch) {
-        logger.info("saving records started");
-        LocalDateTime now = LocalDateTime.now();
-        for (PeriodTimeValueRaw t : ptList) {
-            t.setBatch(batch);
-            t.setCreateDate(now);
-        }
-        ptValueRepository.save(ptList);
-        logger.info("saving records completed");
-    }
 
     @Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
     public List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, Function<LastLoadInfo, LocalDateTime> buildStartTime, Supplier<LocalDateTime> buildEndTime) {
@@ -207,9 +206,9 @@ public class BatchHelper {
             .values()
             .stream()
             .map(indices -> indices
-                    .stream()
-                    .map(points::get)
-                    .collect(toList()))
+                .stream()
+                .map(points::get)
+                .collect(toList()))
             .collect(toList());
     }
 }

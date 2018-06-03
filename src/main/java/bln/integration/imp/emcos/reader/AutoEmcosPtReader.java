@@ -29,20 +29,17 @@ public class AutoEmcosPtReader extends AbstractReader<PeriodTimeValueRaw> {
     @Override
 	@Transactional(propagation=Propagation.NOT_SUPPORTED, readOnly = true)
 	public void read(Long headerId) {
-		super.read(headerId);
+    	super.read(headerId);
     }
 
-    @SuppressWarnings("Duplicates")
 	@Override
-	protected Long request(List<List<MeteringPointCfg>> groupsPoints, Batch batch) throws Exception {
-		Long recCount = 0l;
-		for (int i = 0; i < groupsPoints.size(); i++) {
-			logger.info("group of points: " + (i + 1));
-			List<PeriodTimeValueRaw> list = ptEmcosImpGateway.request(batch.getWorkListHeader().getConfig(), groupsPoints.get(i));
-			batchHelper.ptSave(list, batch);
-			recCount = recCount + list.size();
-		}
-		return recCount;
+	protected List<PeriodTimeValueRaw> request(Batch batch, List<MeteringPointCfg> points) throws Exception {
+		return ptEmcosImpGateway.request(batch.getWorkListHeader().getConfig(), points);
+	}
+
+	@Override
+	protected void save(Batch batch, List<PeriodTimeValueRaw> list) {
+		batchHelper.save(batch, null, list);
 	}
 
 	@Override
