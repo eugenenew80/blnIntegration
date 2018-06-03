@@ -1,4 +1,4 @@
-package bln.integration.gateway.oic.impl;
+package bln.integration.imp.gateway.impl;
 
 import bln.integration.entity.ConnectionConfig;
 import bln.integration.entity.PeriodTimeValueRaw;
@@ -6,10 +6,10 @@ import bln.integration.entity.enums.InputMethodEnum;
 import bln.integration.entity.enums.ProcessingStatusEnum;
 import bln.integration.entity.enums.ReceivingMethodEnum;
 import bln.integration.entity.enums.SourceSystemEnum;
-import bln.integration.gateway.emcos.MeteringPointCfg;
-import bln.integration.gateway.oic.LogPointCfg;
-import bln.integration.gateway.oic.OicDataImpGateway;
-import bln.integration.gateway.oic.TelemetryDto;
+import bln.integration.imp.gateway.LogPointCfg;
+import bln.integration.imp.gateway.MeteringPointCfg;
+import bln.integration.imp.gateway.TelemetryDto;
+import bln.integration.imp.gateway.ValueGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -22,20 +22,12 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Service
-public class OicDataImpGatewayImpl implements OicDataImpGateway {
-    private static final Logger logger = LoggerFactory.getLogger(OicDataImpGatewayImpl.class);
+public class PtOicImpGateway implements ValueGateway<PeriodTimeValueRaw> {
+    private static final Logger logger = LoggerFactory.getLogger(PtOicImpGateway.class);
 
     @Override
-    public List<PeriodTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points, Integer interval)  {
+    public List<PeriodTimeValueRaw> request(ConnectionConfig config, List<MeteringPointCfg> points)  {
         logger.info("request started");
-
-        String arcType = "";
-        if (interval == 3600)
-            arcType = "MIN-60";
-        else if (interval == 900)
-            arcType = "MIN-15";
-        else if (interval == 180)
-            arcType = "MIN-3";
 
         List<LogPointCfg> logPoints = points.stream()
             .map(p -> {
@@ -54,7 +46,7 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-            String url = config.getUrl() + "/" + arcType;
+            String url = config.getUrl();
             HttpEntity<List<LogPointCfg>> requestEntity = new HttpEntity<>(logPoints, headers);
 
             ResponseEntity<List<TelemetryDto>> responseEntity = restTemplate.exchange(
@@ -64,7 +56,7 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
                 new ParameterizedTypeReference<List<TelemetryDto>>() {}
             );
 
-            list = mapToValue(responseEntity.getBody(), interval, points);
+            list = mapToValue(responseEntity.getBody(), points);
             logger.info("parseAnswer completed, count of rows: " + list.size());
             logger.info("request successfully completed");
         }
@@ -77,11 +69,10 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
         return list;
     }
 
-    private List<PeriodTimeValueRaw> mapToValue(List<TelemetryDto> telemetryList, Integer interval, List<MeteringPointCfg> points) {
+    private List<PeriodTimeValueRaw> mapToValue(List<TelemetryDto> telemetryList, List<MeteringPointCfg> points) {
         return telemetryList.stream()
             .map(t -> {
                 PeriodTimeValueRaw pt = new PeriodTimeValueRaw();
-                pt.setInterval(interval);
                 pt.setSourceMeteringPointCode(t.getLogPointId().toString());
                 pt.setMeteringDate(t.getDateTime());
                 pt.setVal(t.getVal());
@@ -100,6 +91,7 @@ public class OicDataImpGatewayImpl implements OicDataImpGateway {
                     pt.setSourceParamCode(pointCfg.getSourceParamCode());
                     pt.setMeteringPointId(pointCfg.getMeteringPointId());
                     pt.setParamId(pointCfg.getParamId());
+                    pt.setInterval(pointCfg.getInterval());
                 }
 
                 return pt;

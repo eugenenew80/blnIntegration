@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 
 @NamedStoredProcedureQueries({
     @NamedStoredProcedureQuery(
-        name = "LastLoadInfo.updateAtLastDate",
+        name = "LastLoadInfo.updateLastDate",
         procedureName = "media_raw_data_proc.at_last_load_info",
         parameters = { @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_batch_id", type = Long.class) }
     ),

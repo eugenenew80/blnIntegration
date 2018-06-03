@@ -1,8 +1,7 @@
-package bln.integration.gateway.ftp.impl;
+package bln.integration.exp.gateway;
 
 import bln.integration.entity.ConnectionConfig;
 import bln.integration.entity.ExportData;
-import bln.integration.gateway.ftp.FtpGateway;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;

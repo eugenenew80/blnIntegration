@@ -1,8 +1,10 @@
-package bln.integration.gateway.emcos.impl;
+package bln.integration.imp.gateway.impl;
 
 import bln.integration.entity.*;
 import bln.integration.entity.enums.*;
-import bln.integration.gateway.emcos.*;
+import bln.integration.http.HttpGatewayImpl;
+import bln.integration.imp.gateway.MeteringPointCfg;
+import bln.integration.imp.gateway.ValueGateway;
 import bln.integration.registry.*;
 import lombok.*;
 import org.slf4j.*;
@@ -22,9 +24,9 @@ import static java.util.Collections.emptyList;
 
 @Service
 @RequiredArgsConstructor
-public class AtTimeValueGatewayImpl implements AtTimeValueGateway {
+public class AtEmcosImpGateway implements ValueGateway<AtTimeValueRaw> {
     private final TemplateRegistry templateRegistry;
-    private static final Logger logger = LoggerFactory.getLogger(AtTimeValueGatewayImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(AtEmcosImpGateway.class);
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HH:mm:'00000'");
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 

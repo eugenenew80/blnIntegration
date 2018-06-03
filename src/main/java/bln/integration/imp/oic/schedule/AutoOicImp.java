@@ -3,14 +3,10 @@ package bln.integration.imp.oic.schedule;
 import bln.integration.entity.PeriodTimeValueRaw;
 import bln.integration.entity.WorkListHeader;
 import bln.integration.entity.enums.*;
-import bln.integration.imp.ImportRunner;
 import bln.integration.imp.Reader;
 import bln.integration.repo.WorkListHeaderRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -19,16 +15,14 @@ import static java.util.stream.Collectors.toList;
 
 @Component
 @RequiredArgsConstructor
-public class AutoOicDataImp implements ImportRunner {
+public class AutoOicImp implements Runnable {
 	private final Reader<PeriodTimeValueRaw> autoOicPtReader;
 	private final WorkListHeaderRepository headerRepository;
-	private static final Logger logger = LoggerFactory.getLogger(AutoOicDataImp.class);
 
 	@Value("${bln.integration.imp.oic.schedule.autoOicImp}")
 	private boolean enable;
 
 	@SuppressWarnings("Duplicates")
-	@Scheduled(cron = "0 42 */1 * * *")
 	public void run() {
 		if (!enable) return;
 

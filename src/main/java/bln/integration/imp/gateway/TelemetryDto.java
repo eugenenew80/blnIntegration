@@ -1,4 +1,4 @@
-package bln.integration.gateway.oic;
+package bln.integration.imp.gateway;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
@@ -14,5 +14,4 @@ public class TelemetryDto {
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dateTime;
-
 }

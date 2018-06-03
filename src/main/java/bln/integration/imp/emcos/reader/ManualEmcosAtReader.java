@@ -1,8 +1,8 @@
 package bln.integration.imp.emcos.reader;
 
 import bln.integration.entity.*;
-import bln.integration.gateway.emcos.AtTimeValueGateway;
-import bln.integration.gateway.emcos.MeteringPointCfg;
+import bln.integration.imp.gateway.ValueGateway;
+import bln.integration.imp.gateway.MeteringPointCfg;
 import bln.integration.imp.BatchHelper;
 import bln.integration.imp.Reader;
 import bln.integration.repo.WorkListHeaderRepository;
@@ -19,7 +19,7 @@ import java.util.List;
 public class ManualEmcosAtReader implements Reader<AtTimeValueRaw> {
     private static final Logger logger = LoggerFactory.getLogger(ManualEmcosAtReader.class);
 	private final WorkListHeaderRepository headerRepository;
-    private final AtTimeValueGateway valueGateway;
+	private final ValueGateway<AtTimeValueRaw> atEmcosImpGateway;
     private final BatchHelper batchHelper;
 
 	@Transactional(propagation=Propagation.NOT_SUPPORTED, readOnly = true)
@@ -49,11 +49,11 @@ public class ManualEmcosAtReader implements Reader<AtTimeValueRaw> {
 
 		Batch batch = batchHelper.createBatch(new Batch(header));
 		try {
-			List<AtTimeValueRaw> list = valueGateway.request(header.getConfig(), points);
+			List<AtTimeValueRaw> list = atEmcosImpGateway.request(header.getConfig(), points);
 			batchHelper.atSave(list, batch);
 			batchHelper.updateBatch(batch, (long) list.size());
-			batchHelper.updateAtLastDate(batch);
-			batchHelper.atLoad(batch);
+			batchHelper.updateLastDate(batch);
+			batchHelper.load(batch);
 		}
 		catch (Exception e) {
 			logger.error("read failed: " + e.getMessage());

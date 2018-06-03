@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface LastLoadInfoRepository extends JpaRepository<LastLoadInfo, Long> {
     @EntityGraph(value = "LastLoadInfo.allJoins" , type= EntityGraph.EntityGraphType.FETCH)
-    List<LastLoadInfo> findAllBySourceSystemCodeAAndParamTypeAAndInterval(
+    List<LastLoadInfo> findAllBySourceSystemCodeAndParamTypeAndInterval(
         SourceSystemEnum sourceSystemCode,
         ParamTypeEnum paramType,
         Integer interval
@@ -22,6 +22,6 @@ public interface LastLoadInfoRepository extends JpaRepository<LastLoadInfo, Long
     @Procedure(name = "LastLoadInfo.updatePtLastDate")
     void updatePtLastDate(@Param("p_batch_id") Long batchId);
 
-    @Procedure(name = "LastLoadInfo.updateAtLastDate")
+    @Procedure(name = "LastLoadInfo.updateLastDate")
     void updateAtLastDate(@Param("p_batch_id") Long batchId);
 }

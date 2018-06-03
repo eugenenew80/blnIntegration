@@ -1,10 +1,10 @@
 package bln.integration.imp.oic.reader;
 
 import bln.integration.entity.*;
-import bln.integration.gateway.emcos.MeteringPointCfg;
-import bln.integration.gateway.oic.OicDataImpGateway;
+import bln.integration.imp.AbstractReader;
+import bln.integration.imp.gateway.ValueGateway;
+import bln.integration.imp.gateway.MeteringPointCfg;
 import bln.integration.imp.BatchHelper;
-import bln.integration.imp.Reader;
 import bln.integration.repo.WorkListHeaderRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -20,66 +20,35 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AutoOicPtReader implements Reader<PeriodTimeValueRaw> {
+@Transactional
+public class AutoOicPtReader extends AbstractReader<PeriodTimeValueRaw> {
     private static final Logger logger = LoggerFactory.getLogger(AutoOicPtReader.class);
 	private final WorkListHeaderRepository headerRepository;
-    private final OicDataImpGateway oicImpGateway;
-    private final BatchHelper batchHelper;
+	private final BatchHelper batchHelper;
+	private final ValueGateway<PeriodTimeValueRaw> ptOicImpGateway;
+	private final Integer groupCount = 4000;
 
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	@Override
+	@Transactional(propagation=Propagation.NOT_SUPPORTED, readOnly = true)
 	public void read(Long headerId) {
-		logger.info("read started");
-		logger.info("headerId: " + headerId);
+		super.read(headerId);
+	}
 
-		WorkListHeader header = headerRepository.findOne(headerId);
-		if (header.getConfig() == null) {
-			logger.warn("Config is empty, request stopped");
-			return;
-		}
-
-		if (header==null) {
-			logger.info("Work list not found");
-			return;
-		}
-
-		List<WorkListLine> lines = header.getLines();
-		if (lines.size()==0) {
-			logger.info("List of lines is empty, import data stopped");
-			return;
-		}
-
-		LocalDateTime endDateTime = LocalDateTime.now(ZoneId.of(header.getTimeZone()))
-			.truncatedTo(ChronoUnit.HOURS);
-
-		List<MeteringPointCfg> points = buildPointsCfg(header, endDateTime);
-		if (points.size()==0) {
-			logger.info("List of points is empty, import data stopped");
-			return;
-		}
-
-		logger.info("url: " + header.getConfig().getUrl());
-		logger.info("user: " + header.getConfig().getUserName());
-
-		Batch batch = batchHelper.createBatch(new Batch(header));
-		try {
-			List<PeriodTimeValueRaw> list = oicImpGateway.request(header.getConfig(), points, header.getInterval());
+	@SuppressWarnings("Duplicates")
+	@Override
+	protected Long request(List<List<MeteringPointCfg>> groupsPoints, Batch batch) throws Exception {
+		Long recCount = 0l;
+		for (int i = 0; i < groupsPoints.size(); i++) {
+			logger.info("group of points: " + (i + 1));
+			List<PeriodTimeValueRaw> list = ptOicImpGateway.request(batch.getWorkListHeader().getConfig(), groupsPoints.get(i));
 			batchHelper.ptSave(list, batch);
-			batchHelper.updateBatch(batch, (long)list.size());
-			batchHelper.updatePtLastDate(batch);
-			batchHelper.ptLoad(batch);
+			recCount = recCount + list.size();
 		}
-		catch (Exception e) {
-			logger.error("read failed: " + e.getMessage());
-			batchHelper.errorBatch(batch, e);
-		}
-		finally {
-			System.gc();
-		}
+		return recCount;
+	}
 
-		logger.info("read completed");
-    }
-
-	private List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, LocalDateTime endDateTime) {
+	@Override
+	protected List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, LocalDateTime endDateTime) {
 		return batchHelper.buildPointsCfg(
 			header,
 			lastLoadInfo -> {
@@ -93,4 +62,16 @@ public class AutoOicPtReader implements Reader<PeriodTimeValueRaw> {
 			() -> endDateTime
 		);
 	}
+
+	@Override
+	protected Logger logger() { return logger; }
+
+	@Override
+	protected BatchHelper batchHelper() { return batchHelper; }
+
+	@Override
+	protected WorkListHeaderRepository headerRepository() { return headerRepository; }
+
+	@Override
+	protected Integer groupCount() { return groupCount; }
 }

@@ -1,4 +1,4 @@
-package bln.integration.gateway.emcos;
+package bln.integration.imp.gateway;
 
 import bln.integration.entity.ParameterConf;
 import lombok.Data;

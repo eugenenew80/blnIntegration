@@ -53,9 +53,6 @@ public class PeriodTimeValueRaw  {
 	private ProcessingStatusEnum status;
 
 	@Column
-	private Integer interval;
-
-	@Column
 	private Double val;
 
 	@ManyToOne
@@ -71,4 +68,7 @@ public class PeriodTimeValueRaw  {
 
 	@Column(name = "param_id")
 	private Long paramId;
+
+	@Column
+	private Integer interval;
 }

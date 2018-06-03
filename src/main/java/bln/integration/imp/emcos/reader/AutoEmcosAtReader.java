@@ -1,9 +1,10 @@
 package bln.integration.imp.emcos.reader;
 
 import bln.integration.entity.*;
-import bln.integration.gateway.emcos.*;
+import bln.integration.imp.AbstractReader;
+import bln.integration.imp.gateway.MeteringPointCfg;
+import bln.integration.imp.gateway.ValueGateway;
 import bln.integration.imp.BatchHelper;
-import bln.integration.imp.Reader;
 import bln.integration.repo.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -18,99 +19,31 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AutoEmcosAtReader implements Reader<AtTimeValueRaw> {
+public class AutoEmcosAtReader extends AbstractReader<AtTimeValueRaw> {
 	private static final Logger logger = LoggerFactory.getLogger(AutoEmcosAtReader.class);
-	private static final int groupCount = 500;
 	private final WorkListHeaderRepository headerRepository;
-	private final AtTimeValueGateway valueGateway;
 	private final BatchHelper batchHelper;
+	private final ValueGateway<AtTimeValueRaw> atEmcosImpGateway;
+	private final Integer groupCount = 500;
 
+	@Override
 	@Transactional(propagation=Propagation.NOT_SUPPORTED, readOnly = true)
-	public void read(Long headerId) {
-		logger.info("read started");
-		logger.info("headerId: " + headerId);
+	public void read(Long headerId) { super.read(headerId); }
 
-		WorkListHeader header = headerRepository.findOne(headerId);
-		if (header.getConfig() == null) {
-			logger.warn("Config is empty, request stopped");
-			return;
+	@Override
+	protected Long request(List<List<MeteringPointCfg>> groupsPoints, Batch batch) throws Exception {
+		Long recCount = 0l;
+		for (int i = 0; i < groupsPoints.size(); i++) {
+			logger.info("group of points: " + (i + 1));
+			List<AtTimeValueRaw> list = atEmcosImpGateway.request(batch.getWorkListHeader().getConfig(), groupsPoints.get(i));
+			batchHelper.atSave(list, batch);
+			recCount = recCount + list.size();
 		}
+		return recCount;
+	}
 
-		if (header == null) {
-			logger.info("Work list not found");
-			return;
-		}
-
-		List<WorkListLine> lines = header.getLines();
-		if (lines.size() == 0) {
-			logger.info("List of lines is empty, import data stopped");
-			return;
-		}
-
-		LocalDateTime endDateTime = LocalDate.now(ZoneId.of(header.getTimeZone()))
-			.atStartOfDay();
-
-		List<MeteringPointCfg> points = buildPointsCfg(header, endDateTime);
-		if (points.size() == 0) {
-			logger.info("List of points is empty, import data stopped");
-			return;
-		}
-
-		LastRequestedDate lastRequestedDate = batchHelper.getLastRequestedDate(header);
-
-		logger.info("url: " + header.getConfig().getUrl());
-		logger.info("user: " + header.getConfig().getUserName());
-		logger.info("lastRequestedDate: " + lastRequestedDate.getLastRequestedDate());
-
-		LocalDateTime requestedDateTime = lastRequestedDate.getLastRequestedDate().plusDays(1);
-		if (requestedDateTime.isAfter(endDateTime))
-			requestedDateTime=endDateTime;
-
-		while (!endDateTime.isBefore(requestedDateTime)) {
-			logger.info("batch requested date: " + requestedDateTime);
-
-			points = buildPointsCfg(header, requestedDateTime);
-			List<List<MeteringPointCfg>> groupsPoints = batchHelper.splitPointsCfg(points, groupCount);
-
-			Batch batch = batchHelper.createBatch(new Batch(header));
-			Long recCount = 0l;
-			try {
-				for (int i = 0; i < groupsPoints.size(); i++) {
-					logger.info("group of points: " + (i + 1));
-					List<AtTimeValueRaw> list = valueGateway.request(header.getConfig(), groupsPoints.get(i));
-					batchHelper.atSave(list, batch);
-					recCount = recCount + list.size();
-				}
-
-				batchHelper.updateBatch(batch, recCount);
-				batchHelper.updateAtLastDate(batch);
-				batchHelper.atLoad(batch);
-				if (recCount>0) {
-					lastRequestedDate.setLastRequestedDate(requestedDateTime);
-					batchHelper.updateLastRequestedDate(lastRequestedDate);
-				}
-			}
-			catch (Exception e) {
-				logger.error("read failed: " + e.getMessage());
-				batchHelper.errorBatch(batch, e);
-				break;
-			}
-			finally {
-				System.gc();
-			}
-
-			if (requestedDateTime.isEqual(endDateTime))
-				break;
-
-			requestedDateTime = requestedDateTime.plusDays(1);
-			if (requestedDateTime.isAfter(endDateTime))
-				requestedDateTime=endDateTime;
-		}
-
-		logger.info("read completed");
-    }
-
-	private List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, LocalDateTime endDateTime) {
+	@Override
+    protected List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, LocalDateTime endDateTime) {
 		return batchHelper.buildPointsCfg(
 			header,
 			lastLoadInfo -> {
@@ -126,4 +59,16 @@ public class AutoEmcosAtReader implements Reader<AtTimeValueRaw> {
 			() -> endDateTime
 		);
 	}
+
+	@Override
+	protected Logger logger() { return logger; }
+
+	@Override
+	protected BatchHelper batchHelper() { return batchHelper; }
+
+	@Override
+	protected WorkListHeaderRepository headerRepository() { return headerRepository; }
+
+	@Override
+	protected Integer groupCount() { return groupCount; }
 }

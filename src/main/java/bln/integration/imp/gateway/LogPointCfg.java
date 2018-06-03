@@ -1,4 +1,4 @@
-package bln.integration.gateway.oic;
+package bln.integration.imp.gateway;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -1,8 +1,8 @@
 package bln.integration.imp.emcos.reader;
 
 import bln.integration.entity.*;
-import bln.integration.gateway.emcos.MeteringPointCfg;
-import bln.integration.gateway.emcos.PeriodTimeValueImpGateway;
+import bln.integration.imp.gateway.ValueGateway;
+import bln.integration.imp.gateway.MeteringPointCfg;
 import bln.integration.imp.BatchHelper;
 import bln.integration.imp.Reader;
 import bln.integration.repo.WorkListHeaderRepository;
@@ -19,7 +19,7 @@ import java.util.List;
 public class ManualEmcosPtReader implements Reader<PeriodTimeValueRaw> {
     private static final Logger logger = LoggerFactory.getLogger(ManualEmcosPtReader.class);
 	private final WorkListHeaderRepository headerRepository;
-    private final PeriodTimeValueImpGateway valueGateway;
+	private final ValueGateway<PeriodTimeValueRaw> ptEmcosImpGateway;
     private final BatchHelper batchHelper;
 
 	@Transactional(propagation=Propagation.NOT_SUPPORTED, readOnly = true)
@@ -48,12 +48,13 @@ public class ManualEmcosPtReader implements Reader<PeriodTimeValueRaw> {
 		logger.info("user: " + header.getConfig().getUserName());
 
 		Batch batch = batchHelper.createBatch(new Batch(header));
+		//noinspection Duplicates
 		try {
-			List<PeriodTimeValueRaw> list = valueGateway.request(header.getConfig(), points);
+			List<PeriodTimeValueRaw> list = ptEmcosImpGateway.request(header.getConfig(), points);
 			batchHelper.ptSave(list, batch);
 			batchHelper.updateBatch(batch, (long) list.size());
-			batchHelper.updatePtLastDate(batch);
-			batchHelper.ptLoad(batch);
+			batchHelper.updateLastDate(batch);
+			batchHelper.load(batch);
 		}
 		catch (Exception e) {
 			logger.error("read failed: " + e.getMessage());

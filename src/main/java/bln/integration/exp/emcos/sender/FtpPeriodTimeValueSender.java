@@ -1,9 +1,9 @@
-package bln.integration.exp.ftp.sender;
+package bln.integration.exp.emcos.sender;
 
 import bln.integration.entity.*;
 import bln.integration.entity.enums.*;
 import bln.integration.exp.Sender;
-import bln.integration.gateway.ftp.FtpGateway;
+import bln.integration.exp.gateway.FtpGateway;
 import bln.integration.repo.BatchRepository;
 import bln.integration.repo.ExportDataRepository;
 import bln.integration.repo.WorkListHeaderRepository;

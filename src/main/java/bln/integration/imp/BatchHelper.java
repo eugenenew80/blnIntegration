@@ -4,7 +4,7 @@ import bln.integration.entity.*;
 import bln.integration.entity.enums.BatchStatusEnum;
 import bln.integration.entity.enums.ParamTypeEnum;
 import bln.integration.entity.enums.WorkListTypeEnum;
-import bln.integration.gateway.emcos.MeteringPointCfg;
+import bln.integration.imp.gateway.MeteringPointCfg;
 import bln.integration.repo.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -82,17 +82,28 @@ public class BatchHelper {
     }
 
     @Transactional(propagation=Propagation.REQUIRES_NEW)
-    public void updateAtLastDate(Batch batch) {
-        logger.info("updateAtLastDate started");
-        lastLoadInfoRepository.updateAtLastDate(batch.getId());
-        logger.info("updateAtLastDate completed");
+    public void updateLastDate(Batch batch) {
+        logger.info("updateLastDate started");
+
+        if (batch.getParamType()==ParamTypeEnum.AT)
+            lastLoadInfoRepository.updateAtLastDate(batch.getId());
+
+        if (batch.getParamType()==ParamTypeEnum.PT)
+            lastLoadInfoRepository.updatePtLastDate(batch.getId());
+
+        logger.info("updateLastDate completed");
     }
 
     @Transactional(propagation=Propagation.REQUIRES_NEW)
-    public void updatePtLastDate(Batch batch) {
-        logger.info("updateAtLastDate started");
-        lastLoadInfoRepository.updatePtLastDate(batch.getId());
-        logger.info("updateAtLastDate completed");
+    public void load(Batch batch) {
+        logger.info("ptLoad started");
+        if (batch.getParamType()==ParamTypeEnum.AT)
+            atValueRepository.load(batch.getId());
+
+        if (batch.getParamType()==ParamTypeEnum.PT)
+            ptValueRepository.load(batch.getId());
+
+        logger.info("ptLoad completed");
     }
 
     @Transactional(propagation=Propagation.REQUIRES_NEW)
@@ -126,30 +137,16 @@ public class BatchHelper {
         logger.info("saving records completed");
     }
 
-    @Transactional(propagation=Propagation.REQUIRES_NEW)
-    public void atLoad(Batch batch) {
-        logger.info("ptLoad started");
-        atValueRepository.load(batch.getId());
-        logger.info("ptLoad completed");
-    }
-
-    @Transactional(propagation=Propagation.REQUIRES_NEW)
-    public void ptLoad(Batch batch) {
-        logger.info("ptLoad started");
-        ptValueRepository.load(batch.getId());
-        logger.info("ptLoad completed");
-    }
-
     @Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
     public List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, Function<LastLoadInfo, LocalDateTime> buildStartTime, Supplier<LocalDateTime> buildEndTime) {
         entityManager.clear();
 
-        List<ParameterConf> parameters = parameterConfRepository.findAllBySourceSystemCodeAndParamTypeAAndInterval(
+        List<ParameterConf> parameters = parameterConfRepository.findAllBySourceSystemCodeAndParamTypeAndInterval(
             header.getSourceSystemCode(),
             header.getParamType(),
             header.getInterval()
         );
-        List<LastLoadInfo> lastLoadInfoList = lastLoadInfoRepository.findAllBySourceSystemCodeAAndParamTypeAAndInterval(
+        List<LastLoadInfo> lastLoadInfoList = lastLoadInfoRepository.findAllBySourceSystemCodeAndParamTypeAndInterval(
             header.getSourceSystemCode(),
             header.getParamType(),
             header.getInterval()

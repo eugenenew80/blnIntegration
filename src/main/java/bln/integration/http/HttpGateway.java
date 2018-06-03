@@ -1,4 +1,4 @@
-package bln.integration.gateway.emcos;
+package bln.integration.http;
 
 public interface HttpGateway {
     byte[] doRequest() throws Exception;

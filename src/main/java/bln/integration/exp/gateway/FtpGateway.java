@@ -1,4 +1,4 @@
-package bln.integration.gateway.ftp;
+package bln.integration.exp.gateway;
 
 import bln.integration.entity.ConnectionConfig;
 import bln.integration.entity.ExportData;

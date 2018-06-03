@@ -1,4 +1,4 @@
-package bln.integration.gateway;
+package bln.integration.compress;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Service;

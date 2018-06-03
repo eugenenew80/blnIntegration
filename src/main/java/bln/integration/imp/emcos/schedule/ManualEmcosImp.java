@@ -4,14 +4,10 @@ import bln.integration.entity.AtTimeValueRaw;
 import bln.integration.entity.PeriodTimeValueRaw;
 import bln.integration.entity.WorkListHeader;
 import bln.integration.entity.enums.*;
-import bln.integration.imp.ImportRunner;
 import bln.integration.imp.Reader;
 import bln.integration.repo.WorkListHeaderRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -20,17 +16,14 @@ import static java.util.stream.Collectors.toList;
 
 @Component
 @RequiredArgsConstructor
-public class ManualEmcosImp implements ImportRunner {
+public class ManualEmcosImp implements Runnable {
 	private final Reader<AtTimeValueRaw> manualEmcosAtReader;
 	private final Reader<PeriodTimeValueRaw> manualEmcosPtReader;
 	private final WorkListHeaderRepository headerRepository;
-	private static final Logger logger = LoggerFactory.getLogger(ManualEmcosImp.class);
 
 	@Value("${bln.integration.imp.emcos.schedule.manualEmcosImp}")
 	private boolean enable;
 
-	@SuppressWarnings("Duplicates")
-	@Scheduled(cron = "0 */1 * * * *")
 	public void run() {
 		if (!enable) return;
 
