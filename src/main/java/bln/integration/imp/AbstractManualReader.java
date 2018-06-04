@@ -15,6 +15,10 @@ public abstract class AbstractManualReader<T> implements Reader<T> {
         logger().info("headerId: " + headerId);
 
         WorkListHeader header = headerRepo().findOne(headerId);
+        if (header == null) {
+            logger().warn("Work list header not found");
+            return;
+        }
         if (header.getConfig() == null) {
             logger().warn("Config is empty, request stopped");
             return;
@@ -24,7 +28,6 @@ public abstract class AbstractManualReader<T> implements Reader<T> {
             logger().warn("Start Date is empty, request stopped");
             return;
         }
-
         if (header.getEndDate() == null) {
             logger().warn("End Date is empty, request stopped");
             return;

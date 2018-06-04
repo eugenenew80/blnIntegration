@@ -18,13 +18,12 @@ public abstract class AbstractAutoReader<T> implements Reader<T> {
         logger().info("headerId: " + headerId);
 
         WorkListHeader header = headerRepo().findOne(headerId);
-        if (header.getConfig() == null) {
-            logger().warn("Config is empty, request stopped");
-            return;
-        }
-
         if (header == null) {
             logger().warn("Work list header not found");
+            return;
+        }
+        if (header.getConfig() == null) {
+            logger().warn("Config is empty, request stopped");
             return;
         }
 

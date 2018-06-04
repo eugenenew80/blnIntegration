@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-
 @Service
 public class FtpGatewayImpl implements FtpGateway {
     private static final Logger logger = LoggerFactory.getLogger(FtpGatewayImpl.class);
