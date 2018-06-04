@@ -49,6 +49,8 @@ public abstract class AbstractManualReader<T> implements Reader<T> {
 
         Batch batch = batchHelper().createBatch(new Batch(header));
         try {
+            logger().debug(points.toString());
+
             List<T> list = request(batch, points);
             save(batch, list);
             batchHelper().updateBatch(batch, (long) list.size());
