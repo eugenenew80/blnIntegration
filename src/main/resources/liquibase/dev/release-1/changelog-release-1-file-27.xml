@@ -344,7 +344,7 @@
         <comment>add column in table: media_last_load_info</comment>
         <addColumn schemaName="apps" tableName="media_last_load_info">
             <column name="interval" type="number">
-                <constraints nullable="true"/>
+                <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
@@ -424,5 +424,36 @@
                 <constraints nullable="false"/>
             </column>
         </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-175" logicalFilePath="path-independent" author="eugene">
+        <comment>dropping index from table: media_period_time_values_raw</comment>
+        <dropIndex schemaName="apps" tableName="media_period_time_values_raw" indexName="idx_media_period_time_values_raw_1" />
+    </changeSet>
+
+    <changeSet id="media-eug-176" logicalFilePath="path-independent" author="eugene">
+        <comment>creating index for table: media_period_time_values_raw</comment>
+        <createIndex indexName="idx_media_period_time_values_raw_1" schemaName="apps" tableName="media_period_time_values_raw">
+            <column name="metering_point_id"  type="number"/>
+            <column name="param_id"           type="number"/>
+            <column name="metering_date"      type="timestamp"/>
+            <column name="interval"           type="number"/>
+            <column name="batch_id"           type="number"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="media-eug-177" logicalFilePath="path-independent" author="eugene">
+        <comment>dropping index from table: media_at_time_values_raw</comment>
+        <dropIndex schemaName="apps" tableName="media_at_time_values_raw" indexName="idx_media_at_time_values_raw_1" />
+    </changeSet>
+
+    <changeSet id="media-eug-178" logicalFilePath="path-independent" author="eugene">
+        <comment>creating index for table: idx_media_at_time_values_raw_1</comment>
+        <createIndex indexName="idx_media_at_time_values_raw_1" schemaName="apps" tableName="media_at_time_values_raw">
+            <column name="metering_point_id"  type="number"/>
+            <column name="param_id"           type="number"/>
+            <column name="metering_date"      type="timestamp"/>
+            <column name="batch_id"           type="number"/>
+        </createIndex>
     </changeSet>
 </databaseChangeLog>

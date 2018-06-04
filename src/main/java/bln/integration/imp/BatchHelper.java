@@ -96,14 +96,14 @@ public class BatchHelper {
 
     @Transactional(propagation=Propagation.REQUIRES_NEW)
     public void load(Batch batch) {
-        logger.info("ptLoad started");
+        logger.info("load started");
         if (batch.getParamType()==ParamTypeEnum.AT)
             atValueRepository.load(batch.getId());
 
         if (batch.getParamType()==ParamTypeEnum.PT)
             ptValueRepository.load(batch.getId());
 
-        logger.info("ptLoad completed");
+        logger.info("load completed");
     }
 
     @Transactional(propagation=Propagation.REQUIRES_NEW)
