@@ -11,8 +11,6 @@ import javax.persistence.*;
 @Immutable
 public class WorkListLine  {
     @Id
-    @SequenceGenerator(name="media_work_list_lines_s", sequenceName = "media_work_list_lines_s", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "media_work_list_lines_s")
     private Long id;
 
     @ManyToOne

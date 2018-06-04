@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface ExportDataRepository extends JpaRepository<ExportData, Long> {
+public interface ExportDataRepo extends JpaRepository<ExportData, Long> {
     List<ExportData> findAllBySourceMeteringPointCodeAndMeteringDateBetween(
         String sourceMeteringPointCode,
         LocalDateTime startDate,

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ParameterConfRepository extends JpaRepository<ParameterConf, Long> {
+public interface ParameterConfRepo extends JpaRepository<ParameterConf, Long> {
     @EntityGraph(value = "ParameterConf.allJoins" , type= EntityGraph.EntityGraphType.FETCH)
     List<ParameterConf> findAllBySourceSystemCodeAndParamTypeAndInterval(
         SourceSystemEnum sourceSystemCode,

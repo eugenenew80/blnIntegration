@@ -4,7 +4,7 @@ import bln.integration.entity.Batch;
 import bln.integration.entity.WorkListHeader;
 import bln.integration.entity.WorkListLine;
 import bln.integration.imp.gateway.MeteringPointCfg;
-import bln.integration.repo.WorkListHeaderRepository;
+import bln.integration.repo.WorkListHeaderRepo;
 import org.slf4j.Logger;
 import java.util.List;
 
@@ -14,7 +14,7 @@ public abstract class AbstractManualReader<T> implements Reader<T> {
         logger().info("read started");
         logger().info("headerId: " + headerId);
 
-        WorkListHeader header = headerRepository().findOne(headerId);
+        WorkListHeader header = headerRepo().findOne(headerId);
         if (header.getConfig() == null) {
             logger().warn("Config is empty, request stopped");
             return;
@@ -53,12 +53,12 @@ public abstract class AbstractManualReader<T> implements Reader<T> {
 
             List<T> list = request(batch, points);
             save(batch, list);
-            batchHelper().updateBatch(batch, (long) list.size());
+            batchHelper().successBatch(batch, (long) list.size());
             batchHelper().updateLastDate(batch);
             batchHelper().load(batch);
         }
         catch (Exception e) {
-            logger().error("read failed: " + e.getMessage());
+            logger().error("read failed: " + e);
             batchHelper().errorBatch(batch, e);
         }
         finally {
@@ -78,5 +78,5 @@ public abstract class AbstractManualReader<T> implements Reader<T> {
 
     protected  abstract BatchHelper batchHelper();
 
-    protected  abstract WorkListHeaderRepository headerRepository();
+    protected  abstract WorkListHeaderRepo headerRepo();
 }

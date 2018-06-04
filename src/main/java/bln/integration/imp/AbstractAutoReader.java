@@ -3,9 +3,9 @@ package bln.integration.imp;
 import bln.integration.entity.*;
 import bln.integration.entity.enums.ParamTypeEnum;
 import bln.integration.imp.gateway.MeteringPointCfg;
-import bln.integration.repo.WorkListHeaderRepository;
+import bln.integration.repo.WorkListHeaderRepo;
 import org.slf4j.Logger;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -17,7 +17,7 @@ public abstract class AbstractAutoReader<T> implements Reader<T> {
         logger().info("read started");
         logger().info("headerId: " + headerId);
 
-        WorkListHeader header = headerRepository().findOne(headerId);
+        WorkListHeader header = headerRepo().findOne(headerId);
         if (header.getConfig() == null) {
             logger().warn("Config is empty, request stopped");
             return;
@@ -77,7 +77,7 @@ public abstract class AbstractAutoReader<T> implements Reader<T> {
                     recCount = recCount + list.size();
                 }
 
-                batchHelper().updateBatch(batch, recCount);
+                batchHelper().successBatch(batch, recCount);
                 batchHelper().updateLastDate(batch);
                 batchHelper().load(batch);
                 if (recCount>0) {
@@ -86,7 +86,7 @@ public abstract class AbstractAutoReader<T> implements Reader<T> {
                 }
             }
             catch (Exception e) {
-                logger().error("read failed: " + e.getMessage());
+                logger().error("read failed: " + e);
                 batchHelper().errorBatch(batch, e);
                 break;
             }
@@ -115,7 +115,7 @@ public abstract class AbstractAutoReader<T> implements Reader<T> {
 
     protected  abstract BatchHelper batchHelper();
 
-    protected  abstract WorkListHeaderRepository headerRepository();
+    protected  abstract WorkListHeaderRepo headerRepo();
 
     protected  abstract Integer groupCount();
 }

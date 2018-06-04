@@ -5,7 +5,7 @@ import bln.integration.imp.AbstractAutoReader;
 import bln.integration.imp.gateway.ValueGateway;
 import bln.integration.imp.gateway.MeteringPointCfg;
 import bln.integration.imp.BatchHelper;
-import bln.integration.repo.WorkListHeaderRepository;
+import bln.integration.repo.WorkListHeaderRepo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ import java.util.List;
 @Transactional
 public class AutoOicPtReader extends AbstractAutoReader<PeriodTimeValueRaw> {
     private static final Logger logger = LoggerFactory.getLogger(AutoOicPtReader.class);
-	private final WorkListHeaderRepository headerRepository;
+	private final WorkListHeaderRepo headerRepo;
 	private final BatchHelper batchHelper;
 	private final ValueGateway<PeriodTimeValueRaw> ptOicImpGateway;
 	private final Integer groupCount = 4000;
@@ -49,12 +49,14 @@ public class AutoOicPtReader extends AbstractAutoReader<PeriodTimeValueRaw> {
 		return batchHelper.buildPointsCfg(
 			header,
 			lastLoadInfo -> {
-				if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate()!=null) {
-					LocalDateTime lastLoadDate = lastLoadInfo.getLastLoadDate();
-					return lastLoadDate.truncatedTo(ChronoUnit.HOURS).plusHours(1);
-				}
-				LocalDate now = LocalDate.now(ZoneId.of(header.getTimeZone()));
-				return now.minusDays(now.getDayOfMonth()-1).atStartOfDay();
+				if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate()!=null)
+					return lastLoadInfo.getLastLoadDate()
+						.plusHours(1)
+						.truncatedTo(ChronoUnit.HOURS);
+
+				return LocalDate.now(ZoneId.of(header.getTimeZone()))
+					.withDayOfMonth(1)
+					.atStartOfDay();
 			},
 			() -> endDateTime
 		);
@@ -67,7 +69,7 @@ public class AutoOicPtReader extends AbstractAutoReader<PeriodTimeValueRaw> {
 	protected BatchHelper batchHelper() { return batchHelper; }
 
 	@Override
-	protected WorkListHeaderRepository headerRepository() { return headerRepository; }
+	protected WorkListHeaderRepo headerRepo() { return headerRepo; }
 
 	@Override
 	protected Integer groupCount() { return groupCount; }

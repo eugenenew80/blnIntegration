@@ -4,9 +4,9 @@ import bln.integration.entity.*;
 import bln.integration.entity.enums.*;
 import bln.integration.exp.Sender;
 import bln.integration.exp.gateway.FtpGateway;
-import bln.integration.repo.BatchRepository;
-import bln.integration.repo.ExportDataRepository;
-import bln.integration.repo.WorkListHeaderRepository;
+import bln.integration.repo.BatchRepo;
+import bln.integration.repo.ExportDataRepo;
+import bln.integration.repo.WorkListHeaderRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,11 +148,11 @@ public class FtpPeriodTimeValueSender implements Sender<PeriodTimeValueRaw> {
     private FtpGateway ftpGateway;
 
     @Autowired
-    private WorkListHeaderRepository headerService;
+    private WorkListHeaderRepo headerService;
 
     @Autowired
-    private BatchRepository batchService;
+    private BatchRepo batchService;
 
     @Autowired
-    private ExportDataRepository exportDataRepository;
+    private ExportDataRepo exportDataRepository;
 }

@@ -30,8 +30,6 @@ import java.time.LocalDateTime;
 })
 public class LastLoadInfo {
     @Id
-    @SequenceGenerator(name="media_last_load_info_s", sequenceName = "media_last_load_info_s", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "media_last_load_info_s")
     private Long id;
 
     @Column(name="source_system_code")

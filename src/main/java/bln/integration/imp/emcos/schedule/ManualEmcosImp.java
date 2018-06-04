@@ -5,7 +5,7 @@ import bln.integration.entity.PeriodTimeValueRaw;
 import bln.integration.entity.WorkListHeader;
 import bln.integration.entity.enums.*;
 import bln.integration.imp.Reader;
-import bln.integration.repo.WorkListHeaderRepository;
+import bln.integration.repo.WorkListHeaderRepo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class ManualEmcosImp implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(ManualEmcosImp.class);
 	private final Reader<AtTimeValueRaw> manualEmcosAtReader;
 	private final Reader<PeriodTimeValueRaw> manualEmcosPtReader;
-	private final WorkListHeaderRepository headerRepository;
+	private final WorkListHeaderRepo headerRepository;
 	public  final AtomicBoolean isEnable = new AtomicBoolean(true);
 	private boolean isRunning = false;
 
@@ -53,7 +53,7 @@ public class ManualEmcosImp implements Runnable {
 		}
 
 		catch (Exception e) {
-			logger.error("run failed: " + e.getMessage());
+			logger.error("run failed: " + e);
 		}
 
 		finally {

@@ -1,28 +1,19 @@
 package bln.integration.imp;
 
 import bln.integration.entity.*;
-import bln.integration.entity.enums.BatchStatusEnum;
-import bln.integration.entity.enums.ParamTypeEnum;
-import bln.integration.entity.enums.WorkListTypeEnum;
+import bln.integration.entity.enums.*;
 import bln.integration.imp.gateway.MeteringPointCfg;
 import bln.integration.repo.*;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.jpa.repository.Lock;
+import org.slf4j.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import java.util.function.*;
+import static java.util.stream.Collectors.*;
 import static java.util.stream.IntStream.range;
 
 @Service
@@ -30,29 +21,28 @@ import static java.util.stream.IntStream.range;
 @Transactional
 public class BatchHelper {
     private static final Logger logger = LoggerFactory.getLogger(BatchHelper.class);
-    private final WorkListHeaderRepository headerRepository;
-    private final BatchRepository batchRepository;
-    private final LastLoadInfoRepository lastLoadInfoRepository;
-    private final LastRequestedDateRepository lastRequestedDateRepository;
-    private final AtTimeValueRawRepository atValueRepository;
-    private final PeriodTimeValueRawRepository ptValueRepository;
-    private final ParameterConfRepository parameterConfRepository;
+    private final WorkListHeaderRepo headerRepo;
+    private final BatchRepo batchRepo;
+    private final LastLoadInfoRepo lastLoadInfoRepo;
+    private final LastRequestedDateRepo lastRequestedDateRepo;
+    private final AtTimeValueRawRepo atValueRepo;
+    private final PeriodTimeValueRawRepo ptValueRepo;
+    private final ParameterConfRepo parameterConfRepo;
     private final EntityManager entityManager;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Batch createBatch(Batch batch) {
-        batch = batchRepository.save(batch);
+        batch = batchRepo.save(batch);
         updateHeader(batch);
         return batch;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Batch updateBatch(Batch batch, Long recCount) {
+    public Batch successBatch(Batch batch, Long recCount) {
         batch.setEndDate(LocalDateTime.now());
         batch.setStatus(BatchStatusEnum.C);
         batch.setRecCount(recCount);
-        batch = batchRepository.save(batch);
-
+        batch = batchRepo.save(batch);
         updateHeader(batch);
         return batch;
     }
@@ -62,22 +52,20 @@ public class BatchHelper {
         batch.setEndDate(LocalDateTime.now());
         batch.setStatus(BatchStatusEnum.E);
         batch.setErrMsg(e.getMessage());
-        batch = batchRepository.save(batch);
-
+        batch = batchRepo.save(batch);
         updateHeader(batch);
         return batch;
     }
 
-    @Lock(LockModeType.WRITE)
     private WorkListHeader updateHeader(Batch batch) {
         WorkListHeader header = batch.getWorkListHeader();
         if (header==null) return null;
 
-        header = headerRepository.findOne(header.getId());
+        header = headerRepo.findOne(header.getId());
         header.setBatch(batch);
         header.setStatus(batch.getStatus());
 
-        headerRepository.save(header);
+        headerRepo.save(header);
         return header;
     }
 
@@ -86,10 +74,10 @@ public class BatchHelper {
         logger.debug("updateLastDate started");
 
         if (batch.getParamType()==ParamTypeEnum.AT)
-            lastLoadInfoRepository.updateAtLastDate(batch.getId());
+            lastLoadInfoRepo.updateAtLastDate(batch.getId());
 
         if (batch.getParamType()==ParamTypeEnum.PT)
-            lastLoadInfoRepository.updatePtLastDate(batch.getId());
+            lastLoadInfoRepo.updatePtLastDate(batch.getId());
 
         logger.debug("updateLastDate completed");
     }
@@ -99,17 +87,17 @@ public class BatchHelper {
         logger.debug("load started");
 
         if (batch.getParamType()==ParamTypeEnum.AT)
-            atValueRepository.load(batch.getId());
+            atValueRepo.load(batch.getId());
 
         if (batch.getParamType()==ParamTypeEnum.PT)
-            ptValueRepository.load(batch.getId());
+            ptValueRepo.load(batch.getId());
 
         logger.debug("load completed");
     }
 
     @Transactional(propagation=Propagation.REQUIRES_NEW)
     public void updateLastRequestedDate(LastRequestedDate lastRequestedDate) {
-        lastRequestedDateRepository.save(lastRequestedDate);
+        lastRequestedDateRepo.save(lastRequestedDate);
     }
 
     @Transactional(propagation=Propagation.REQUIRES_NEW)
@@ -122,14 +110,14 @@ public class BatchHelper {
                 t.setBatch(batch);
                 t.setCreateDate(now);
             }
-            atValueRepository.save(atList);
+            atValueRepo.save(atList);
         }
         if (batch.getParamType()==ParamTypeEnum.PT) {
             for (PeriodTimeValueRaw t : ptList) {
                 t.setBatch(batch);
                 t.setCreateDate(now);
             }
-            ptValueRepository.save(ptList);
+            ptValueRepo.save(ptList);
         }
 
         logger.debug("saving records completed");
@@ -139,13 +127,13 @@ public class BatchHelper {
     public List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, Function<LastLoadInfo, LocalDateTime> buildStartTime, Supplier<LocalDateTime> buildEndTime) {
         entityManager.clear();
 
-        List<ParameterConf> parameters = parameterConfRepository.findAllBySourceSystemCodeAndParamTypeAndInterval(
+        List<ParameterConf> parameters = parameterConfRepo.findAllBySourceSystemCodeAndParamTypeAndInterval(
             header.getSourceSystemCode(),
             header.getParamType(),
             header.getInterval()
         );
 
-        List<LastLoadInfo> lastLoadInfoList = lastLoadInfoRepository.findAllBySourceSystemCodeAndParamTypeAndInterval(
+        List<LastLoadInfo> lastLoadInfoList = lastLoadInfoRepo.findAllBySourceSystemCodeAndParamTypeAndInterval(
             header.getSourceSystemCode(),
             header.getParamType(),
             header.getInterval()
@@ -184,7 +172,7 @@ public class BatchHelper {
 
     @Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
     public LastRequestedDate getLastRequestedDate(WorkListHeader header) {
-        return  lastRequestedDateRepository.findAllByWorkListHeaderId(header.getId())
+        return  lastRequestedDateRepo.findAllByWorkListHeaderId(header.getId())
             .stream()
             .findFirst()
             .orElseGet(() -> {

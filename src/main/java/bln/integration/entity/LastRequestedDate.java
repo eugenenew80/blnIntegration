@@ -1,6 +1,7 @@
 package bln.integration.entity;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of= {"id"})
 @Entity
 @Table(name = "media_last_requested_dates")
+@DynamicUpdate
 public class LastRequestedDate {
     @Id
     @SequenceGenerator(name="media_last_requested_dates_s", sequenceName = "media_last_requested_dates_s", allocationSize=1)

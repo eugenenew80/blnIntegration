@@ -4,8 +4,6 @@ import bln.integration.entity.enums.*;
 import bln.integration.jpa.BooleanToIntConverter;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,8 +19,6 @@ import java.util.List;
 })
 public class WorkListHeader {
     @Id
-    @SequenceGenerator(name="media_work_list_headers_s", sequenceName = "media_work_list_headers_s", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "media_work_list_headers_s")
     private Long id;
 
     @Column
@@ -57,7 +53,6 @@ public class WorkListHeader {
 
     @ManyToOne
     @JoinColumn(name="batch_id")
-    @NotFound(action = NotFoundAction.IGNORE)
     private Batch batch;
 
     @Column(name = "start_date")

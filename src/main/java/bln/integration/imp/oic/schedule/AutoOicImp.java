@@ -4,7 +4,7 @@ import bln.integration.entity.PeriodTimeValueRaw;
 import bln.integration.entity.WorkListHeader;
 import bln.integration.entity.enums.*;
 import bln.integration.imp.Reader;
-import bln.integration.repo.WorkListHeaderRepository;
+import bln.integration.repo.WorkListHeaderRepo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.toList;
 public class AutoOicImp implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(AutoOicImp.class);
 	private final Reader<PeriodTimeValueRaw> autoOicPtReader;
-	private final WorkListHeaderRepository headerRepository;
+	private final WorkListHeaderRepo headerRepo;
 	public  final AtomicBoolean isEnable = new AtomicBoolean(true);
 	private boolean isRunning = false;
 
@@ -30,7 +30,7 @@ public class AutoOicImp implements Runnable {
 		try {
 			isRunning = true;
 
-			List<WorkListHeader> headers = headerRepository.findAllBySourceSystemCodeAndDirectionAndWorkListType(
+			List<WorkListHeader> headers = headerRepo.findAllBySourceSystemCodeAndDirectionAndWorkListType(
 				SourceSystemEnum.OIC,
 				DirectionEnum.IMPORT,
 				WorkListTypeEnum.SYS
@@ -44,7 +44,7 @@ public class AutoOicImp implements Runnable {
 			submit(tasks);
 		}
 		catch (Exception e) {
-			logger.error("run failed: " + e.getMessage());
+			logger.error("run failed: " + e);
 		}
 		finally {
 			isRunning = false;

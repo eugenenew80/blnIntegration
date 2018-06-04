@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface WorkListHeaderRepository extends JpaRepository<WorkListHeader, Long> {
+public interface WorkListHeaderRepo extends JpaRepository<WorkListHeader, Long> {
     @EntityGraph(value = "WorkListHeader.allJoins" , type= EntityGraph.EntityGraphType.FETCH)
     List<WorkListHeader> findAllBySourceSystemCodeAndDirectionAndWorkListType(
         SourceSystemEnum sourceSystemCode,

@@ -3,7 +3,7 @@ package bln.integration.imp.emcos.schedule;
 import bln.integration.entity.*;
 import bln.integration.entity.enums.*;
 import bln.integration.imp.*;
-import bln.integration.repo.WorkListHeaderRepository;
+import bln.integration.repo.WorkListHeaderRepo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ public class AutoEmcosImp implements Runnable  {
 	private static final Logger logger = LoggerFactory.getLogger(AutoEmcosImp.class);
 	private final Reader<AtTimeValueRaw> autoEmcosAtReader;
 	private final Reader<PeriodTimeValueRaw> autoEmcosPtReader;
-	private final WorkListHeaderRepository headerRepository;
+	private final WorkListHeaderRepo headerRepo;
 	public  final AtomicBoolean isEnable = new AtomicBoolean(true);
 	private boolean isRunning = false;
 
@@ -29,7 +29,7 @@ public class AutoEmcosImp implements Runnable  {
 		try {
 			isRunning = true;
 
-			List<WorkListHeader> headers = headerRepository.findAllBySourceSystemCodeAndDirectionAndWorkListType(
+			List<WorkListHeader> headers = headerRepo.findAllBySourceSystemCodeAndDirectionAndWorkListType(
 				SourceSystemEnum.EMCOS,
 				DirectionEnum.IMPORT,
 				WorkListTypeEnum.SYS
@@ -50,7 +50,7 @@ public class AutoEmcosImp implements Runnable  {
 		}
 
 		catch (Exception e) {
-			logger.error("run failed: " + e.getMessage());
+			logger.error("run failed: " + e);
 		}
 
 		finally {

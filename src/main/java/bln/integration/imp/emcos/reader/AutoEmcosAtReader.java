@@ -21,7 +21,7 @@ import java.util.*;
 @Transactional
 public class AutoEmcosAtReader extends AbstractAutoReader<AtTimeValueRaw> {
 	private static final Logger logger = LoggerFactory.getLogger(AutoEmcosAtReader.class);
-	private final WorkListHeaderRepository headerRepository;
+	private final WorkListHeaderRepo headerRepo;
 	private final BatchHelper batchHelper;
 	private final ValueGateway<AtTimeValueRaw> atEmcosImpGateway;
 	private final Integer groupCount = 500;
@@ -67,7 +67,7 @@ public class AutoEmcosAtReader extends AbstractAutoReader<AtTimeValueRaw> {
 	protected BatchHelper batchHelper() { return batchHelper; }
 
 	@Override
-	protected WorkListHeaderRepository headerRepository() { return headerRepository; }
+	protected WorkListHeaderRepo headerRepo() { return headerRepo; }
 
 	@Override
 	protected Integer groupCount() { return groupCount; }

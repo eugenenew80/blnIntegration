@@ -14,12 +14,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Batch  {
     public Batch(WorkListHeader header) {
-        this.workListHeader = header;
-        this.sourceSystemCode = header.getSourceSystemCode();
-        this.direction = header.getDirection();
-        this.paramType = header.getParamType();
-        this.status = BatchStatusEnum.P;
-        this.startDate = LocalDateTime.now();
+        workListHeader = header;
+        sourceSystemCode = header.getSourceSystemCode();
+        direction = header.getDirection();
+        paramType = header.getParamType();
+        status = BatchStatusEnum.P;
+        startDate = LocalDateTime.now();
     }
 
     @Id

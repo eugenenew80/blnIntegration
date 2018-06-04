@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AtTimeValueRawRepository extends JpaRepository<AtTimeValueRaw, Long> {
+public interface AtTimeValueRawRepo extends JpaRepository<AtTimeValueRaw, Long> {
     @Procedure(name = "AtTimeValueRaw.load")
     void load(@Param("p_batch_id") Long batchId);
 }

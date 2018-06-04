@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LastLoadInfoRepository extends JpaRepository<LastLoadInfo, Long> {
+public interface LastLoadInfoRepo extends JpaRepository<LastLoadInfo, Long> {
     @EntityGraph(value = "LastLoadInfo.allJoins" , type= EntityGraph.EntityGraphType.FETCH)
     List<LastLoadInfo> findAllBySourceSystemCodeAndParamTypeAndInterval(
         SourceSystemEnum sourceSystemCode,

@@ -5,7 +5,7 @@ import bln.integration.imp.AbstractManualReader;
 import bln.integration.imp.gateway.ValueGateway;
 import bln.integration.imp.gateway.MeteringPointCfg;
 import bln.integration.imp.BatchHelper;
-import bln.integration.repo.WorkListHeaderRepository;
+import bln.integration.repo.WorkListHeaderRepo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ManualEmcosAtReader extends AbstractManualReader<AtTimeValueRaw> {
     private static final Logger logger = LoggerFactory.getLogger(ManualEmcosAtReader.class);
-	private final WorkListHeaderRepository headerRepository;
+	private final WorkListHeaderRepo headerRepo;
 	private final ValueGateway<AtTimeValueRaw> atEmcosImpGateway;
     private final BatchHelper batchHelper;
 
@@ -50,5 +50,5 @@ public class ManualEmcosAtReader extends AbstractManualReader<AtTimeValueRaw> {
 	protected BatchHelper batchHelper() { return batchHelper; }
 
 	@Override
-	protected WorkListHeaderRepository headerRepository() { return headerRepository; }
+	protected WorkListHeaderRepo headerRepo() { return headerRepo; }
 }

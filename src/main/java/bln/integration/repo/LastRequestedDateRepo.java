@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LastRequestedDateRepository extends JpaRepository<LastRequestedDate, Long> {
+public interface LastRequestedDateRepo extends JpaRepository<LastRequestedDate, Long> {
     List<LastRequestedDate> findAllByWorkListHeaderId(Long workListHeaderId);
 }

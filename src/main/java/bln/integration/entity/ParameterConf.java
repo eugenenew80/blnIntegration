@@ -12,13 +12,10 @@ import javax.persistence.*;
 @Immutable
 @NamedEntityGraph(name="ParameterConf.allJoins", attributeNodes = {
     @NamedAttributeNode("meteringPoint"),
-    @NamedAttributeNode("sourceUnit"),
     @NamedAttributeNode("param")
 })
 public class ParameterConf {
     @Id
-    @SequenceGenerator(name="media_parameter_conf_s", sequenceName = "media_parameter_conf_s", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "media_parameter_conf_s")
     private Long id;
 
     @Column(name="source_system_code")
@@ -33,10 +30,6 @@ public class ParameterConf {
 
     @Column(name = "source_unit_code")
     private String sourceUnitCode;
-
-    @ManyToOne
-    @JoinColumn(name="source_unit_id")
-    private Unit sourceUnit;
 
     @ManyToOne
     @JoinColumn(name="metering_point_id")

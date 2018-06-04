@@ -21,7 +21,7 @@ import java.util.*;
 @Transactional
 public class AutoEmcosPtReader extends AbstractAutoReader<PeriodTimeValueRaw> {
     private static final Logger logger = LoggerFactory.getLogger(AutoEmcosPtReader.class);
-	private final WorkListHeaderRepository headerRepository;
+	private final WorkListHeaderRepo headerRepo;
 	private final BatchHelper batchHelper;
 	private final ValueGateway<PeriodTimeValueRaw> ptEmcosImpGateway;
 	private final Integer groupCount = 300;
@@ -47,11 +47,11 @@ public class AutoEmcosPtReader extends AbstractAutoReader<PeriodTimeValueRaw> {
 		return batchHelper.buildPointsCfg(
 			header,
 			lastLoadInfo -> {
-				if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate() !=null) {
-					return lastLoadInfo.getLastLoadDate().getMinute() == 45
-						? lastLoadInfo.getLastLoadDate().plusMinutes(15)
-						: lastLoadInfo.getLastLoadDate().truncatedTo(ChronoUnit.HOURS);
-				}
+				if (lastLoadInfo!=null && lastLoadInfo.getLastLoadDate() !=null)
+					return lastLoadInfo.getLastLoadDate()
+						.plusMinutes(15)
+						.truncatedTo(ChronoUnit.HOURS);
+
 				return LocalDate.now(ZoneId.of(header.getTimeZone()))
 					.withDayOfMonth(1)
 					.atStartOfDay();
@@ -67,7 +67,7 @@ public class AutoEmcosPtReader extends AbstractAutoReader<PeriodTimeValueRaw> {
 	protected BatchHelper batchHelper() { return batchHelper; }
 
 	@Override
-	protected WorkListHeaderRepository headerRepository() { return headerRepository; }
+	protected WorkListHeaderRepo headerRepo() { return headerRepo; }
 
 	@Override
 	protected Integer groupCount() { return groupCount; }
