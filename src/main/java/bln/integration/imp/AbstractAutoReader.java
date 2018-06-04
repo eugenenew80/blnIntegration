@@ -1,12 +1,14 @@
 package bln.integration.imp;
 
 import bln.integration.entity.*;
+import bln.integration.entity.enums.ParamTypeEnum;
 import bln.integration.imp.gateway.MeteringPointCfg;
 import bln.integration.repo.WorkListHeaderRepository;
 import org.slf4j.Logger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public abstract class AbstractAutoReader<T> implements Reader<T> {
@@ -32,7 +34,13 @@ public abstract class AbstractAutoReader<T> implements Reader<T> {
             return;
         }
 
-        LocalDateTime endDateTime = LocalDate.now(ZoneId.of(header.getTimeZone())).atStartOfDay();
+        LocalDateTime endDateTime = LocalDateTime.now(ZoneId.of(header.getTimeZone()));
+        if (header.getParamType()==ParamTypeEnum.PT)
+            endDateTime = endDateTime.truncatedTo(ChronoUnit.HOURS);
+
+        if (header.getParamType()== ParamTypeEnum.AT)
+            endDateTime = endDateTime.truncatedTo(ChronoUnit.DAYS);
+
         List<MeteringPointCfg> points = buildPointsCfg(header, endDateTime);
         if (points.size() == 0) {
             logger().warn("List of points is empty, import data stopped");

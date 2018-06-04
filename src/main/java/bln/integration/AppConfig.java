@@ -15,6 +15,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 
@@ -30,16 +31,18 @@ public class AppConfig implements ApplicationListener<ApplicationReadyEvent> {
         return mapper;
     }
 
-
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
-        taskScheduler.setPoolSize(5);
-        taskScheduler.initialize();
+        taskScheduler().schedule(autoEmcosImp,   new CronTrigger(autoEmcosImpCronExpr));
+        taskScheduler().schedule(manualEmcosImp, new CronTrigger(manualEmcosImpCronExpr));
+        taskScheduler().schedule(autoOicImp,     new CronTrigger(autoOicImpCronExpr));
+        taskScheduler().schedule(autoEmcosExp,   new CronTrigger(autoEmcosExpCronExpr));
+    }
 
-        taskScheduler.schedule(autoEmcosImp, new CronTrigger(autoEmcosImpCronExpr));
-        taskScheduler.schedule(manualEmcosImp, new CronTrigger(manualEmcosImpCronExpr));
-        taskScheduler.schedule(autoOicImp, new CronTrigger(autoOicImpCronExpr));
-        taskScheduler.schedule(autoEmcosExp, new CronTrigger(autoEmcosExpCronExpr));
+    private TaskScheduler taskScheduler() {
+        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+        taskScheduler.setPoolSize(1);
+        taskScheduler.initialize();
+        return taskScheduler;
     }
 
     @Value("${bln.integration.imp.emcos.schedule.autoEmcosImp.cron}")
