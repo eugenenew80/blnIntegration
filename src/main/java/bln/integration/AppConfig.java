@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -20,7 +20,13 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 
 @Configuration
+@RequiredArgsConstructor
 public class AppConfig implements ApplicationListener<ApplicationReadyEvent> {
+    private final AutoEmcosImp autoEmcosImp;
+    private final ManualEmcosImp manualEmcosImp;
+    private final AutoOicImp autoOicImp;
+    private final AutoEmcosExp autoEmcosExp;
+
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
@@ -32,10 +38,17 @@ public class AppConfig implements ApplicationListener<ApplicationReadyEvent> {
     }
 
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-        taskScheduler().schedule(autoEmcosImp,   new CronTrigger(autoEmcosImpCronExpr));
-        taskScheduler().schedule(manualEmcosImp, new CronTrigger(manualEmcosImpCronExpr));
-        taskScheduler().schedule(autoOicImp,     new CronTrigger(autoOicImpCronExpr));
-        taskScheduler().schedule(autoEmcosExp,   new CronTrigger(autoEmcosExpCronExpr));
+        if (isAutoEmcosImpEnable)
+            taskScheduler().schedule(autoEmcosImp, new CronTrigger(autoEmcosImpCronExpr));
+
+        if (isManualEmcosImpEnable)
+            taskScheduler().schedule(manualEmcosImp, new CronTrigger(manualEmcosImpCronExpr));
+
+        if (isAutoOicImpEnable)
+            taskScheduler().schedule(autoOicImp, new CronTrigger(autoOicImpCronExpr));
+
+        if (isAutoEmcosExpEnable)
+            taskScheduler().schedule(autoEmcosExp, new CronTrigger(autoEmcosExpCronExpr));
     }
 
     private TaskScheduler taskScheduler() {
@@ -57,15 +70,15 @@ public class AppConfig implements ApplicationListener<ApplicationReadyEvent> {
     @Value("${bln.integration.exp.emcos.schedule.autoEmcosExp.cron}")
     private String autoEmcosExpCronExpr;
 
-    @Autowired
-    private AutoEmcosImp autoEmcosImp;
+    @Value("${bln.integration.imp.emcos.schedule.autoEmcosImp}")
+    private boolean isAutoEmcosImpEnable;
 
-    @Autowired
-    private ManualEmcosImp manualEmcosImp;
+    @Value("${bln.integration.imp.emcos.schedule.manualEmcosImp}")
+    private boolean isManualEmcosImpEnable;
 
-    @Autowired
-    private AutoOicImp autoOicImp;
+    @Value("${bln.integration.imp.oic.schedule.autoOicImp}")
+    private boolean isAutoOicImpEnable;
 
-    @Autowired
-    private AutoEmcosExp autoEmcosExp;
+    @Value("${bln.integration.exp.emcos.schedule.AutoEmcosExp}")
+    private boolean isAutoEmcosExpEnable;
 }
