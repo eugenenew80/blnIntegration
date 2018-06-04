@@ -83,7 +83,7 @@ public class BatchHelper {
 
     @Transactional(propagation=Propagation.REQUIRES_NEW)
     public void updateLastDate(Batch batch) {
-        logger.info("updateLastDate started");
+        logger.debug("updateLastDate started");
 
         if (batch.getParamType()==ParamTypeEnum.AT)
             lastLoadInfoRepository.updateAtLastDate(batch.getId());
@@ -91,31 +91,30 @@ public class BatchHelper {
         if (batch.getParamType()==ParamTypeEnum.PT)
             lastLoadInfoRepository.updatePtLastDate(batch.getId());
 
-        logger.info("updateLastDate completed");
+        logger.debug("updateLastDate completed");
     }
 
     @Transactional(propagation=Propagation.REQUIRES_NEW)
     public void load(Batch batch) {
-        logger.info("load started");
+        logger.debug("load started");
+
         if (batch.getParamType()==ParamTypeEnum.AT)
             atValueRepository.load(batch.getId());
 
         if (batch.getParamType()==ParamTypeEnum.PT)
             ptValueRepository.load(batch.getId());
 
-        logger.info("load completed");
+        logger.debug("load completed");
     }
 
     @Transactional(propagation=Propagation.REQUIRES_NEW)
     public void updateLastRequestedDate(LastRequestedDate lastRequestedDate) {
-        logger.info("updateLastRequestedDate started");
         lastRequestedDateRepository.save(lastRequestedDate);
-        logger.info("updateLastRequestedDate completed");
     }
 
     @Transactional(propagation=Propagation.REQUIRES_NEW)
     public void save(Batch batch, List<AtTimeValueRaw> atList, List<PeriodTimeValueRaw> ptList) {
-        logger.info("saving records started");
+        logger.debug("saving records started");
 
         LocalDateTime now = LocalDateTime.now();
         if (batch.getParamType()==ParamTypeEnum.AT) {
@@ -132,7 +131,8 @@ public class BatchHelper {
             }
             ptValueRepository.save(ptList);
         }
-        logger.info("saving records completed");
+
+        logger.debug("saving records completed");
     }
 
     @Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
