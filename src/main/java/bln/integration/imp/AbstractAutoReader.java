@@ -33,7 +33,7 @@ public abstract class AbstractAutoReader<T> implements Reader<T> {
             return;
         }
 
-        LocalDateTime endDateTime = LocalDateTime.now(ZoneId.of(header.getConfig().getTimeZone()));
+        LocalDateTime endDateTime = LocalDateTime.now(ZoneId.of("UTC+1"));
         if (header.getParamType()==ParamTypeEnum.PT)
             endDateTime = endDateTime.truncatedTo(ChronoUnit.HOURS);
 

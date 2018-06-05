@@ -182,7 +182,7 @@ public class BatchHelper {
             .stream()
             .findFirst()
             .orElseGet(() -> {
-                LocalDateTime now = LocalDate.now(ZoneId.of(header.getConfig().getTimeZone()))
+                LocalDateTime now = LocalDate.now(ZoneId.of("UTC+1"))
                     .withDayOfMonth(1)
                     .atStartOfDay();
 

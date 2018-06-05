@@ -70,7 +70,7 @@ public class PtOicImpGateway implements ValueGateway<PeriodTimeValueRaw> {
     }
 
     private List<PeriodTimeValueRaw> mapToValue(List<TelemetryDto> telemetryList, List<MeteringPointCfg> points, ConnectionConfig config) {
-        int offset = tzOffset(config.getTimeZone());
+        int offset = tzOffset(config.getTimeZone())-1;
 
         return telemetryList.stream()
             .map(t -> {

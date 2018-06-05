@@ -167,7 +167,7 @@ public class PtEmcosImpGateway implements ValueGateway<PeriodTimeValueRaw> {
                 NodeList rowData = nodes.item(i).getChildNodes();
                 for(int j = 0; j < rowData.getLength(); j++) {
                     if (rowData.item(j).getNodeName() == "ROW") {
-                    	logger.debug("row: " + (j+1));
+                    	logger.trace("row: " + (j+1));
                         list.add(parseNode(rowData.item(j)));
                     }
                 }

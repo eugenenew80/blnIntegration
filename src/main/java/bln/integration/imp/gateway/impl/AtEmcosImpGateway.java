@@ -166,7 +166,7 @@ public class AtEmcosImpGateway implements ValueGateway<AtTimeValueRaw> {
                 NodeList rowData = nodes.item(i).getChildNodes();
                 for(int j = 0; j < rowData.getLength(); j++) {
                     if (rowData.item(j).getNodeName() == "ROW") {
-                    	logger.debug("row: " + (j+1));
+                    	logger.trace("row: " + (j+1));
                         AtTimeValueRaw node = parseNode(rowData.item(j));
                         if (node!=null)
                             list.add(node);

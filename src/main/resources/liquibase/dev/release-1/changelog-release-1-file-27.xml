@@ -466,4 +466,24 @@
             <column name="batch_id"           type="number"/>
         </createIndex>
     </changeSet>
+
+    <changeSet id="media-eug-179" logicalFilePath="path-independent" author="eugene">
+        <comment>creating index for table: media_period_time_values</comment>
+        <createIndex indexName="idx_media_period_time_values_3" schemaName="apps" tableName="media_period_time_values">
+            <column name="metering_point_id"  type="number"/>
+            <column name="param_id"           type="number"/>
+            <column name="metering_date"      type="timestamp"/>
+            <column name="source_type_id"     type="number"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="media-eug-180" logicalFilePath="path-independent" author="eugene">
+        <comment>creating index for table: media_at_time_values</comment>
+        <createIndex indexName="idx_media_at_time_values_3" schemaName="apps" tableName="media_at_time_values">
+            <column name="metering_point_id"  type="number"/>
+            <column name="param_id"           type="number"/>
+            <column name="metering_date"      type="timestamp"/>
+            <column name="source_type_id"     type="number"/>
+        </createIndex>
+    </changeSet>
 </databaseChangeLog>
