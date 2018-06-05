@@ -57,7 +57,8 @@ public class BatchHelper {
         return batch;
     }
 
-    private WorkListHeader updateHeader(Batch batch) {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public WorkListHeader updateHeader(Batch batch) {
         WorkListHeader header = batch.getWorkListHeader();
         if (header==null) return null;
 
@@ -104,11 +105,14 @@ public class BatchHelper {
     public void save(Batch batch, List<AtTimeValueRaw> atList, List<PeriodTimeValueRaw> ptList) {
         logger.debug("saving records started");
 
+        int offset = tzOffset(batch.getWorkListHeader().getTimeZone());
+
         LocalDateTime now = LocalDateTime.now();
         if (batch.getParamType()==ParamTypeEnum.AT) {
             for (AtTimeValueRaw t : atList) {
                 t.setBatch(batch);
                 t.setCreateDate(now);
+                if (offset!=0) t.setMeteringDate(t.getMeteringDate().plusHours(offset));
             }
             atValueRepo.save(atList);
         }
@@ -116,6 +120,7 @@ public class BatchHelper {
             for (PeriodTimeValueRaw t : ptList) {
                 t.setBatch(batch);
                 t.setCreateDate(now);
+                if (offset!=0) t.setMeteringDate(t.getMeteringDate().plusHours(offset));
             }
             ptValueRepo.save(ptList);
         }
@@ -172,13 +177,15 @@ public class BatchHelper {
 
     @Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
     public LastRequestedDate getLastRequestedDate(WorkListHeader header) {
+        int offset = tzOffset(header.getTimeZone());
         return  lastRequestedDateRepo.findAllByWorkListHeaderId(header.getId())
             .stream()
             .findFirst()
             .orElseGet(() -> {
                 LocalDateTime now = LocalDate.now(ZoneId.of(header.getTimeZone()))
                     .withDayOfMonth(1)
-                    .atStartOfDay();
+                    .atStartOfDay()
+                    .minusHours(offset);
 
                 LastRequestedDate d = new LastRequestedDate();
                 d.setWorkListHeader(header);
@@ -198,5 +205,31 @@ public class BatchHelper {
                 .map(points::get)
                 .collect(toList()))
             .collect(toList());
+    }
+
+
+    public int tzOffset(String timezone) {
+        if (timezone.startsWith("UTC+1"))
+            return 0;
+
+        if (timezone.startsWith("UTC+2"))
+            return -1;
+
+        if (timezone.startsWith("UTC+3"))
+            return -2;
+
+        if (timezone.startsWith("UTC+4"))
+            return -3;
+
+        if (timezone.startsWith("UTC+5"))
+            return -4;
+
+        if (timezone.startsWith("UTC+6"))
+            return -5;
+
+        if (timezone.startsWith("UTC+7"))
+            return -6;
+
+        return 0;
     }
 }

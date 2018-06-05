@@ -12,7 +12,7 @@ public abstract class AbstractManualReader<T> implements Reader<T> {
     @Override
     public void read(Long headerId) {
         logger().info("read started");
-        logger().info("headerId: " + headerId);
+        logger().debug("headerId: " + headerId);
 
         WorkListHeader header = headerRepo().findOne(headerId);
         if (header == null) {
@@ -52,7 +52,7 @@ public abstract class AbstractManualReader<T> implements Reader<T> {
 
         Batch batch = batchHelper().createBatch(new Batch(header));
         try {
-            logger().debug(points.toString());
+            logger().trace(points.toString());
 
             List<T> list = request(batch, points);
             save(batch, list);
