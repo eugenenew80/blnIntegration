@@ -105,14 +105,11 @@ public class BatchHelper {
     public void save(Batch batch, List<AtTimeValueRaw> atList, List<PeriodTimeValueRaw> ptList) {
         logger.debug("saving records started");
 
-        int offset = tzOffset(batch.getWorkListHeader().getTimeZone());
-
         LocalDateTime now = LocalDateTime.now();
         if (batch.getParamType()==ParamTypeEnum.AT) {
             for (AtTimeValueRaw t : atList) {
                 t.setBatch(batch);
                 t.setCreateDate(now);
-                if (offset!=0) t.setMeteringDate(t.getMeteringDate().plusHours(offset));
             }
             atValueRepo.save(atList);
         }
@@ -120,7 +117,6 @@ public class BatchHelper {
             for (PeriodTimeValueRaw t : ptList) {
                 t.setBatch(batch);
                 t.setCreateDate(now);
-                if (offset!=0) t.setMeteringDate(t.getMeteringDate().plusHours(offset));
             }
             ptValueRepo.save(ptList);
         }
@@ -177,15 +173,13 @@ public class BatchHelper {
 
     @Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
     public LastRequestedDate getLastRequestedDate(WorkListHeader header) {
-        int offset = tzOffset(header.getTimeZone());
         return  lastRequestedDateRepo.findAllByWorkListHeaderId(header.getId())
             .stream()
             .findFirst()
             .orElseGet(() -> {
                 LocalDateTime now = LocalDate.now(ZoneId.of(header.getTimeZone()))
                     .withDayOfMonth(1)
-                    .atStartOfDay()
-                    .minusHours(offset);
+                    .atStartOfDay();
 
                 LastRequestedDate d = new LastRequestedDate();
                 d.setWorkListHeader(header);
