@@ -126,6 +126,7 @@ public class BatchHelper {
 
     @Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true)
     public List<MeteringPointCfg> buildPointsCfg(WorkListHeader header, Function<LastLoadInfo, LocalDateTime> buildStartTime, Supplier<LocalDateTime> buildEndTime) {
+        int offset = tzOffset(header.getConfig().getTimeZone());
         entityManager.clear();
 
         List<ParameterConf> parameters = parameterConfRepo.findAllBySourceSystemCodeAndParamTypeAndInterval(
@@ -158,8 +159,8 @@ public class BatchHelper {
                         }
 
                         MeteringPointCfg point = MeteringPointCfg.fromParameterConf(p);
-                        point.setStartTime(buildStartTime.apply(lastLoadInfo));
-                        point.setEndTime(buildEndTime.get());
+                        point.setStartTime(buildStartTime.apply(lastLoadInfo).minusHours(offset));
+                        point.setEndTime(buildEndTime.get().minusHours(offset));
 
                         logger.trace(point.toString());
                         return point;
@@ -204,5 +205,30 @@ public class BatchHelper {
                 .map(points::get)
                 .collect(toList()))
             .collect(toList());
+    }
+
+    public int tzOffset(String timezone) {
+        if (timezone.startsWith("UTC+1"))
+            return 0;
+
+        if (timezone.startsWith("UTC+2"))
+            return -1;
+
+        if (timezone.startsWith("UTC+3"))
+            return -2;
+
+        if (timezone.startsWith("UTC+4"))
+            return -3;
+
+        if (timezone.startsWith("UTC+5"))
+            return -4;
+
+        if (timezone.startsWith("UTC+6"))
+            return -5;
+
+        if (timezone.startsWith("UTC+7"))
+            return -6;
+
+        return 0;
     }
 }
