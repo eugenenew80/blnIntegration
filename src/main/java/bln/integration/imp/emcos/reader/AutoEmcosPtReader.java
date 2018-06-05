@@ -52,7 +52,7 @@ public class AutoEmcosPtReader extends AbstractAutoReader<PeriodTimeValueRaw> {
 						.plusMinutes(15)
 						.truncatedTo(ChronoUnit.HOURS);
 
-				return LocalDate.now(ZoneId.of(header.getTimeZone()))
+				return LocalDate.now(ZoneId.of(header.getConfig().getTimeZone()))
 					.withDayOfMonth(1)
 					.atStartOfDay();
 			},

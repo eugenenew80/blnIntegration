@@ -33,7 +33,7 @@ public abstract class AbstractAutoReader<T> implements Reader<T> {
             return;
         }
 
-        LocalDateTime endDateTime = LocalDateTime.now(ZoneId.of(header.getTimeZone()));
+        LocalDateTime endDateTime = LocalDateTime.now(ZoneId.of(header.getConfig().getTimeZone()));
         if (header.getParamType()==ParamTypeEnum.PT)
             endDateTime = endDateTime.truncatedTo(ChronoUnit.HOURS);
 
@@ -61,7 +61,7 @@ public abstract class AbstractAutoReader<T> implements Reader<T> {
             logger().info("batch requested date: " + requestedDateTime);
 
             points = buildPointsCfg(header, requestedDateTime);
-            logger().debug(points.toString());
+            logger().trace(points.toString());
             List<List<MeteringPointCfg>> groupsPoints = batchHelper().splitPointsCfg(points, groupCount());
 
             Batch batch = batchHelper().createBatch(new Batch(header));

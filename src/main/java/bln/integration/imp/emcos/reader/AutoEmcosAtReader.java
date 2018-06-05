@@ -52,7 +52,7 @@ public class AutoEmcosAtReader extends AbstractAutoReader<AtTimeValueRaw> {
 						.plusDays(1)
 						.truncatedTo(ChronoUnit.DAYS);
 
-				return LocalDate.now(ZoneId.of(header.getTimeZone()))
+				return LocalDate.now(ZoneId.of(header.getConfig().getTimeZone()))
 					.withDayOfMonth(1)
 					.atStartOfDay();
 			},

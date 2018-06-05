@@ -67,7 +67,4 @@ public class WorkListHeader {
 
     @Column
     private Integer interval;
-
-    @Column(name = "time_zone")
-    private String timeZone;
 }

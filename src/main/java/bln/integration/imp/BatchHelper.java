@@ -133,13 +133,16 @@ public class BatchHelper {
             header.getParamType(),
             header.getInterval()
         );
+        logger.trace("parameters count: " + parameters.size());
 
         List<LastLoadInfo> lastLoadInfoList = lastLoadInfoRepo.findAllBySourceSystemCodeAndParamTypeAndInterval(
             header.getSourceSystemCode(),
             header.getParamType(),
             header.getInterval()
         );
+        logger.trace("lastLoadInfo count: " + lastLoadInfoList.size());
 
+        logger.trace("lines count: " + header.getLines().size());
         List<MeteringPointCfg> points = header.getLines().stream()
             .flatMap(line ->
                 parameters.stream()
@@ -157,6 +160,8 @@ public class BatchHelper {
                         MeteringPointCfg point = MeteringPointCfg.fromParameterConf(p);
                         point.setStartTime(buildStartTime.apply(lastLoadInfo));
                         point.setEndTime(buildEndTime.get());
+
+                        logger.trace(point.toString());
                         return point;
                     })
                     .filter(point ->
@@ -177,7 +182,7 @@ public class BatchHelper {
             .stream()
             .findFirst()
             .orElseGet(() -> {
-                LocalDateTime now = LocalDate.now(ZoneId.of(header.getTimeZone()))
+                LocalDateTime now = LocalDate.now(ZoneId.of(header.getConfig().getTimeZone()))
                     .withDayOfMonth(1)
                     .atStartOfDay();
 
@@ -199,31 +204,5 @@ public class BatchHelper {
                 .map(points::get)
                 .collect(toList()))
             .collect(toList());
-    }
-
-
-    public int tzOffset(String timezone) {
-        if (timezone.startsWith("UTC+1"))
-            return 0;
-
-        if (timezone.startsWith("UTC+2"))
-            return -1;
-
-        if (timezone.startsWith("UTC+3"))
-            return -2;
-
-        if (timezone.startsWith("UTC+4"))
-            return -3;
-
-        if (timezone.startsWith("UTC+5"))
-            return -4;
-
-        if (timezone.startsWith("UTC+6"))
-            return -5;
-
-        if (timezone.startsWith("UTC+7"))
-            return -6;
-
-        return 0;
     }
 }

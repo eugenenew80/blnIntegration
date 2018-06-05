@@ -56,7 +56,7 @@ public class PtOicImpGateway implements ValueGateway<PeriodTimeValueRaw> {
                 new ParameterizedTypeReference<List<TelemetryDto>>() {}
             );
 
-            list = mapToValue(responseEntity.getBody(), points);
+            list = mapToValue(responseEntity.getBody(), points, config);
             logger.info("parseAnswer completed, count of rows: " + list.size());
             logger.info("request successfully completed");
         }
@@ -69,12 +69,14 @@ public class PtOicImpGateway implements ValueGateway<PeriodTimeValueRaw> {
         return list;
     }
 
-    private List<PeriodTimeValueRaw> mapToValue(List<TelemetryDto> telemetryList, List<MeteringPointCfg> points) {
+    private List<PeriodTimeValueRaw> mapToValue(List<TelemetryDto> telemetryList, List<MeteringPointCfg> points, ConnectionConfig config) {
+        int offset = tzOffset(config.getTimeZone());
+
         return telemetryList.stream()
             .map(t -> {
                 PeriodTimeValueRaw pt = new PeriodTimeValueRaw();
                 pt.setSourceMeteringPointCode(t.getLogPointId().toString());
-                pt.setMeteringDate(t.getDateTime());
+                pt.setMeteringDate(t.getDateTime().plusHours(offset));
                 pt.setVal(t.getVal());
                 pt.setSourceSystemCode(SourceSystemEnum.OIC);
                 pt.setStatus(ProcessingStatusEnum.TMP);
@@ -97,5 +99,30 @@ public class PtOicImpGateway implements ValueGateway<PeriodTimeValueRaw> {
                 return pt;
             })
             .collect(toList());
+    }
+
+    public int tzOffset(String timezone) {
+        if (timezone.startsWith("UTC+1"))
+            return 0;
+
+        if (timezone.startsWith("UTC+2"))
+            return -1;
+
+        if (timezone.startsWith("UTC+3"))
+            return -2;
+
+        if (timezone.startsWith("UTC+4"))
+            return -3;
+
+        if (timezone.startsWith("UTC+5"))
+            return -4;
+
+        if (timezone.startsWith("UTC+6"))
+            return -5;
+
+        if (timezone.startsWith("UTC+7"))
+            return -6;
+
+        return 0;
     }
 }

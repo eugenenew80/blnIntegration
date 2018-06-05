@@ -54,7 +54,7 @@ public class AutoOicPtReader extends AbstractAutoReader<PeriodTimeValueRaw> {
 						.plusHours(1)
 						.truncatedTo(ChronoUnit.HOURS);
 
-				return LocalDate.now(ZoneId.of(header.getTimeZone()))
+				return LocalDate.now(ZoneId.of(header.getConfig().getTimeZone()))
 					.withDayOfMonth(1)
 					.atStartOfDay();
 			},

@@ -24,4 +24,7 @@ public class ConnectionConfig {
 
     @Column
     private String pwd;
+
+    @Column(name = "time_zone")
+    private String timeZone;
 }

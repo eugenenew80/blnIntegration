@@ -379,8 +379,8 @@
     </changeSet>
 
     <changeSet id="media-eug-170" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_work_list_headers</comment>
-        <addColumn schemaName="apps" tableName="media_work_list_headers">
+        <comment>add column in table: media_connection_config</comment>
+        <addColumn schemaName="apps" tableName="media_connection_config">
             <column name="time_zone" type="varchar(10)" defaultValue="UTC+1">
                 <constraints nullable="false"/>
             </column>
@@ -427,8 +427,13 @@
     </changeSet>
 
     <changeSet id="media-eug-175" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <indexExists schemaName="apps" tableName="media_period_time_values_raw" indexName="idx_media_period_time_values_raw_1" />
+        </preConditions>
+
         <comment>dropping index from table: media_period_time_values_raw</comment>
         <dropIndex schemaName="apps" tableName="media_period_time_values_raw" indexName="idx_media_period_time_values_raw_1" />
+        <rollback/>
     </changeSet>
 
     <changeSet id="media-eug-176" logicalFilePath="path-independent" author="eugene">
@@ -443,8 +448,13 @@
     </changeSet>
 
     <changeSet id="media-eug-177" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <indexExists schemaName="apps" tableName="media_at_time_values_raw" indexName="idx_media_at_time_values_raw_1" />
+        </preConditions>
+
         <comment>dropping index from table: media_at_time_values_raw</comment>
         <dropIndex schemaName="apps" tableName="media_at_time_values_raw" indexName="idx_media_at_time_values_raw_1" />
+        <rollback/>
     </changeSet>
 
     <changeSet id="media-eug-178" logicalFilePath="path-independent" author="eugene">
