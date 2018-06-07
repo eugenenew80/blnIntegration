@@ -69,7 +69,7 @@ public abstract class AbstractAutoReader<T> implements Reader<T> {
                 Long recCount = 0l;
                 for (int i = 0; i < groupsPoints.size(); i++) {
                     logger().debug("group of points: " + (i + 1));
-                    logger().debug(groupsPoints.get(i).toString());
+                    logger().trace(groupsPoints.get(i).toString());
 
                     List<T> list = request(batch, groupsPoints.get(i));
                     save(batch, list);

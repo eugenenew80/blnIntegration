@@ -1,6 +1,6 @@
 .classpath
 .project
-blnInt.iml
+bln-int.iml
 .settings/
 .idea/
 target/
