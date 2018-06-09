@@ -4,6 +4,7 @@ import bln.integration.exp.emcos.schedule.AutoEmcosExp;
 import bln.integration.imp.emcos.schedule.AutoEmcosImp;
 import bln.integration.imp.emcos.schedule.ManualEmcosImp;
 import bln.integration.imp.oic.schedule.AutoOicImp;
+import bln.integration.imp.oic.schedule.ManualOicImp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -24,8 +25,9 @@ import org.springframework.scheduling.support.CronTrigger;
 public class AppConfig implements ApplicationListener<ApplicationReadyEvent> {
     private final AutoEmcosImp autoEmcosImp;
     private final ManualEmcosImp manualEmcosImp;
-    private final AutoOicImp autoOicImp;
     private final AutoEmcosExp autoEmcosExp;
+    private final AutoOicImp autoOicImp;
+    private final ManualOicImp manualOicImp;
 
     @Bean
     public ObjectMapper objectMapper() {
@@ -44,11 +46,14 @@ public class AppConfig implements ApplicationListener<ApplicationReadyEvent> {
         if (isManualEmcosImpEnable)
             taskScheduler().schedule(manualEmcosImp, new CronTrigger(manualEmcosImpCronExpr));
 
+        if (isAutoEmcosExpEnable)
+            taskScheduler().schedule(autoEmcosExp, new CronTrigger(autoEmcosExpCronExpr));
+
         if (isAutoOicImpEnable)
             taskScheduler().schedule(autoOicImp, new CronTrigger(autoOicImpCronExpr));
 
-        if (isAutoEmcosExpEnable)
-            taskScheduler().schedule(autoEmcosExp, new CronTrigger(autoEmcosExpCronExpr));
+        if (isManualOicImpEnable)
+            taskScheduler().schedule(manualOicImp, new CronTrigger(manualOicImpCronExpr));
     }
 
     private TaskScheduler taskScheduler() {
@@ -64,11 +69,15 @@ public class AppConfig implements ApplicationListener<ApplicationReadyEvent> {
     @Value("${bln.integration.imp.emcos.schedule.manualEmcosImp.cron}")
     private String manualEmcosImpCronExpr;
 
+    @Value("${bln.integration.exp.emcos.schedule.autoEmcosExp.cron}")
+    private String autoEmcosExpCronExpr;
+
     @Value("${bln.integration.imp.oic.schedule.autoOicImp.cron}")
     private String autoOicImpCronExpr;
 
-    @Value("${bln.integration.exp.emcos.schedule.autoEmcosExp.cron}")
-    private String autoEmcosExpCronExpr;
+    @Value("${bln.integration.imp.oic.schedule.manualOicImp.cron}")
+    private String manualOicImpCronExpr;
+
 
     @Value("${bln.integration.imp.emcos.schedule.autoEmcosImp}")
     private boolean isAutoEmcosImpEnable;
@@ -76,9 +85,12 @@ public class AppConfig implements ApplicationListener<ApplicationReadyEvent> {
     @Value("${bln.integration.imp.emcos.schedule.manualEmcosImp}")
     private boolean isManualEmcosImpEnable;
 
+    @Value("${bln.integration.exp.emcos.schedule.AutoEmcosExp}")
+    private boolean isAutoEmcosExpEnable;
+
     @Value("${bln.integration.imp.oic.schedule.autoOicImp}")
     private boolean isAutoOicImpEnable;
 
-    @Value("${bln.integration.exp.emcos.schedule.AutoEmcosExp}")
-    private boolean isAutoEmcosExpEnable;
+    @Value("${bln.integration.imp.oic.schedule.manualOicImp}")
+    private boolean isManualOicImpEnable;
 }
