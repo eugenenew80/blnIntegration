@@ -56,6 +56,7 @@
                 </dependencies>
             </plugin>
         </plugins>
+
         <extensions>
             <extension>
                 <groupId>com.github.shyiko.servers-maven-extension</groupId>
@@ -67,12 +68,12 @@
 
     <profiles>
         <profile>
-            <id>localDev</id>
+            <id>prod</id>
             <properties>
-                <driver>org.postgresql.Driver</driver>
-                <url>jdbc:postgresql://localhost:5432/bln_dev</url>
-                <username>postgres</username>
-                <password>1</password>
+                <driver>oracle.jdbc.OracleDriver</driver>
+                <url>jdbc:oracle:thin:@192.168.82.33:1521:blndprod</url>
+                <username>system</username>
+                <password>${settings.servers.server.ora.password}</password>
                 <scripts>dev</scripts>
                 <skipTests>true</skipTests>
             </properties>
@@ -95,15 +96,15 @@
         </profile>
 
         <profile>
-            <id>prod</id>
-                <properties>
-                    <driver>oracle.jdbc.OracleDriver</driver>
-                    <url>jdbc:oracle:thin:@192.168.82.33:1521:blndprod</url>
-                    <username>system</username>
-                    <password>${settings.servers.server.ora.password}</password>
-                    <scripts>dev</scripts>
-                    <skipTests>true</skipTests>
-                </properties>
+            <id>localDev</id>
+            <properties>
+                <driver>org.postgresql.Driver</driver>
+                <url>jdbc:postgresql://localhost:5432/bln_dev</url>
+                <username>postgres</username>
+                <password>1</password>
+                <scripts>dev</scripts>
+                <skipTests>true</skipTests>
+            </properties>
         </profile>
     </profiles>
 
