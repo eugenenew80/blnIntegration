@@ -80,6 +80,21 @@
         </profile>
 
         <profile>
+            <id>blntest</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <driver>oracle.jdbc.OracleDriver</driver>
+                <url>jdbc:oracle:thin:@localhost:1521:BLNDEV</url>
+                <username>system</username>
+                <password>${settings.servers.server.ora.password}</password>
+                <scripts>dev</scripts>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+
+        <profile>
             <id>dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>

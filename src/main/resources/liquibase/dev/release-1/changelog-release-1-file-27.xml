@@ -486,4 +486,177 @@
             <column name="source_type_id"     type="number"/>
         </createIndex>
     </changeSet>
+
+    <changeSet id="media-rus-141" logicalFilePath="path-independent" author="ruslan">
+        <comment>сomment on column APPS.MEDIA_CONNECTION_CONFIG.time_zone</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_CONNECTION_CONFIG.time_zone
+            is 'часовой пояс';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-142" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.METERING_POINT_ID</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.METERING_POINT_ID
+            is 'Ид точки учета';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-143" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.PARAM_ID</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.PARAM_ID
+            is 'Идентификатор параметра';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-144" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_PARAMETERS.IS_AT</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_PARAMETERS.IS_AT
+            is 'Мгновенные значения измерений';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-145" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_PARAMETERS.IS_PT</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_PARAMETERS.IS_PT
+            is 'Измерения значений за период';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-146" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_PARAMETER_CONF.METERING_POINT_ID</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_PARAMETER_CONF.METERING_POINT_ID
+            is 'Ид точки учета';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-147" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_PERIOD_TIME_VALUES_RAW.METERING_POINT_ID</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_PERIOD_TIME_VALUES_RAW.METERING_POINT_ID
+            is 'Ид точки учета';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-148" logicalFilePath="path-independent" author="ruslan">
+        <comment> comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.METERING_POINT_ID</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.METERING_POINT_ID
+            is 'Ид точки учета';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-149" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_LAST_LOAD_INFO.METERING_POINT_ID</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_LAST_LOAD_INFO.METERING_POINT_ID
+            is 'Ид точки учета';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-150" logicalFilePath="path-independent" author="ruslan">
+        <comment>omment on column APPS.MEDIA_LAST_LOAD_INFO.METERING_POINT_ID</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_LAST_LOAD_INFO.METERING_POINT_ID
+            is 'Ид точки учета';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-151" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_PARAMETER_CONF.SOURCE_METERING_POINT_CODE</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_PARAMETER_CONF.SOURCE_METERING_POINT_CODE
+            is 'Код точки учета во внешней системе ';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-152" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_PARAMETER_CONF.PARAM_TYPE</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_PARAMETER_CONF.PARAM_TYPE
+            is 'Тип параметра';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-153" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_PERIOD_TIME_VALUES_RAW.PARAM_ID</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_PERIOD_TIME_VALUES_RAW.PARAM_ID
+            is 'Ид параметра';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-154" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.PARAM_ID</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.PARAM_ID
+            is 'Ид параметра';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-155" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_LAST_LOAD_INFO.PARAM_ID</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_LAST_LOAD_INFO.PARAM_ID
+            is 'Ид параметра';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-156" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_LAST_LOAD_INFO.PARAM_TYPE</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_LAST_LOAD_INFO.PARAM_TYPE
+            is 'Тип параметра';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-157" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_LAST_LOAD_INFO.INTERVAL</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_LAST_LOAD_INFO.INTERVAL
+            is 'Интервал';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-158" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_WORK_LIST_HEADERS.INTERVAL</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_WORK_LIST_HEADERS.INTERVAL
+            is 'Интервал';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-159" logicalFilePath="path-independent" author="ruslan">
+        <comment>comment on column APPS.MEDIA_WORK_LIST_HEADERS.PARAM_TYPE</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            comment on column APPS.MEDIA_WORK_LIST_HEADERS.PARAM_TYPE
+            is 'Тип параметра';
+        </sql>
+        <rollback/>
+    </changeSet>
+
+
 </databaseChangeLog>
