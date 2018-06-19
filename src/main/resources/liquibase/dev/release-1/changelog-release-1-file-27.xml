@@ -869,7 +869,7 @@
                 constraintName="fk_media_parameter_conf_6"
                 deferrable="true"
                 initiallyDeferred="true"
-                onDelete="CASCADE"
+                onDelete="RESTRICT"
                 onUpdate="RESTRICT"
                 referencedTableSchemaName="apps"
                 referencedTableName="media_metering_steps"
@@ -877,5 +877,89 @@
         />
     </changeSet>
 
+    <changeSet id="media-rus-178" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating foreign constraint: media_work_list_headers to media_work_list_types</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_work_list_headers"
+                baseColumnNames="work_list_type"
+                constraintName="fk_media_work_list_headers_3"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_work_list_types"
+                referencedColumnNames="code"
+        />
+    </changeSet>
 
+    <changeSet id="media-rus-179" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating foreign constraint: media_work_list_headers to media_batches</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_work_list_headers"
+                baseColumnNames="batch_id"
+                constraintName="fk_media_work_list_headers_4"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_batches"
+                referencedColumnNames="id"
+        />
+    </changeSet>
+
+    <changeSet id="media-rus-180" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating foreign constraint: media_work_list_headers to media_batch_statuses</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_work_list_headers"
+                baseColumnNames="status"
+                constraintName="fk_media_work_list_headers_5"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_batch_statuses"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+
+    <changeSet id="media-rus-181" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating foreign constraint: media_work_list_headers to media_metering_steps</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_work_list_headers"
+                baseColumnNames="interval"
+                constraintName="fk_media_work_list_headers_6"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_metering_steps"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+
+    <changeSet id="media-rus-182" logicalFilePath="path-independent" author="ruslan">
+        <comment>add foreign key constraint media_work_list_headers to dict_units</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_work_list_headers"
+                baseColumnNames="param_type"
+                constraintName="fk_media_work_list_headers_7"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_param_types"
+                referencedColumnNames="code"
+        />
+        <rollback/>
+    </changeSet>
 </databaseChangeLog>
