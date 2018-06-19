@@ -735,8 +735,8 @@
 
         <dropForeignKeyConstraint
                 baseTableSchemaName="apps"
-                baseTableName="media_work_list_headers"
-                constraintName="fk_media_work_list_headers_4" />
+                baseTableName="media_metering_steps_tl"
+                constraintName="fk_media_metering_steps_tl_1" />
         <rollback/>
     </changeSet>
 
