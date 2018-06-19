@@ -843,4 +843,39 @@
         <rollback/>
     </changeSet>
 
+    <changeSet id="media-rus-176" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating foreign constraint: media_metering_steps_tl to media_metering_steps</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_metering_steps_tl"
+                baseColumnNames="code"
+                constraintName="fk_media_metering_steps_tl_1"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_metering_steps"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+
+    <changeSet id="media-rus-177" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating foreign constraint: media_parameter_conf to media_metering_steps</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_parameter_conf"
+                baseColumnNames="interval"
+                constraintName="fk_media_parameter_conf_6"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_metering_steps"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+
+
 </databaseChangeLog>
