@@ -658,5 +658,96 @@
         <rollback/>
     </changeSet>
 
+    <changeSet id="media-rus-160" logicalFilePath="path-independent" author="ruslan">
+        <comment>add foreign key constraint media_parameter_conf to dict_units</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_parameter_conf"
+                baseColumnNames="source_unit_id"
+                constraintName="fk_media_parameter_conf_2"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="dict_units"
+                referencedColumnNames="id"
+        />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-161" logicalFilePath="path-independent" author="ruslan">
+        <comment>add foreign key constraint media_parameter_conf to dict_units</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_parameter_conf"
+                baseColumnNames="metering_point_id"
+                constraintName="fk_media_parameter_conf_4"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="dict_metering_points"
+                referencedColumnNames="id"
+        />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-162" logicalFilePath="path-independent" author="ruslan">
+        <comment>add foreign key constraint media_parameter_conf to dict_units</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_parameter_conf"
+                baseColumnNames="param_type"
+                constraintName="fk_media_parameter_conf_5"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_param_types"
+                referencedColumnNames="code"
+        />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-163" logicalFilePath="path-independent" author="ruslan">
+        <comment>delete data from media_metering_steps_tl</comment>
+        <delete schemaName="apps"
+                tableName="media_metering_steps_tl">
+        </delete>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-164" logicalFilePath="path-independent" author="ruslan">
+        <comment>delete data from media_metering_steps</comment>
+        <delete schemaName="apps"
+                tableName="media_metering_steps">
+        </delete>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-164-1" logicalFilePath="path-independent" author="ruslan">
+        <preConditions onFail="MARK_RAN" >
+            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_metering_steps_tl" foreignKeyName="fk_media_metering_steps_tl_1" />
+        </preConditions>
+
+        <dropForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_work_list_headers"
+                constraintName="fk_media_work_list_headers_4" />
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-165" logicalFilePath="path-independent" author="ruslan">
+        <comment>modify data type in media_metering_steps_tl</comment>
+        <modifyDataType columnName="code"
+                        newDataType="number"
+                        schemaName="apps"
+                        tableName="media_metering_steps_tl"/>
+        <rollback/>
+    </changeSet>
+
 
 </databaseChangeLog>
