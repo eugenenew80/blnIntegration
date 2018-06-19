@@ -750,4 +750,97 @@
     </changeSet>
 
 
+    <changeSet id="media-rus-166" logicalFilePath="path-independent" author="ruslan">
+        <comment>modify data type in media_metering_steps</comment>
+        <modifyDataType columnName="code"
+                        newDataType="number"
+                        schemaName="apps"
+                        tableName="media_metering_steps"/>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-167" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>insert into media_metering_steps</comment>
+        <insert schemaName="apps" tableName="media_metering_steps">
+            <column name="code" type="number" value="900"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-168" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>insert into media_metering_steps</comment>
+        <insert schemaName="apps" tableName="media_metering_steps">
+            <column name="code" type="number" value="3600"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-169" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>insert into media_metering_steps</comment>
+        <insert schemaName="apps" tableName="media_metering_steps">
+            <column name="code" type="number" value="86400"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-170" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>insert into media_metering_steps_tl</comment>
+        <insert schemaName="apps" tableName="media_metering_steps_tl">
+            <column name="code" type="number" value="900"/>
+            <column name="lang" type="varchar2" value="RU"/>
+            <column name="name" type="varchar2" value="15 минут"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-171" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>insert into media_metering_steps_tl</comment>
+        <insert schemaName="apps" tableName="media_metering_steps_tl">
+            <column name="code" type="number" value="900"/>
+            <column name="lang" type="varchar2" value="KZ"/>
+            <column name="name" type="varchar2" value="15 минут"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-172" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>insert into media_metering_steps_tl</comment>
+        <insert schemaName="apps" tableName="media_metering_steps_tl">
+            <column name="code" type="number" value="3600"/>
+            <column name="lang" type="varchar2" value="RU"/>
+            <column name="name" type="varchar2" value="1 час"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-173" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>insert into media_metering_steps_tl</comment>
+        <insert schemaName="apps" tableName="media_metering_steps_tl">
+            <column name="code" type="number" value="3600"/>
+            <column name="lang" type="varchar2" value="KZ"/>
+            <column name="name" type="varchar2" value="1 час"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-174" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>insert into media_metering_steps_tl</comment>
+        <insert schemaName="apps" tableName="media_metering_steps_tl">
+            <column name="code" type="number" value="86400"/>
+            <column name="lang" type="varchar2" value="RU"/>
+            <column name="name" type="varchar2" value="Сутки"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="media-rus-175" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>insert into media_metering_steps_tl</comment>
+        <insert schemaName="apps" tableName="media_metering_steps_tl">
+            <column name="code" type="number" value="86400"/>
+            <column name="lang" type="varchar2" value="KZ"/>
+            <column name="name" type="varchar2" value="Сутки"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
 </databaseChangeLog>
