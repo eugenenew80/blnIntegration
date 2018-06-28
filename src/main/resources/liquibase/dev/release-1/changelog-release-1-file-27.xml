@@ -659,6 +659,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-160" logicalFilePath="path-independent" author="ruslan">
+    <preConditions onFail="MARK_RAN">
     <not>
         <customPrecondition className="com.ctp.liquibase.ForeignKeyExistsPrecondition">
             <param name="schemaName" value="apps"/>
@@ -667,6 +668,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
             <param name="foreignTableName" value="dict_units"/>
         </customPrecondition>
     </not>
+    </preConditions>
     <comment>add foreign key constraint media_parameter_conf to dict_units</comment>
     <addForeignKeyConstraint
             baseTableSchemaName="apps"
