@@ -976,20 +976,4 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         </insert>
         <rollback/>
     </changeSet>
-
-    <changeSet id="media-rus-184" logicalFilePath="path-independent" author="ruslan">
-        <comment>add Column into table: media_ways_to_start</comment>
-        <addColumn schemaName="apps"
-                   tableName="media_work_list_headers">
-            <column name="emcos_default" type="number" remarks="значение по умолчанию для EMCOS" defaultValue="900"/>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-rus-185" logicalFilePath="path-independent" author="ruslan">
-        <comment>add Column into table: media_ways_to_start</comment>
-        <addColumn schemaName="apps"
-                   tableName="media_work_list_headers">
-            <column name="oic_default" type="number" remarks="значение по умолчанию для EMCOS" defaultValue="3600"/>
-        </addColumn>
-    </changeSet>
 </databaseChangeLog>
