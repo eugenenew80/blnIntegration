@@ -660,7 +660,9 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 
 <changeSet id="media-rus-160" logicalFilePath="path-independent" author="ruslan">
     <preConditions onFail="CONTINUE">
-       <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_parameter_conf" foreignKeyName="fk_media_parameter_conf_2" />
+        <not>
+            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_parameter_conf" foreignKeyName="fk_media_parameter_conf_2" />
+        </not>
     </preConditions>
     <comment>add foreign key constraint media_parameter_conf to dict_units</comment>
     <addForeignKeyConstraint
