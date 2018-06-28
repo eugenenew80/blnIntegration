@@ -719,6 +719,9 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 
 <changeSet id="media-rus-163" logicalFilePath="path-independent" author="ruslan">
     <comment>delete data from media_metering_steps_tl</comment>
+    <preConditions onFail="CONTINUE">
+        <tableExists schemaName="apps" tableName="media_metering_steps_tl"/>
+    </preConditions>
     <delete schemaName="apps"
             tableName="media_metering_steps_tl">
     </delete>
