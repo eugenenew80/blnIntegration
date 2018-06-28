@@ -1,965 +1,995 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <databaseChangeLog
-  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
 
-    <changeSet id="media-eug-134" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_work_list_headers" foreignKeyName="fk_media_work_list_headers_4" />
-        </preConditions>
-
-        <dropForeignKeyConstraint
-                baseTableSchemaName="apps"
-                baseTableName="media_work_list_headers"
-                constraintName="fk_media_work_list_headers_4" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-135" logicalFilePath="path-independent" author="eugene" context="dev">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="at_batch_id" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_work_list_headers</comment>
-        <dropColumn schemaName="apps" tableName="media_work_list_headers" columnName="at_batch_id" />
-        <rollback/>
-    </changeSet>
-
-
-    <changeSet id="media-eug-136" logicalFilePath="path-independent" author="eugene" context="dev">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="at_status" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_work_list_headers</comment>
-        <dropColumn schemaName="apps" tableName="media_work_list_headers" columnName="at_status" />
-        <rollback/>
-    </changeSet>
-
-
-    <changeSet id="media-eug-137" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_work_list_headers" foreignKeyName="fk_media_work_list_headers_3" />
-        </preConditions>
-
-        <dropForeignKeyConstraint
-                baseTableSchemaName="apps"
-                baseTableName="media_work_list_headers"
-                constraintName="fk_media_work_list_headers_3" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-138" logicalFilePath="path-independent" author="eugene" context="dev">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="pt_batch_id" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_work_list_headers</comment>
-        <dropColumn schemaName="apps" tableName="media_work_list_headers" columnName="pt_batch_id" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-139" logicalFilePath="path-independent" author="eugene" context="dev">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="pt_status" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_work_list_headers</comment>
-        <dropColumn schemaName="apps" tableName="media_work_list_headers" columnName="pt_status" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-140" logicalFilePath="path-independent" author="eugene" context="dev">
-        <comment>add Column into table: media_work_list_headers</comment>
-        <addColumn schemaName="apps" tableName="media_work_list_headers">
-            <column name="batch_id" type="number" remarks="Идентификатора пакета">
-                <constraints nullable="true"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-141" logicalFilePath="path-independent" author="eugene" context="dev">
-        <comment>add Column into table: media_work_list_headers</comment>
-        <addColumn schemaName="apps" tableName="media_work_list_headers">
-            <column name="status" type="varchar(20)" remarks="Статус рабочего списка">
-                <constraints nullable="true"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-142" logicalFilePath="path-independent" author="eugene" context="dev">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_parameters" columnName="param_type" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_parameters</comment>
-            <dropColumn schemaName="apps" tableName="media_parameters" columnName="param_type" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-143" logicalFilePath="path-independent" author="eugene">
-        <comment>Creating table: media_last_requested_dates</comment>
-        <createTable tableName="media_last_requested_dates" schemaName="apps" remarks="Дата и время последнего запроса данных">
-            <column name="id" type="number" remarks="Идентификатор записи">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="work_list_header_id" type="number" remarks="Идентификатор рабочего списка">
-                <constraints nullable="true"/>
-            </column>
-
-            <column name="param_type" type="varchar(10)" remarks="Тип параметра">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="last_requested_date" type="TIMESTAMP" remarks="Метка времени последнего запроса данных">
-                <constraints nullable="true"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="media-eug-144" logicalFilePath="path-independent" author="eugene">
-        <comment>Creating primary key for table: media_last_requested_dates</comment>
-        <addPrimaryKey
-                columnNames="id"
-                constraintName="pk_media_last_requested_dates"
-                schemaName="apps"
-                tableName="media_last_requested_dates"/>
-    </changeSet>
-
-    <changeSet id="media-eug-145" logicalFilePath="path-independent" author="eugene">
-        <comment>Creating sequence for table: media_last_requested_dates</comment>
-        <createSequence
-                incrementBy="1"
-                schemaName="apps"
-                sequenceName="media_last_requested_dates_s"
-                startValue="1"/>
-    </changeSet>
-
-    <changeSet id="media-eug-146" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_parameters</comment>
-        <addColumn schemaName="apps" tableName="media_parameters">
-            <column name="is_at" type="number"/>
-        </addColumn>
-        <addColumn schemaName="apps" tableName="media_parameters">
-            <column name="is_pt" type="number"/>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-147" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_parameter_conf</comment>
-        <addColumn schemaName="apps" tableName="media_parameter_conf">
-            <column name="metering_point_id" type="number">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-148" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_period_time_values_raw</comment>
-        <addColumn schemaName="apps" tableName="media_period_time_values_raw">
-            <column name="metering_point_id" type="number">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-149" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_at_time_values_raw</comment>
-        <addColumn schemaName="apps" tableName="media_at_time_values_raw">
-            <column name="metering_point_id" type="number">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-150" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_last_load_info</comment>
-        <addColumn schemaName="apps" tableName="media_last_load_info">
-            <column name="metering_point_id" type="number">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-151" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_parameter_conf</comment>
-        <addColumn schemaName="apps" tableName="media_parameter_conf">
-            <column name="source_metering_point_code" type="varchar(18)">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-152" logicalFilePath="path-independent" author="eugene">
-        <preConditions>
-            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_work_list_lines" foreignKeyName="fk_media_work_list_lines_2" />
-        </preConditions>
-
-        <dropForeignKeyConstraint
-                baseTableSchemaName="apps"
-                baseTableName="media_work_list_lines"
-                constraintName="fk_media_work_list_lines_2" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-153" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_work_list_lines" columnName="param_id" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_work_list_lines</comment>
-        <dropColumn schemaName="apps" tableName="media_work_list_lines" columnName="param_id" />
-        <rollback/>
-    </changeSet>
-
-
-
-    <changeSet id="media-eug-154" logicalFilePath="path-independent" author="eugene">
-        <comment>add Column into table: media_source_types</comment>
-        <addColumn schemaName="apps" tableName="media_source_types">
-            <column name="priority" type="number" remarks="Приоритет">
-                <constraints nullable="true"/>
-            </column>
-
-            <column name="is_oper" type="number" remarks="Подходит для оперативного расчёта">
-                <constraints nullable="true"/>
-            </column>
-
-            <column name="is_final" type="number" remarks="Подходит для окончательного расчёта">
-                <constraints nullable="true"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-155" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_period_time_values" columnName="source_metering_point_code" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_period_time_values</comment>
-        <dropColumn schemaName="apps" tableName="media_period_time_values" columnName="source_metering_point_code" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-156" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_period_time_values" columnName="source_param_code" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_period_time_values</comment>
-        <dropColumn schemaName="apps" tableName="media_period_time_values" columnName="source_param_code" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-157" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_period_time_values" columnName="source_unit_code" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_period_time_values</comment>
-        <dropColumn schemaName="apps" tableName="media_period_time_values" columnName="source_unit_code" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-158" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_at_time_values" columnName="source_metering_point_code" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_at_time_values</comment>
-        <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="source_metering_point_code" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-159" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_at_time_values" columnName="source_param_code" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_at_time_values</comment>
-        <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="source_param_code" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-160" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_at_time_values" columnName="source_unit_code" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_at_time_values</comment>
-        <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="source_unit_code" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-161" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_parameter_conf</comment>
-        <addColumn schemaName="apps" tableName="media_parameter_conf">
-            <column name="param_type" type="varchar(20)" defaultValue="PT">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-162" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_period_time_values_raw</comment>
-        <addColumn schemaName="apps" tableName="media_period_time_values_raw">
-            <column name="param_id" type="number">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-163" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_at_time_values_raw</comment>
-        <addColumn schemaName="apps" tableName="media_at_time_values_raw">
-            <column name="param_id" type="number">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-164" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_last_load_info</comment>
-        <addColumn schemaName="apps" tableName="media_last_load_info">
-            <column name="param_id" type="number">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-165" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_last_load_info</comment>
-        <addColumn schemaName="apps" tableName="media_last_load_info">
-            <column name="param_type" type="varchar(20)" defaultValue="PT">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-166" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_last_load_info</comment>
-        <addColumn schemaName="apps" tableName="media_last_load_info">
-            <column name="interval" type="number">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-167" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_last_load_info" columnName="source_metering_point_code" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_last_load_info</comment>
-        <dropColumn schemaName="apps" tableName="media_last_load_info" columnName="source_metering_point_code" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-168" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_last_load_info" columnName="source_param_code" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_last_load_info</comment>
-        <dropColumn schemaName="apps" tableName="media_last_load_info" columnName="source_param_code" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-169" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_work_list_headers</comment>
-        <addColumn schemaName="apps" tableName="media_work_list_headers">
-            <column name="interval" type="number" defaultValue="900">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-170" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_connection_config</comment>
-        <addColumn schemaName="apps" tableName="media_connection_config">
-            <column name="time_zone" type="varchar(10)" defaultValue="UTC+1">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-171" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_work_list_lines" columnName="start_date" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_work_list_lines</comment>
-        <dropColumn schemaName="apps" tableName="media_work_list_lines" columnName="start_date" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-172" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_work_list_lines" columnName="end_date" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_work_list_lines</comment>
-        <dropColumn schemaName="apps" tableName="media_work_list_lines" columnName="end_date" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-173" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <columnExists schemaName="apps" tableName="media_last_requested_dates" columnName="param_type" />
-        </preConditions>
-
-        <comment>Dropping columns from table media_last_requested_dates</comment>
-        <dropColumn schemaName="apps" tableName="media_last_requested_dates" columnName="param_type" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-174" logicalFilePath="path-independent" author="eugene">
-        <comment>add column in table: media_work_list_headers</comment>
-        <addColumn schemaName="apps" tableName="media_work_list_headers">
-            <column name="param_type" type="varchar(20)" defaultValue="PT">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="media-eug-175" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <indexExists schemaName="apps" tableName="media_period_time_values_raw" indexName="idx_media_period_time_values_raw_1" />
-        </preConditions>
-
-        <comment>dropping index from table: media_period_time_values_raw</comment>
-        <dropIndex schemaName="apps" tableName="media_period_time_values_raw" indexName="idx_media_period_time_values_raw_1" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-176" logicalFilePath="path-independent" author="eugene">
-        <comment>creating index for table: media_period_time_values_raw</comment>
-        <createIndex indexName="idx_media_period_time_values_raw_1" schemaName="apps" tableName="media_period_time_values_raw">
-            <column name="metering_point_id"  type="number"/>
-            <column name="param_id"           type="number"/>
-            <column name="metering_date"      type="timestamp"/>
-            <column name="interval"           type="number"/>
-            <column name="batch_id"           type="number"/>
-        </createIndex>
-    </changeSet>
-
-    <changeSet id="media-eug-177" logicalFilePath="path-independent" author="eugene">
-        <preConditions onFail="MARK_RAN" >
-            <indexExists schemaName="apps" tableName="media_at_time_values_raw" indexName="idx_media_at_time_values_raw_1" />
-        </preConditions>
-
-        <comment>dropping index from table: media_at_time_values_raw</comment>
-        <dropIndex schemaName="apps" tableName="media_at_time_values_raw" indexName="idx_media_at_time_values_raw_1" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-eug-178" logicalFilePath="path-independent" author="eugene">
-        <comment>creating index for table: idx_media_at_time_values_raw_1</comment>
-        <createIndex indexName="idx_media_at_time_values_raw_1" schemaName="apps" tableName="media_at_time_values_raw">
-            <column name="metering_point_id"  type="number"/>
-            <column name="param_id"           type="number"/>
-            <column name="metering_date"      type="timestamp"/>
-            <column name="batch_id"           type="number"/>
-        </createIndex>
-    </changeSet>
-
-    <changeSet id="media-eug-179" logicalFilePath="path-independent" author="eugene">
-        <comment>creating index for table: media_period_time_values</comment>
-        <createIndex indexName="idx_media_period_time_values_3" schemaName="apps" tableName="media_period_time_values">
-            <column name="metering_point_id"  type="number"/>
-            <column name="param_id"           type="number"/>
-            <column name="metering_date"      type="timestamp"/>
-            <column name="source_type_id"     type="number"/>
-        </createIndex>
-    </changeSet>
-
-    <changeSet id="media-eug-180" logicalFilePath="path-independent" author="eugene">
-        <comment>creating index for table: media_at_time_values</comment>
-        <createIndex indexName="idx_media_at_time_values_3" schemaName="apps" tableName="media_at_time_values">
-            <column name="metering_point_id"  type="number"/>
-            <column name="param_id"           type="number"/>
-            <column name="metering_date"      type="timestamp"/>
-            <column name="source_type_id"     type="number"/>
-        </createIndex>
-    </changeSet>
-
-    <changeSet id="media-rus-141" logicalFilePath="path-independent" author="ruslan">
-        <comment>сomment on column APPS.MEDIA_CONNECTION_CONFIG.time_zone</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_CONNECTION_CONFIG.time_zone
-            is 'часовой пояс';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-142" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.METERING_POINT_ID</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.METERING_POINT_ID
-            is 'Ид точки учета';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-143" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.PARAM_ID</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.PARAM_ID
-            is 'Идентификатор параметра';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-144" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_PARAMETERS.IS_AT</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_PARAMETERS.IS_AT
-            is 'Мгновенные значения измерений';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-145" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_PARAMETERS.IS_PT</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_PARAMETERS.IS_PT
-            is 'Измерения значений за период';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-146" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_PARAMETER_CONF.METERING_POINT_ID</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_PARAMETER_CONF.METERING_POINT_ID
-            is 'Ид точки учета';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-147" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_PERIOD_TIME_VALUES_RAW.METERING_POINT_ID</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_PERIOD_TIME_VALUES_RAW.METERING_POINT_ID
-            is 'Ид точки учета';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-148" logicalFilePath="path-independent" author="ruslan">
-        <comment> comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.METERING_POINT_ID</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.METERING_POINT_ID
-            is 'Ид точки учета';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-149" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_LAST_LOAD_INFO.METERING_POINT_ID</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_LAST_LOAD_INFO.METERING_POINT_ID
-            is 'Ид точки учета';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-150" logicalFilePath="path-independent" author="ruslan">
-        <comment>omment on column APPS.MEDIA_LAST_LOAD_INFO.METERING_POINT_ID</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_LAST_LOAD_INFO.METERING_POINT_ID
-            is 'Ид точки учета';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-151" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_PARAMETER_CONF.SOURCE_METERING_POINT_CODE</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_PARAMETER_CONF.SOURCE_METERING_POINT_CODE
-            is 'Код точки учета во внешней системе ';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-152" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_PARAMETER_CONF.PARAM_TYPE</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_PARAMETER_CONF.PARAM_TYPE
-            is 'Тип параметра';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-153" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_PERIOD_TIME_VALUES_RAW.PARAM_ID</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_PERIOD_TIME_VALUES_RAW.PARAM_ID
-            is 'Ид параметра';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-154" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.PARAM_ID</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.PARAM_ID
-            is 'Ид параметра';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-155" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_LAST_LOAD_INFO.PARAM_ID</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_LAST_LOAD_INFO.PARAM_ID
-            is 'Ид параметра';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-156" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_LAST_LOAD_INFO.PARAM_TYPE</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_LAST_LOAD_INFO.PARAM_TYPE
-            is 'Тип параметра';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-157" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_LAST_LOAD_INFO.INTERVAL</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_LAST_LOAD_INFO.INTERVAL
-            is 'Интервал';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-158" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_WORK_LIST_HEADERS.INTERVAL</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_WORK_LIST_HEADERS.INTERVAL
-            is 'Интервал';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-159" logicalFilePath="path-independent" author="ruslan">
-        <comment>comment on column APPS.MEDIA_WORK_LIST_HEADERS.PARAM_TYPE</comment>
-        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
-            comment on column APPS.MEDIA_WORK_LIST_HEADERS.PARAM_TYPE
-            is 'Тип параметра';
-        </sql>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-160" logicalFilePath="path-independent" author="ruslan">
-        <comment>add foreign key constraint media_parameter_conf to dict_units</comment>
-        <addForeignKeyConstraint
-                baseTableSchemaName="apps"
-                baseTableName="media_parameter_conf"
-                baseColumnNames="source_unit_id"
-                constraintName="fk_media_parameter_conf_2"
-                deferrable="true"
-                initiallyDeferred="true"
-                onDelete="RESTRICT"
-                onUpdate="RESTRICT"
-                referencedTableSchemaName="apps"
-                referencedTableName="dict_units"
-                referencedColumnNames="id"
-        />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-161" logicalFilePath="path-independent" author="ruslan">
-        <comment>add foreign key constraint media_parameter_conf to dict_units</comment>
-        <addForeignKeyConstraint
-                baseTableSchemaName="apps"
-                baseTableName="media_parameter_conf"
-                baseColumnNames="metering_point_id"
-                constraintName="fk_media_parameter_conf_4"
-                deferrable="true"
-                initiallyDeferred="true"
-                onDelete="RESTRICT"
-                onUpdate="RESTRICT"
-                referencedTableSchemaName="apps"
-                referencedTableName="dict_metering_points"
-                referencedColumnNames="id"
-        />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-162" logicalFilePath="path-independent" author="ruslan">
-        <comment>add foreign key constraint media_parameter_conf to dict_units</comment>
-        <addForeignKeyConstraint
-                baseTableSchemaName="apps"
-                baseTableName="media_parameter_conf"
-                baseColumnNames="param_type"
-                constraintName="fk_media_parameter_conf_5"
-                deferrable="true"
-                initiallyDeferred="true"
-                onDelete="RESTRICT"
-                onUpdate="RESTRICT"
-                referencedTableSchemaName="apps"
-                referencedTableName="media_param_types"
-                referencedColumnNames="code"
-        />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-163" logicalFilePath="path-independent" author="ruslan">
-        <comment>delete data from media_metering_steps_tl</comment>
-        <delete schemaName="apps"
-                tableName="media_metering_steps_tl">
-        </delete>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-164" logicalFilePath="path-independent" author="ruslan">
-        <comment>delete data from media_metering_steps</comment>
-        <delete schemaName="apps"
-                tableName="media_metering_steps">
-        </delete>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-164-1" logicalFilePath="path-independent" author="ruslan">
-        <preConditions onFail="MARK_RAN" >
-            <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_metering_steps_tl" foreignKeyName="fk_media_metering_steps_tl_1" />
-        </preConditions>
-
-        <dropForeignKeyConstraint
-                baseTableSchemaName="apps"
-                baseTableName="media_metering_steps_tl"
-                constraintName="fk_media_metering_steps_tl_1" />
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-165" logicalFilePath="path-independent" author="ruslan">
-        <comment>modify data type in media_metering_steps_tl</comment>
-        <modifyDataType columnName="code"
-                        newDataType="number"
-                        schemaName="apps"
-                        tableName="media_metering_steps_tl"/>
-        <rollback/>
-    </changeSet>
-
-
-    <changeSet id="media-rus-166" logicalFilePath="path-independent" author="ruslan">
-        <comment>modify data type in media_metering_steps</comment>
-        <modifyDataType columnName="code"
-                        newDataType="number"
-                        schemaName="apps"
-                        tableName="media_metering_steps"/>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-167" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>insert into media_metering_steps</comment>
-        <insert schemaName="apps" tableName="media_metering_steps">
-            <column name="code" type="number" value="900"/>
+<changeSet id="media-eug-134" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_work_list_headers" foreignKeyName="fk_media_work_list_headers_4" />
+    </preConditions>
+
+    <dropForeignKeyConstraint
+            baseTableSchemaName="apps"
+            baseTableName="media_work_list_headers"
+            constraintName="fk_media_work_list_headers_4" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-135" logicalFilePath="path-independent" author="eugene" context="dev">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="at_batch_id" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_work_list_headers</comment>
+    <dropColumn schemaName="apps" tableName="media_work_list_headers" columnName="at_batch_id" />
+    <rollback/>
+</changeSet>
+
+
+<changeSet id="media-eug-136" logicalFilePath="path-independent" author="eugene" context="dev">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="at_status" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_work_list_headers</comment>
+    <dropColumn schemaName="apps" tableName="media_work_list_headers" columnName="at_status" />
+    <rollback/>
+</changeSet>
+
+
+<changeSet id="media-eug-137" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_work_list_headers" foreignKeyName="fk_media_work_list_headers_3" />
+    </preConditions>
+
+    <dropForeignKeyConstraint
+            baseTableSchemaName="apps"
+            baseTableName="media_work_list_headers"
+            constraintName="fk_media_work_list_headers_3" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-138" logicalFilePath="path-independent" author="eugene" context="dev">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="pt_batch_id" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_work_list_headers</comment>
+    <dropColumn schemaName="apps" tableName="media_work_list_headers" columnName="pt_batch_id" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-139" logicalFilePath="path-independent" author="eugene" context="dev">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_work_list_headers" columnName="pt_status" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_work_list_headers</comment>
+    <dropColumn schemaName="apps" tableName="media_work_list_headers" columnName="pt_status" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-140" logicalFilePath="path-independent" author="eugene" context="dev">
+    <comment>add Column into table: media_work_list_headers</comment>
+    <addColumn schemaName="apps" tableName="media_work_list_headers">
+        <column name="batch_id" type="number" remarks="Идентификатора пакета">
+            <constraints nullable="true"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-141" logicalFilePath="path-independent" author="eugene" context="dev">
+    <comment>add Column into table: media_work_list_headers</comment>
+    <addColumn schemaName="apps" tableName="media_work_list_headers">
+        <column name="status" type="varchar(20)" remarks="Статус рабочего списка">
+            <constraints nullable="true"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-142" logicalFilePath="path-independent" author="eugene" context="dev">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_parameters" columnName="param_type" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_parameters</comment>
+    <dropColumn schemaName="apps" tableName="media_parameters" columnName="param_type" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-143" logicalFilePath="path-independent" author="eugene">
+    <comment>Creating table: media_last_requested_dates</comment>
+    <createTable tableName="media_last_requested_dates" schemaName="apps" remarks="Дата и время последнего запроса данных">
+        <column name="id" type="number" remarks="Идентификатор записи">
+            <constraints nullable="false"/>
+        </column>
+
+        <column name="work_list_header_id" type="number" remarks="Идентификатор рабочего списка">
+            <constraints nullable="true"/>
+        </column>
+
+        <column name="param_type" type="varchar(10)" remarks="Тип параметра">
+            <constraints nullable="false"/>
+        </column>
+
+        <column name="last_requested_date" type="TIMESTAMP" remarks="Метка времени последнего запроса данных">
+            <constraints nullable="true"/>
+        </column>
+    </createTable>
+</changeSet>
+
+<changeSet id="media-eug-144" logicalFilePath="path-independent" author="eugene">
+    <comment>Creating primary key for table: media_last_requested_dates</comment>
+    <addPrimaryKey
+            columnNames="id"
+            constraintName="pk_media_last_requested_dates"
+            schemaName="apps"
+            tableName="media_last_requested_dates"/>
+</changeSet>
+
+<changeSet id="media-eug-145" logicalFilePath="path-independent" author="eugene">
+    <comment>Creating sequence for table: media_last_requested_dates</comment>
+    <createSequence
+            incrementBy="1"
+            schemaName="apps"
+            sequenceName="media_last_requested_dates_s"
+            startValue="1"/>
+</changeSet>
+
+<changeSet id="media-eug-146" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_parameters</comment>
+    <addColumn schemaName="apps" tableName="media_parameters">
+        <column name="is_at" type="number"/>
+    </addColumn>
+    <addColumn schemaName="apps" tableName="media_parameters">
+        <column name="is_pt" type="number"/>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-147" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_parameter_conf</comment>
+    <addColumn schemaName="apps" tableName="media_parameter_conf">
+        <column name="metering_point_id" type="number">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-148" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_period_time_values_raw</comment>
+    <addColumn schemaName="apps" tableName="media_period_time_values_raw">
+        <column name="metering_point_id" type="number">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-149" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_at_time_values_raw</comment>
+    <addColumn schemaName="apps" tableName="media_at_time_values_raw">
+        <column name="metering_point_id" type="number">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-150" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_last_load_info</comment>
+    <addColumn schemaName="apps" tableName="media_last_load_info">
+        <column name="metering_point_id" type="number">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-151" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_parameter_conf</comment>
+    <addColumn schemaName="apps" tableName="media_parameter_conf">
+        <column name="source_metering_point_code" type="varchar(18)">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-152" logicalFilePath="path-independent" author="eugene">
+    <preConditions>
+        <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_work_list_lines" foreignKeyName="fk_media_work_list_lines_2" />
+    </preConditions>
+
+    <dropForeignKeyConstraint
+            baseTableSchemaName="apps"
+            baseTableName="media_work_list_lines"
+            constraintName="fk_media_work_list_lines_2" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-153" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_work_list_lines" columnName="param_id" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_work_list_lines</comment>
+    <dropColumn schemaName="apps" tableName="media_work_list_lines" columnName="param_id" />
+    <rollback/>
+</changeSet>
+
+
+
+<changeSet id="media-eug-154" logicalFilePath="path-independent" author="eugene">
+    <comment>add Column into table: media_source_types</comment>
+    <addColumn schemaName="apps" tableName="media_source_types">
+        <column name="priority" type="number" remarks="Приоритет">
+            <constraints nullable="true"/>
+        </column>
+
+        <column name="is_oper" type="number" remarks="Подходит для оперативного расчёта">
+            <constraints nullable="true"/>
+        </column>
+
+        <column name="is_final" type="number" remarks="Подходит для окончательного расчёта">
+            <constraints nullable="true"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-155" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_period_time_values" columnName="source_metering_point_code" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_period_time_values</comment>
+    <dropColumn schemaName="apps" tableName="media_period_time_values" columnName="source_metering_point_code" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-156" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_period_time_values" columnName="source_param_code" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_period_time_values</comment>
+    <dropColumn schemaName="apps" tableName="media_period_time_values" columnName="source_param_code" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-157" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_period_time_values" columnName="source_unit_code" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_period_time_values</comment>
+    <dropColumn schemaName="apps" tableName="media_period_time_values" columnName="source_unit_code" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-158" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_at_time_values" columnName="source_metering_point_code" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_at_time_values</comment>
+    <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="source_metering_point_code" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-159" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_at_time_values" columnName="source_param_code" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_at_time_values</comment>
+    <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="source_param_code" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-160" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_at_time_values" columnName="source_unit_code" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_at_time_values</comment>
+    <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="source_unit_code" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-161" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_parameter_conf</comment>
+    <addColumn schemaName="apps" tableName="media_parameter_conf">
+        <column name="param_type" type="varchar(20)" defaultValue="PT">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-162" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_period_time_values_raw</comment>
+    <addColumn schemaName="apps" tableName="media_period_time_values_raw">
+        <column name="param_id" type="number">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-163" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_at_time_values_raw</comment>
+    <addColumn schemaName="apps" tableName="media_at_time_values_raw">
+        <column name="param_id" type="number">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-164" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_last_load_info</comment>
+    <addColumn schemaName="apps" tableName="media_last_load_info">
+        <column name="param_id" type="number">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-165" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_last_load_info</comment>
+    <addColumn schemaName="apps" tableName="media_last_load_info">
+        <column name="param_type" type="varchar(20)" defaultValue="PT">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-166" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_last_load_info</comment>
+    <addColumn schemaName="apps" tableName="media_last_load_info">
+        <column name="interval" type="number">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-167" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_last_load_info" columnName="source_metering_point_code" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_last_load_info</comment>
+    <dropColumn schemaName="apps" tableName="media_last_load_info" columnName="source_metering_point_code" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-168" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_last_load_info" columnName="source_param_code" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_last_load_info</comment>
+    <dropColumn schemaName="apps" tableName="media_last_load_info" columnName="source_param_code" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-169" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_work_list_headers</comment>
+    <addColumn schemaName="apps" tableName="media_work_list_headers">
+        <column name="interval" type="number" defaultValue="900">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-170" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_connection_config</comment>
+    <addColumn schemaName="apps" tableName="media_connection_config">
+        <column name="time_zone" type="varchar(10)" defaultValue="UTC+1">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-171" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_work_list_lines" columnName="start_date" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_work_list_lines</comment>
+    <dropColumn schemaName="apps" tableName="media_work_list_lines" columnName="start_date" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-172" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_work_list_lines" columnName="end_date" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_work_list_lines</comment>
+    <dropColumn schemaName="apps" tableName="media_work_list_lines" columnName="end_date" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-173" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <columnExists schemaName="apps" tableName="media_last_requested_dates" columnName="param_type" />
+    </preConditions>
+
+    <comment>Dropping columns from table media_last_requested_dates</comment>
+    <dropColumn schemaName="apps" tableName="media_last_requested_dates" columnName="param_type" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-174" logicalFilePath="path-independent" author="eugene">
+    <comment>add column in table: media_work_list_headers</comment>
+    <addColumn schemaName="apps" tableName="media_work_list_headers">
+        <column name="param_type" type="varchar(20)" defaultValue="PT">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="media-eug-175" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <indexExists schemaName="apps" tableName="media_period_time_values_raw" indexName="idx_media_period_time_values_raw_1" />
+    </preConditions>
+
+    <comment>dropping index from table: media_period_time_values_raw</comment>
+    <dropIndex schemaName="apps" tableName="media_period_time_values_raw" indexName="idx_media_period_time_values_raw_1" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-176" logicalFilePath="path-independent" author="eugene">
+    <comment>creating index for table: media_period_time_values_raw</comment>
+    <createIndex indexName="idx_media_period_time_values_raw_1" schemaName="apps" tableName="media_period_time_values_raw">
+        <column name="metering_point_id"  type="number"/>
+        <column name="param_id"           type="number"/>
+        <column name="metering_date"      type="timestamp"/>
+        <column name="interval"           type="number"/>
+        <column name="batch_id"           type="number"/>
+    </createIndex>
+</changeSet>
+
+<changeSet id="media-eug-177" logicalFilePath="path-independent" author="eugene">
+    <preConditions onFail="MARK_RAN" >
+        <indexExists schemaName="apps" tableName="media_at_time_values_raw" indexName="idx_media_at_time_values_raw_1" />
+    </preConditions>
+
+    <comment>dropping index from table: media_at_time_values_raw</comment>
+    <dropIndex schemaName="apps" tableName="media_at_time_values_raw" indexName="idx_media_at_time_values_raw_1" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-eug-178" logicalFilePath="path-independent" author="eugene">
+    <comment>creating index for table: idx_media_at_time_values_raw_1</comment>
+    <createIndex indexName="idx_media_at_time_values_raw_1" schemaName="apps" tableName="media_at_time_values_raw">
+        <column name="metering_point_id"  type="number"/>
+        <column name="param_id"           type="number"/>
+        <column name="metering_date"      type="timestamp"/>
+        <column name="batch_id"           type="number"/>
+    </createIndex>
+</changeSet>
+
+<changeSet id="media-eug-179" logicalFilePath="path-independent" author="eugene">
+    <comment>creating index for table: media_period_time_values</comment>
+    <createIndex indexName="idx_media_period_time_values_3" schemaName="apps" tableName="media_period_time_values">
+        <column name="metering_point_id"  type="number"/>
+        <column name="param_id"           type="number"/>
+        <column name="metering_date"      type="timestamp"/>
+        <column name="source_type_id"     type="number"/>
+    </createIndex>
+</changeSet>
+
+<changeSet id="media-eug-180" logicalFilePath="path-independent" author="eugene">
+    <comment>creating index for table: media_at_time_values</comment>
+    <createIndex indexName="idx_media_at_time_values_3" schemaName="apps" tableName="media_at_time_values">
+        <column name="metering_point_id"  type="number"/>
+        <column name="param_id"           type="number"/>
+        <column name="metering_date"      type="timestamp"/>
+        <column name="source_type_id"     type="number"/>
+    </createIndex>
+</changeSet>
+
+<changeSet id="media-rus-141" logicalFilePath="path-independent" author="ruslan">
+    <comment>сomment on column APPS.MEDIA_CONNECTION_CONFIG.time_zone</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_CONNECTION_CONFIG.time_zone
+        is 'часовой пояс';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-142" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.METERING_POINT_ID</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.METERING_POINT_ID
+        is 'Ид точки учета';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-143" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.PARAM_ID</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.PARAM_ID
+        is 'Идентификатор параметра';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-144" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_PARAMETERS.IS_AT</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_PARAMETERS.IS_AT
+        is 'Мгновенные значения измерений';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-145" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_PARAMETERS.IS_PT</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_PARAMETERS.IS_PT
+        is 'Измерения значений за период';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-146" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_PARAMETER_CONF.METERING_POINT_ID</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_PARAMETER_CONF.METERING_POINT_ID
+        is 'Ид точки учета';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-147" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_PERIOD_TIME_VALUES_RAW.METERING_POINT_ID</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_PERIOD_TIME_VALUES_RAW.METERING_POINT_ID
+        is 'Ид точки учета';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-148" logicalFilePath="path-independent" author="ruslan">
+    <comment> comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.METERING_POINT_ID</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.METERING_POINT_ID
+        is 'Ид точки учета';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-149" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_LAST_LOAD_INFO.METERING_POINT_ID</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_LAST_LOAD_INFO.METERING_POINT_ID
+        is 'Ид точки учета';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-150" logicalFilePath="path-independent" author="ruslan">
+    <comment>omment on column APPS.MEDIA_LAST_LOAD_INFO.METERING_POINT_ID</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_LAST_LOAD_INFO.METERING_POINT_ID
+        is 'Ид точки учета';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-151" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_PARAMETER_CONF.SOURCE_METERING_POINT_CODE</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_PARAMETER_CONF.SOURCE_METERING_POINT_CODE
+        is 'Код точки учета во внешней системе ';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-152" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_PARAMETER_CONF.PARAM_TYPE</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_PARAMETER_CONF.PARAM_TYPE
+        is 'Тип параметра';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-153" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_PERIOD_TIME_VALUES_RAW.PARAM_ID</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_PERIOD_TIME_VALUES_RAW.PARAM_ID
+        is 'Ид параметра';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-154" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.PARAM_ID</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_AT_TIME_VALUES_RAW.PARAM_ID
+        is 'Ид параметра';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-155" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_LAST_LOAD_INFO.PARAM_ID</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_LAST_LOAD_INFO.PARAM_ID
+        is 'Ид параметра';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-156" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_LAST_LOAD_INFO.PARAM_TYPE</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_LAST_LOAD_INFO.PARAM_TYPE
+        is 'Тип параметра';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-157" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_LAST_LOAD_INFO.INTERVAL</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_LAST_LOAD_INFO.INTERVAL
+        is 'Интервал';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-158" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_WORK_LIST_HEADERS.INTERVAL</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_WORK_LIST_HEADERS.INTERVAL
+        is 'Интервал';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-159" logicalFilePath="path-independent" author="ruslan">
+    <comment>comment on column APPS.MEDIA_WORK_LIST_HEADERS.PARAM_TYPE</comment>
+    <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+        comment on column APPS.MEDIA_WORK_LIST_HEADERS.PARAM_TYPE
+        is 'Тип параметра';
+    </sql>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-160" logicalFilePath="path-independent" author="ruslan">
+    <comment>add foreign key constraint media_parameter_conf to dict_units</comment>
+    <addForeignKeyConstraint
+            baseTableSchemaName="apps"
+            baseTableName="media_parameter_conf"
+            baseColumnNames="source_unit_id"
+            constraintName="fk_media_parameter_conf_2"
+            deferrable="true"
+            initiallyDeferred="true"
+            onDelete="RESTRICT"
+            onUpdate="RESTRICT"
+            referencedTableSchemaName="apps"
+            referencedTableName="dict_units"
+            referencedColumnNames="id"
+    />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-161" logicalFilePath="path-independent" author="ruslan">
+    <comment>add foreign key constraint media_parameter_conf to dict_units</comment>
+    <addForeignKeyConstraint
+            baseTableSchemaName="apps"
+            baseTableName="media_parameter_conf"
+            baseColumnNames="metering_point_id"
+            constraintName="fk_media_parameter_conf_4"
+            deferrable="true"
+            initiallyDeferred="true"
+            onDelete="RESTRICT"
+            onUpdate="RESTRICT"
+            referencedTableSchemaName="apps"
+            referencedTableName="dict_metering_points"
+            referencedColumnNames="id"
+    />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-162" logicalFilePath="path-independent" author="ruslan">
+    <comment>add foreign key constraint media_parameter_conf to dict_units</comment>
+    <addForeignKeyConstraint
+            baseTableSchemaName="apps"
+            baseTableName="media_parameter_conf"
+            baseColumnNames="param_type"
+            constraintName="fk_media_parameter_conf_5"
+            deferrable="true"
+            initiallyDeferred="true"
+            onDelete="RESTRICT"
+            onUpdate="RESTRICT"
+            referencedTableSchemaName="apps"
+            referencedTableName="media_param_types"
+            referencedColumnNames="code"
+    />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-163" logicalFilePath="path-independent" author="ruslan">
+    <comment>delete data from media_metering_steps_tl</comment>
+    <delete schemaName="apps"
+            tableName="media_metering_steps_tl">
+    </delete>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-164" logicalFilePath="path-independent" author="ruslan">
+    <comment>delete data from media_metering_steps</comment>
+    <delete schemaName="apps"
+            tableName="media_metering_steps">
+    </delete>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-164-1" logicalFilePath="path-independent" author="ruslan">
+    <preConditions onFail="MARK_RAN" >
+        <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_metering_steps_tl" foreignKeyName="fk_media_metering_steps_tl_1" />
+    </preConditions>
+
+    <dropForeignKeyConstraint
+            baseTableSchemaName="apps"
+            baseTableName="media_metering_steps_tl"
+            constraintName="fk_media_metering_steps_tl_1" />
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-165" logicalFilePath="path-independent" author="ruslan">
+    <comment>modify data type in media_metering_steps_tl</comment>
+    <modifyDataType columnName="code"
+                    newDataType="number"
+                    schemaName="apps"
+                    tableName="media_metering_steps_tl"/>
+    <rollback/>
+</changeSet>
+
+
+<changeSet id="media-rus-166" logicalFilePath="path-independent" author="ruslan">
+    <comment>modify data type in media_metering_steps</comment>
+    <modifyDataType columnName="code"
+                    newDataType="number"
+                    schemaName="apps"
+                    tableName="media_metering_steps"/>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-167" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>insert into media_metering_steps</comment>
+    <insert schemaName="apps" tableName="media_metering_steps">
+        <column name="code" type="number" value="900"/>
+    </insert>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-168" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>insert into media_metering_steps</comment>
+    <insert schemaName="apps" tableName="media_metering_steps">
+        <column name="code" type="number" value="3600"/>
+    </insert>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-169" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>insert into media_metering_steps</comment>
+    <insert schemaName="apps" tableName="media_metering_steps">
+        <column name="code" type="number" value="86400"/>
+    </insert>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-170" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>insert into media_metering_steps_tl</comment>
+    <insert schemaName="apps" tableName="media_metering_steps_tl">
+        <column name="code" type="number" value="900"/>
+        <column name="lang" type="varchar2" value="RU"/>
+        <column name="name" type="varchar2" value="15 минут"/>
+    </insert>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-171" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>insert into media_metering_steps_tl</comment>
+    <insert schemaName="apps" tableName="media_metering_steps_tl">
+        <column name="code" type="number" value="900"/>
+        <column name="lang" type="varchar2" value="KZ"/>
+        <column name="name" type="varchar2" value="15 минут"/>
+    </insert>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-172" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>insert into media_metering_steps_tl</comment>
+    <insert schemaName="apps" tableName="media_metering_steps_tl">
+        <column name="code" type="number" value="3600"/>
+        <column name="lang" type="varchar2" value="RU"/>
+        <column name="name" type="varchar2" value="1 час"/>
+    </insert>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-173" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>insert into media_metering_steps_tl</comment>
+    <insert schemaName="apps" tableName="media_metering_steps_tl">
+        <column name="code" type="number" value="3600"/>
+        <column name="lang" type="varchar2" value="KZ"/>
+        <column name="name" type="varchar2" value="1 час"/>
+    </insert>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-174" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>insert into media_metering_steps_tl</comment>
+    <insert schemaName="apps" tableName="media_metering_steps_tl">
+        <column name="code" type="number" value="86400"/>
+        <column name="lang" type="varchar2" value="RU"/>
+        <column name="name" type="varchar2" value="Сутки"/>
+    </insert>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-175" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>insert into media_metering_steps_tl</comment>
+    <insert schemaName="apps" tableName="media_metering_steps_tl">
+        <column name="code" type="number" value="86400"/>
+        <column name="lang" type="varchar2" value="KZ"/>
+        <column name="name" type="varchar2" value="Сутки"/>
+    </insert>
+    <rollback/>
+</changeSet>
+
+<changeSet id="media-rus-176" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>Creating foreign constraint: media_metering_steps_tl to media_metering_steps</comment>
+    <addForeignKeyConstraint
+            baseTableSchemaName="apps"
+            baseTableName="media_metering_steps_tl"
+            baseColumnNames="code"
+            constraintName="fk_media_metering_steps_tl_1"
+            deferrable="true"
+            initiallyDeferred="true"
+            onDelete="CASCADE"
+            onUpdate="RESTRICT"
+            referencedTableSchemaName="apps"
+            referencedTableName="media_metering_steps"
+            referencedColumnNames="code"
+    />
+</changeSet>
+
+<changeSet id="media-rus-177" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>Creating foreign constraint: media_parameter_conf to media_metering_steps</comment>
+    <addForeignKeyConstraint
+            baseTableSchemaName="apps"
+            baseTableName="media_parameter_conf"
+            baseColumnNames="interval"
+            constraintName="fk_media_parameter_conf_6"
+            deferrable="true"
+            initiallyDeferred="true"
+            onDelete="RESTRICT"
+            onUpdate="RESTRICT"
+            referencedTableSchemaName="apps"
+            referencedTableName="media_metering_steps"
+            referencedColumnNames="code"
+    />
+</changeSet>
+
+<changeSet id="media-rus-178" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>Creating foreign constraint: media_work_list_headers to media_work_list_types</comment>
+    <addForeignKeyConstraint
+            baseTableSchemaName="apps"
+            baseTableName="media_work_list_headers"
+            baseColumnNames="work_list_type"
+            constraintName="fk_media_work_list_headers_3"
+            deferrable="true"
+            initiallyDeferred="true"
+            onDelete="RESTRICT"
+            onUpdate="RESTRICT"
+            referencedTableSchemaName="apps"
+            referencedTableName="media_work_list_types"
+            referencedColumnNames="code"
+    />
+</changeSet>
+
+<changeSet id="media-rus-179" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>Creating foreign constraint: media_work_list_headers to media_batches</comment>
+    <addForeignKeyConstraint
+            baseTableSchemaName="apps"
+            baseTableName="media_work_list_headers"
+            baseColumnNames="batch_id"
+            constraintName="fk_media_work_list_headers_4"
+            deferrable="true"
+            initiallyDeferred="true"
+            onDelete="RESTRICT"
+            onUpdate="RESTRICT"
+            referencedTableSchemaName="apps"
+            referencedTableName="media_batches"
+            referencedColumnNames="id"
+    />
+</changeSet>
+
+<changeSet id="media-rus-180" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>Creating foreign constraint: media_work_list_headers to media_batch_statuses</comment>
+    <addForeignKeyConstraint
+            baseTableSchemaName="apps"
+            baseTableName="media_work_list_headers"
+            baseColumnNames="status"
+            constraintName="fk_media_work_list_headers_6"
+            deferrable="true"
+            initiallyDeferred="true"
+            onDelete="RESTRICT"
+            onUpdate="RESTRICT"
+            referencedTableSchemaName="apps"
+            referencedTableName="media_batch_statuses"
+            referencedColumnNames="code"
+    />
+</changeSet>
+
+<changeSet id="media-rus-181" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <comment>Creating foreign constraint: media_work_list_headers to media_metering_steps</comment>
+    <addForeignKeyConstraint
+            baseTableSchemaName="apps"
+            baseTableName="media_work_list_headers"
+            baseColumnNames="interval"
+            constraintName="fk_media_work_list_headers_7"
+            deferrable="true"
+            initiallyDeferred="true"
+            onDelete="RESTRICT"
+            onUpdate="RESTRICT"
+            referencedTableSchemaName="apps"
+            referencedTableName="media_metering_steps"
+            referencedColumnNames="code"
+    />
+</changeSet>
+
+<changeSet id="media-rus-182" logicalFilePath="path-independent" author="ruslan">
+    <comment>add foreign key constraint media_work_list_headers to dict_units</comment>
+    <addForeignKeyConstraint
+            baseTableSchemaName="apps"
+            baseTableName="media_work_list_headers"
+            baseColumnNames="param_type"
+            constraintName="fk_media_work_list_headers_8"
+            deferrable="true"
+            initiallyDeferred="true"
+            onDelete="RESTRICT"
+            onUpdate="RESTRICT"
+            referencedTableSchemaName="apps"
+            referencedTableName="media_param_types"
+            referencedColumnNames="code"
+    />
+    <rollback/>
+</changeSet>
+
+    <changeSet id="media-rus-183" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>insert into media_connection_protocol</comment>
+        <insert schemaName="apps" tableName="media_connection_protocol">
+            <column name="code" type="number" value="SOAP"/>
+            <column name="name" type="varchar2" value="Simple Object Access Protocol "/>
+        </insert>
+
+        <insert schemaName="apps" tableName="media_connection_protocol">
+            <column name="code" type="number" value="REST"/>
+            <column name="name" type="varchar2" value="Representational state transfer"/>
         </insert>
         <rollback/>
     </changeSet>
 
-    <changeSet id="media-rus-168" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>insert into media_metering_steps</comment>
-        <insert schemaName="apps" tableName="media_metering_steps">
-            <column name="code" type="number" value="3600"/>
-        </insert>
-        <rollback/>
+    <changeSet id="media-rus-184" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_ways_to_start</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_work_list_headers">
+            <column name="emcos_default" type="number" remarks="значение по умолчанию для EMCOS" defaultValue="900"/>
+        </addColumn>
     </changeSet>
 
-    <changeSet id="media-rus-169" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>insert into media_metering_steps</comment>
-        <insert schemaName="apps" tableName="media_metering_steps">
-            <column name="code" type="number" value="86400"/>
-        </insert>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-170" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>insert into media_metering_steps_tl</comment>
-        <insert schemaName="apps" tableName="media_metering_steps_tl">
-            <column name="code" type="number" value="900"/>
-            <column name="lang" type="varchar2" value="RU"/>
-            <column name="name" type="varchar2" value="15 минут"/>
-        </insert>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-171" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>insert into media_metering_steps_tl</comment>
-        <insert schemaName="apps" tableName="media_metering_steps_tl">
-            <column name="code" type="number" value="900"/>
-            <column name="lang" type="varchar2" value="KZ"/>
-            <column name="name" type="varchar2" value="15 минут"/>
-        </insert>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-172" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>insert into media_metering_steps_tl</comment>
-        <insert schemaName="apps" tableName="media_metering_steps_tl">
-            <column name="code" type="number" value="3600"/>
-            <column name="lang" type="varchar2" value="RU"/>
-            <column name="name" type="varchar2" value="1 час"/>
-        </insert>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-173" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>insert into media_metering_steps_tl</comment>
-        <insert schemaName="apps" tableName="media_metering_steps_tl">
-            <column name="code" type="number" value="3600"/>
-            <column name="lang" type="varchar2" value="KZ"/>
-            <column name="name" type="varchar2" value="1 час"/>
-        </insert>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-174" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>insert into media_metering_steps_tl</comment>
-        <insert schemaName="apps" tableName="media_metering_steps_tl">
-            <column name="code" type="number" value="86400"/>
-            <column name="lang" type="varchar2" value="RU"/>
-            <column name="name" type="varchar2" value="Сутки"/>
-        </insert>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-175" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>insert into media_metering_steps_tl</comment>
-        <insert schemaName="apps" tableName="media_metering_steps_tl">
-            <column name="code" type="number" value="86400"/>
-            <column name="lang" type="varchar2" value="KZ"/>
-            <column name="name" type="varchar2" value="Сутки"/>
-        </insert>
-        <rollback/>
-    </changeSet>
-
-    <changeSet id="media-rus-176" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>Creating foreign constraint: media_metering_steps_tl to media_metering_steps</comment>
-        <addForeignKeyConstraint
-                baseTableSchemaName="apps"
-                baseTableName="media_metering_steps_tl"
-                baseColumnNames="code"
-                constraintName="fk_media_metering_steps_tl_1"
-                deferrable="true"
-                initiallyDeferred="true"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedTableSchemaName="apps"
-                referencedTableName="media_metering_steps"
-                referencedColumnNames="code"
-        />
-    </changeSet>
-
-    <changeSet id="media-rus-177" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>Creating foreign constraint: media_parameter_conf to media_metering_steps</comment>
-        <addForeignKeyConstraint
-                baseTableSchemaName="apps"
-                baseTableName="media_parameter_conf"
-                baseColumnNames="interval"
-                constraintName="fk_media_parameter_conf_6"
-                deferrable="true"
-                initiallyDeferred="true"
-                onDelete="RESTRICT"
-                onUpdate="RESTRICT"
-                referencedTableSchemaName="apps"
-                referencedTableName="media_metering_steps"
-                referencedColumnNames="code"
-        />
-    </changeSet>
-
-    <changeSet id="media-rus-178" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>Creating foreign constraint: media_work_list_headers to media_work_list_types</comment>
-        <addForeignKeyConstraint
-                baseTableSchemaName="apps"
-                baseTableName="media_work_list_headers"
-                baseColumnNames="work_list_type"
-                constraintName="fk_media_work_list_headers_3"
-                deferrable="true"
-                initiallyDeferred="true"
-                onDelete="RESTRICT"
-                onUpdate="RESTRICT"
-                referencedTableSchemaName="apps"
-                referencedTableName="media_work_list_types"
-                referencedColumnNames="code"
-        />
-    </changeSet>
-
-    <changeSet id="media-rus-179" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>Creating foreign constraint: media_work_list_headers to media_batches</comment>
-        <addForeignKeyConstraint
-                baseTableSchemaName="apps"
-                baseTableName="media_work_list_headers"
-                baseColumnNames="batch_id"
-                constraintName="fk_media_work_list_headers_4"
-                deferrable="true"
-                initiallyDeferred="true"
-                onDelete="RESTRICT"
-                onUpdate="RESTRICT"
-                referencedTableSchemaName="apps"
-                referencedTableName="media_batches"
-                referencedColumnNames="id"
-        />
-    </changeSet>
-
-    <changeSet id="media-rus-180" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>Creating foreign constraint: media_work_list_headers to media_batch_statuses</comment>
-        <addForeignKeyConstraint
-                baseTableSchemaName="apps"
-                baseTableName="media_work_list_headers"
-                baseColumnNames="status"
-                constraintName="fk_media_work_list_headers_6"
-                deferrable="true"
-                initiallyDeferred="true"
-                onDelete="RESTRICT"
-                onUpdate="RESTRICT"
-                referencedTableSchemaName="apps"
-                referencedTableName="media_batch_statuses"
-                referencedColumnNames="code"
-        />
-    </changeSet>
-
-    <changeSet id="media-rus-181" logicalFilePath="path-independent" author="ruslan" context="dev">
-        <comment>Creating foreign constraint: media_work_list_headers to media_metering_steps</comment>
-        <addForeignKeyConstraint
-                baseTableSchemaName="apps"
-                baseTableName="media_work_list_headers"
-                baseColumnNames="interval"
-                constraintName="fk_media_work_list_headers_7"
-                deferrable="true"
-                initiallyDeferred="true"
-                onDelete="RESTRICT"
-                onUpdate="RESTRICT"
-                referencedTableSchemaName="apps"
-                referencedTableName="media_metering_steps"
-                referencedColumnNames="code"
-        />
-    </changeSet>
-
-    <changeSet id="media-rus-182" logicalFilePath="path-independent" author="ruslan">
-        <comment>add foreign key constraint media_work_list_headers to dict_units</comment>
-        <addForeignKeyConstraint
-                baseTableSchemaName="apps"
-                baseTableName="media_work_list_headers"
-                baseColumnNames="param_type"
-                constraintName="fk_media_work_list_headers_8"
-                deferrable="true"
-                initiallyDeferred="true"
-                onDelete="RESTRICT"
-                onUpdate="RESTRICT"
-                referencedTableSchemaName="apps"
-                referencedTableName="media_param_types"
-                referencedColumnNames="code"
-        />
-        <rollback/>
+    <changeSet id="media-rus-185" logicalFilePath="path-independent" author="ruslan">
+        <comment>add Column into table: media_ways_to_start</comment>
+        <addColumn schemaName="apps"
+                   tableName="media_work_list_headers">
+            <column name="oic_default" type="number" remarks="значение по умолчанию для EMCOS" defaultValue="3600"/>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>
