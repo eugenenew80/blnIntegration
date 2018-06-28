@@ -976,4 +976,31 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         </insert>
         <rollback/>
     </changeSet>
+
+    <changeSet id="media-rus-184" logicalFilePath="path-independent" author="eugene">
+        <comment>add column in table: media_work_list_headers</comment>
+        <addColumn schemaName="apps" tableName="dict_data_sources">
+            <column name="default_value" type="number" remarks="Значение по умолчанию для интервала"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-185" logicalFilePath="path-independent" author="eugene">
+        <comment>update data in table: dict_data_sources</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            update apps.dict_data_sources
+            set default_value = 900
+            where code = 'EMCOS'
+        </sql>
+    </changeSet>
+
+    <changeSet id="media-rus-186" logicalFilePath="path-independent" author="eugene">
+        <comment>update data in table: dict_data_sources</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            update apps.dict_data_sources
+            set default_value = 3600
+            where code = 'OIC'
+        </sql>
+    </changeSet>
+
+
 </databaseChangeLog>
