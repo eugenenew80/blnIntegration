@@ -718,7 +718,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-163" logicalFilePath="path-independent" author="ruslan">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps_tl"/>
     </preConditions>
     <comment>delete data from media_metering_steps_tl</comment>
@@ -729,7 +729,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-164" logicalFilePath="path-independent" author="ruslan">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps"/>
     </preConditions>
     <comment>delete data from media_metering_steps</comment>
@@ -752,7 +752,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-165" logicalFilePath="path-independent" author="ruslan">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps_tl"/>
     </preConditions>
     <comment>modify data type in media_metering_steps_tl</comment>
@@ -765,7 +765,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 
 
 <changeSet id="media-rus-166" logicalFilePath="path-independent" author="ruslan">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps"/>
     </preConditions>
     <comment>modify data type in media_metering_steps</comment>
@@ -777,7 +777,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-167" logicalFilePath="path-independent" author="ruslan" context="dev">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps"/>
     </preConditions>
     <comment>insert into media_metering_steps</comment>
@@ -788,7 +788,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-168" logicalFilePath="path-independent" author="ruslan" context="dev">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps"/>
     </preConditions>
     <comment>insert into media_metering_steps</comment>
@@ -799,7 +799,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-169" logicalFilePath="path-independent" author="ruslan" context="dev">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps"/>
     </preConditions>
     <comment>insert into media_metering_steps</comment>
@@ -810,7 +810,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-170" logicalFilePath="path-independent" author="ruslan" context="dev">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps_tl"/>
     </preConditions>
     <comment>insert into media_metering_steps_tl</comment>
@@ -823,7 +823,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-171" logicalFilePath="path-independent" author="ruslan" context="dev">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps_tl"/>
     </preConditions>
     <comment>insert into media_metering_steps_tl</comment>
@@ -836,7 +836,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-172" logicalFilePath="path-independent" author="ruslan" context="dev">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps_tl"/>
     </preConditions>
     <comment>insert into media_metering_steps_tl</comment>
@@ -849,7 +849,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-173" logicalFilePath="path-independent" author="ruslan" context="dev">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps_tl"/>
     </preConditions>
     <comment>insert into media_metering_steps_tl</comment>
@@ -862,7 +862,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-174" logicalFilePath="path-independent" author="ruslan" context="dev">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps_tl"/>
     </preConditions>
     <comment>insert into media_metering_steps_tl</comment>
@@ -875,7 +875,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-175" logicalFilePath="path-independent" author="ruslan" context="dev">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps_tl"/>
     </preConditions>
     <comment>insert into media_metering_steps_tl</comment>
@@ -888,7 +888,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-176" logicalFilePath="path-independent" author="ruslan" context="dev">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps_tl"/>
     </preConditions>
     <comment>Creating foreign constraint: media_metering_steps_tl to media_metering_steps</comment>
@@ -908,7 +908,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-177" logicalFilePath="path-independent" author="ruslan" context="dev">
-    <preConditions onFail="CONTINUE">
+    <preConditions onFail="MARK_RAN">
         <tableExists schemaName="apps" tableName="media_metering_steps"/>
     </preConditions>
     <comment>Creating foreign constraint: media_parameter_conf to media_metering_steps</comment>
@@ -979,6 +979,9 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </changeSet>
 
 <changeSet id="media-rus-181" logicalFilePath="path-independent" author="ruslan" context="dev">
+    <preConditions onFail="MARK_RAN">
+        <tableExists schemaName="apps" tableName="media_metering_steps"/>
+    </preConditions>
     <comment>Creating foreign constraint: media_work_list_headers to media_metering_steps</comment>
     <addForeignKeyConstraint
             baseTableSchemaName="apps"
