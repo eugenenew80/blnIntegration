@@ -54,6 +54,7 @@ public class AutoEmcosPtReader extends AbstractAutoReader<PeriodTimeValueRaw> {
 
 				return LocalDate.now(ZoneId.of(header.getConfig().getTimeZone()))
 					.withDayOfMonth(1)
+					.minusDays(1)
 					.atStartOfDay();
 			},
 			() -> endDateTime

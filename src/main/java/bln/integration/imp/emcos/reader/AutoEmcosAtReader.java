@@ -54,6 +54,8 @@ public class AutoEmcosAtReader extends AbstractAutoReader<AtTimeValueRaw> {
 
 				return LocalDate.now(ZoneId.of(header.getConfig().getTimeZone()))
 					.withDayOfMonth(1)
+					.minusMonths(1)
+					.minusDays(1)
 					.atStartOfDay();
 			},
 			() -> endDateTime
