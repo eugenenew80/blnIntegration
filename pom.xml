@@ -68,27 +68,12 @@
 
     <profiles>
         <profile>
-            <id>prod</id>
-            <properties>
-                <driver>oracle.jdbc.OracleDriver</driver>
-                <url>jdbc:oracle:thin:@192.168.82.33:1521:blndprod</url>
-                <username>system</username>
-                <password>${settings.servers.server.ora.password}</password>
-                <scripts>dev</scripts>
-                <skipTests>true</skipTests>
-            </properties>
-        </profile>
-
-        <profile>
             <id>blntest</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <driver>oracle.jdbc.OracleDriver</driver>
-                <url>jdbc:oracle:thin:@localhost:1521:BLNDEV</url>
+                <url>jdbc:oracle:thin:@10.9.44.240:1521:BLNDEV</url>
                 <username>system</username>
-                <password>${settings.servers.server.ora.password}</password>
+                <password>qwerty</password>
                 <scripts>dev</scripts>
                 <skipTests>true</skipTests>
             </properties>
@@ -104,7 +89,7 @@
                 <driver>oracle.jdbc.OracleDriver</driver>
                 <url>jdbc:oracle:thin:@10.9.40.151:1521:orcl12c</url>
                 <username>system</username>
-                <password>Q1w2e3r4t5</password>
+                <password>system</password>
                 <scripts>dev</scripts>
                 <skipTests>true</skipTests>
             </properties>
@@ -120,6 +105,31 @@
                 <scripts>dev</scripts>
                 <skipTests>true</skipTests>
             </properties>
+        </profile>
+
+        <profile>
+            <id>localTest</id>
+            <properties>
+                <driver>org.postgresql.Driver</driver>
+                <url>jdbc:postgresql://localhost:5432/bln_dev</url>
+                <username>postgres</username>
+                <password>1</password>
+                <scripts>dev</scripts>
+                <skipTests>false</skipTests>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>prod</id>
+            <properties>
+                <driver>oracle.jdbc.OracleDriver</driver>
+                <url>jdbc:oracle:thin:@192.168.82.33:1521:blndprod</url>
+                <username>system</username>
+                <password>${settings.servers.server.ora.password}</password>
+                <scripts>dev</scripts>
+                <skipTests>true</skipTests>
+            </properties>
+
         </profile>
     </profiles>
 

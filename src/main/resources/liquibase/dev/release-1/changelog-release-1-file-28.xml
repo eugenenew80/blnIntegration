@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="media-eug-181" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <not>
+                <columnExists schemaName="apps" tableName="media_period_time_values" columnName="period_type" />
+            </not>
+        </preConditions>
+        <comment>Adding columns from table media_period_time_values</comment>
+
+        <addColumn schemaName="apps" tableName="media_period_time_values">
+            <column name="period_type" type="varchar2(20)" remarks="Тип периода" defaultValue="H">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-182" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <not>
+                <columnExists schemaName="apps" tableName="media_at_time_values" columnName="period_type" />
+            </not>
+        </preConditions>
+        <comment>Adding columns from table media_at_time_values</comment>
+
+        <addColumn schemaName="apps" tableName="media_at_time_values">
+            <column name="period_type" type="varchar2(20)" remarks="Тип периода" defaultValue="D">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-183" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <not>
+                <indexExists schemaName="apps" tableName="media_period_time_values" indexName="idx_media_period_time_values_4" />
+            </not>
+        </preConditions>
+
+        <comment>creating index for table: media_period_time_values</comment>
+        <createIndex indexName="idx_media_period_time_values_4" schemaName="apps" tableName="media_period_time_values">
+            <column name="period_type"  type="varchar2(20)"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="media-eug-184" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <not>
+                <indexExists schemaName="apps" tableName="media_at_time_values" indexName="idx_media_at_time_values_4" />
+            </not>
+        </preConditions>
+
+        <comment>creating index for table: media_at_time_values</comment>
+        <createIndex indexName="idx_media_at_time_values_4" schemaName="apps" tableName="media_at_time_values">
+            <column name="period_type"  type="varchar2(20)"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="media-eug-185" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <not>
+                <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_period_time_values" foreignKeyName="fk_media_period_time_values_12"  />
+            </not>
+        </preConditions>
+
+        <comment>Creating foreign constraint: media_period_time_values to calc_period_types</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_period_time_values"
+                baseColumnNames="period_type"
+                constraintName="fk_media_period_time_values_12"
+                deferrable="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="calc_period_types"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+
+    <changeSet id="media-eug-186" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <not>
+                <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_at_time_values" foreignKeyName="fk_media_at_time_values_12"  />
+            </not>
+        </preConditions>
+
+        <comment>Creating foreign constraint: media_at_time_values to calc_period_types</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_at_time_values"
+                baseColumnNames="period_type"
+                constraintName="fk_media_at_time_values_12"
+                deferrable="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="calc_period_types"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+
+
+</databaseChangeLog>
