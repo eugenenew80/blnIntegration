@@ -106,5 +106,9 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         />
     </changeSet>
 
+    <changeSet id="media-eug-187" logicalFilePath="path-independent" author="eugene">
+        <comment>Drop not null constraint from table: media_period_time_values</comment>
+        <dropNotNullConstraint schemaName="apps" tableName="media_period_time_values" columnName="interval" />
+    </changeSet>
 
 </databaseChangeLog>
