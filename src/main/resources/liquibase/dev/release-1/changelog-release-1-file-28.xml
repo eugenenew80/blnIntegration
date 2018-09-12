@@ -111,4 +111,33 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         <dropNotNullConstraint schemaName="apps" tableName="media_period_time_values" columnName="interval" />
     </changeSet>
 
+    <changeSet id="media-eug-188" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Adding column to table: media_period_time_values</comment>
+        <addColumn schemaName="apps" tableName="media_period_time_values">
+            <column name="source_code"      type="varchar2(30)" remarks="Код докупента - источника данных" />
+            <column name="source_id"        type="number"       remarks="Идентификатор заголовка докупента - источника данных" />
+            <column name="source_line_id"   type="number"       remarks="Идентификатор строки документа источника данных" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-189" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Adding column to table: media_at_time_values</comment>
+        <addColumn schemaName="apps" tableName="media_at_time_values">
+            <column name="source_code"      type="varchar2(30)" remarks="Код докупента - источника данных" />
+            <column name="source_id"        type="number"       remarks="Идентификатор заголовка докупента - источника данных" />
+            <column name="source_line_id"   type="number"       remarks="Идентификатор строки документа источника данных" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-190" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Dropping column from table: media_period_time_values</comment>
+        <dropColumn schemaName="apps" tableName="media_period_time_values" columnName="metering_data_source_id" />
+        <dropColumn schemaName="apps" tableName="media_period_time_values" columnName="metering_data_source_line_id" />
+    </changeSet>
+
+    <changeSet id="media-eug-191" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Dropping column from table: media_period_time_values</comment>
+        <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="metering_data_source_id" />
+        <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="metering_data_source_line_id" />
+    </changeSet>
 </databaseChangeLog>
