@@ -1055,5 +1055,4 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         </sql>
     </changeSet>
 
-
 </databaseChangeLog>
