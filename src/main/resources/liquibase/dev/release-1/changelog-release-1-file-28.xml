@@ -140,4 +140,13 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="metering_data_source_id" />
         <dropColumn schemaName="apps" tableName="media_at_time_values" columnName="metering_data_source_line_id" />
     </changeSet>
+
+    <changeSet id="media-eug-192" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Adding column to table: media_period_time_values</comment>
+        <addColumn schemaName="apps" tableName="media_period_time_values">
+            <column name="is_active_manual"  type="number" defaultValue="0" remarks="Флаг - активная запись для использования в расчётах выбрана вручную">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
