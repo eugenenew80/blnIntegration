@@ -25,6 +25,10 @@ public class HttpGatewayImpl implements HttpGateway {
 		StringBuffer response = new StringBuffer();
 		HttpURLConnection con = null;
 		try {
+			logger.trace("request body-----------------------------");
+			logger.trace(new String(body, "UTF-8"));
+			logger.trace("request body-----------------------------");
+
 			con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod(method);
 			con.setUseCaches(false);
@@ -55,6 +59,10 @@ public class HttpGatewayImpl implements HttpGateway {
 		finally {
 			if (con!=null) con.disconnect();
 		}
+
+		logger.trace("response body-----------------------------");
+		logger.trace(response.toString());
+		logger.trace("----------------------------------------");
 
 		return response.toString().getBytes();
 	}
