@@ -46,7 +46,7 @@ public class AutoEmcosImp implements Runnable  {
 				.collect(toList());
 
 			submit(atTasks);
-			//submit(ptTasks);
+			submit(ptTasks);
 		}
 
 		catch (Exception e) {
