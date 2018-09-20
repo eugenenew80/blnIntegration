@@ -149,4 +149,62 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="media-eug-193" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Adding column to table: media_period_time_values</comment>
+        <addColumn schemaName="apps" tableName="media_period_time_values">
+            <column name="metering_data_source_id"  type="number"  remarks="Идентификатор источника данных (кто предоставил данные)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-194" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Adding column to table: media_at_time_values</comment>
+        <addColumn schemaName="apps" tableName="media_at_time_values">
+            <column name="metering_data_source_id"  type="number"  remarks="Идентификатор источника данных (кто предоставил данные)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-195" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <not>
+                <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_period_time_values" foreignKeyName="fk_media_period_time_values_13"  />
+            </not>
+        </preConditions>
+
+        <comment>Creating foreign constraint: media_period_time_values to calc_metering_data_sources</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_period_time_values"
+                baseColumnNames="metering_data_source_id"
+                constraintName="fk_media_period_time_values_13"
+                deferrable="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="calc_metering_data_sources"
+                referencedColumnNames="id"
+        />
+    </changeSet>
+
+    <changeSet id="media-eug-196" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <not>
+                <foreignKeyConstraintExists schemaName="apps" foreignKeyTableName="media_at_time_values" foreignKeyName="fk_media_at_time_values_10"  />
+            </not>
+        </preConditions>
+
+        <comment>Creating foreign constraint: media_at_time_values to calc_metering_data_sources</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_at_time_values"
+                baseColumnNames="metering_data_source_id"
+                constraintName="fk_media_at_time_values_10"
+                deferrable="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="calc_metering_data_sources"
+                referencedColumnNames="id"
+        />
+    </changeSet>
 </databaseChangeLog>
