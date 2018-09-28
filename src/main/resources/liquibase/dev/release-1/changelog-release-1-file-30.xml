@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="media-rus-187" logicalFilePath="path-independent" author="ruslan">
+        <comment>insert data in media_parameters_tl</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+
+            insert into apps.media_parameters_tl(
+            id,
+            parameter_id,
+            lang,
+            short_name,
+            name)
+            select
+            apps.media_parameters_tl_s.nextval,
+            id,
+            'RU',
+            short_name,
+            name
+            from apps.MEDIA_PARAMETERS;
+
+            insert into apps.media_parameters_tl(
+            id,
+            parameter_id,
+            lang,
+            short_name,
+            name)
+            select
+            apps.media_parameters_tl_s.nextval,
+            id,
+            'KZ',
+            short_name,
+            name
+            from apps.MEDIA_PARAMETERS;
+        </sql>
+        <rollback/>
+    </changeSet>
+
+
+</databaseChangeLog>
