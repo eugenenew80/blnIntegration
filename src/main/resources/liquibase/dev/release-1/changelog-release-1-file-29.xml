@@ -51,4 +51,97 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         </addColumn>
     </changeSet>
 
+
+    <changeSet id="media-eug-200" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Creating table: media_parameters_tl</comment>
+        <createTable tableName="media_parameters_tl" schemaName="apps" remarks="Перевод - параметры точек учета">
+            <column name="id" type="number" remarks="Идентификатор">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="parameter_id" type="number" remarks="Идентификатор параметра">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="lang" type="varchar(10)" remarks="язык">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="short_name" type="varchar(100)" remarks="Краткое наименование">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(300)" remarks="Полное наименование">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="create_date" type="TIMESTAMP" remarks="Дата создания">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата изменения">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_by" type="number" remarks="Автор">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_by" type="number" remarks="Автор изменения">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="media-eug-201" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Creating primary key for table: media_parameters_tl</comment>
+        <addPrimaryKey
+                columnNames="id"
+                constraintName="pk_media_parameters_tl"
+                schemaName="apps"
+                tableName="media_parameters_tl"/>
+    </changeSet>
+
+    <changeSet id="media-eug-202" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Creating unique key for table: media_parameters_tl</comment>
+        <addUniqueConstraint
+                columnNames="parameter_id, lang"
+                constraintName="uk_media_parameters_tl_1"
+                schemaName="apps"
+                tableName="media_parameters_tl"/>
+    </changeSet>
+
+    <changeSet id="media-eug-203" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Creating sequence for table: media_parameters_tl</comment>
+        <createSequence
+                incrementBy="1"
+                schemaName="apps"
+                sequenceName="media_parameters_tl_s"
+                startValue="1"/>
+    </changeSet>
+
+    <changeSet id="media-eug-204" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>creating index for table: media_parameters_tl</comment>
+        <createIndex indexName="idx_media_parameters_tl_1" schemaName="apps" tableName="media_parameters_tl">
+            <column name="parameter_id"  type="number"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="media-eug-205" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Creating foreign constraint: media_parameters_tl to media_parameters</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_parameters_tl"
+                baseColumnNames="parameter_id"
+                constraintName="fk_media_parameters_tl_1"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_parameters"
+                referencedColumnNames="id"
+        />
+    </changeSet>
+
 </databaseChangeLog>
