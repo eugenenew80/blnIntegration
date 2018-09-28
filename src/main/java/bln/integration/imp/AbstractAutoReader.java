@@ -38,7 +38,7 @@ public abstract class AbstractAutoReader<T> implements Reader<T> {
             endDateTime = endDateTime.truncatedTo(ChronoUnit.HOURS);
 
         if (header.getParamType()== ParamTypeEnum.AT)
-            endDateTime = endDateTime.truncatedTo(ChronoUnit.DAYS);
+            endDateTime = endDateTime.truncatedTo(ChronoUnit.DAYS).plusDays(1);
 
         List<MeteringPointCfg> points = buildPointsCfg(header, endDateTime);
         if (points.size() == 0) {

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="media-eug-197" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <not>
+                <columnExists schemaName="apps" tableName="media_period_time_values" columnName="is_inverted" />
+            </not>
+        </preConditions>
+        <comment>Adding columns from table media_period_time_values</comment>
+
+        <addColumn schemaName="apps" tableName="media_period_time_values">
+            <column name="is_inverted" type="number" remarks="Флаг - применено инвертирование" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-198" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <not>
+                <columnExists schemaName="apps" tableName="media_at_time_values" columnName="is_inverted" />
+            </not>
+        </preConditions>
+        <comment>Adding columns from table media_period_time_values</comment>
+
+        <addColumn schemaName="apps" tableName="media_at_time_values">
+            <column name="is_inverted" type="number" remarks="Флаг - применено инвертирование" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-eug-199" logicalFilePath="path-independent" author="eugene">
+        <preConditions onFail="MARK_RAN" >
+            <not>
+                <columnExists schemaName="apps" tableName="dict_metering_points" columnName="is_inverted" />
+            </not>
+        </preConditions>
+        <comment>Adding columns from table dict_metering_points</comment>
+
+        <addColumn schemaName="apps" tableName="dict_metering_points">
+            <column name="is_inverted" type="number" remarks="Флаг - применять инвертирование" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>
