@@ -41,5 +41,13 @@
         <rollback/>
     </changeSet>
 
+    <changeSet id="media-rus-188" logicalFilePath="path-independent" author="rus">
+        <addColumn schemaName="apps" tableName="media_parameters">
+            <column name="digits_number_of_rounding" type="number" remarks="Точность фиксации значений">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 
 </databaseChangeLog>
