@@ -53,4 +53,14 @@
         <comment>Dropping column from table: media_period_time_values</comment>
         <dropColumn schemaName="apps" tableName="media_parameters" columnName="digits_number_of_rounding"/>
     </changeSet>
+
+    <changeSet id="media-rus-190" logicalFilePath="path-independent" author="rus">
+        <comment>Dropping column from table: media_parameters</comment>
+        <dropColumn schemaName="apps" tableName="media_parameters" columnName="name"/>
+    </changeSet>
+
+    <changeSet id="media-rus-191" logicalFilePath="path-independent" author="rus">
+        <comment>Dropping column from table: media_parameters</comment>
+        <dropColumn schemaName="apps" tableName="media_parameters" columnName="short_name"/>
+    </changeSet>
 </databaseChangeLog>
