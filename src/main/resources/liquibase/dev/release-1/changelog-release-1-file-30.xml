@@ -63,4 +63,174 @@
         <comment>Dropping column from table: media_parameters</comment>
         <dropColumn schemaName="apps" tableName="media_parameters" columnName="short_name"/>
     </changeSet>
+
+    <changeSet id="media-rus-192" logicalFilePath="path-independent" author="ruslan">
+        <comment>Creating table: media_parameter_directions</comment>
+        <createTable tableName="media_parameter_directions" schemaName="apps" remarks="Справочник типы направлений">
+            <column name="code" type="varchar(10)" remarks="Код">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="create_date" type="TIMESTAMP" remarks="Дата создания">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_date" type="TIMESTAMP" remarks="Дата изменения">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="create_by" type="number" remarks="Автор">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="last_update_by" type="number" remarks="Автор изменения">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="media-rus-193" logicalFilePath="path-independent" author="ruslan">
+        <comment>Creating primary key for table: media_parameter_directions</comment>
+        <addPrimaryKey
+                columnNames="code"
+                constraintName="pk_media_parameter_directions"
+                schemaName="apps"
+                tableName="media_parameter_directions"/>
+    </changeSet>
+
+    <changeSet id="media-rus-194" logicalFilePath="path-independent" author="ruslan">
+        <comment>inserting records into table: media_parameter_directions</comment>
+        <insert schemaName="apps"  tableName="media_parameter_directions">
+            <column name="code" type="varchar2(15)" value="IN" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_directions">
+            <column name="code" type="varchar2(15)" value="OUT" />
+        </insert>
+    </changeSet>
+
+
+    <changeSet id="media-rus-195" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating table: media_parameter_directions_tl</comment>
+        <createTable tableName="media_parameter_directions_tl" schemaName="apps" remarks="Справочник способ запуска перевод">
+            <column name="code" type="varchar(15)" remarks="Ссылка на родительскую запись">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="lang" type="varchar(10)" remarks="Язык">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(100)" remarks="Наименование">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="media-rus-196" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating primary key for table: media_parameter_directions_tl</comment>
+        <addPrimaryKey
+                columnNames="code, lang"
+                constraintName="pk_media_parameter_directions_tl"
+                schemaName="apps"
+                tableName="media_parameter_directions_tl"/>
+    </changeSet>
+
+    <changeSet id="media-rus-197" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating foreign constraint: media_parameter_directions_tl to media_parameter_directions</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_parameter_directions_tl"
+                baseColumnNames="code"
+                constraintName="fk_media_parameter_directions_tl_1"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_parameter_directions"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+
+    <changeSet id="media-rus-198" logicalFilePath="path-independent" author="ruslan">
+        <comment>inserting records into table: media_parameter_directions_tl</comment>
+        <insert schemaName="apps"  tableName="media_parameter_directions_tl">
+            <column name="code"   type="varchar2(15)" value="IN" />
+            <column name="lang"   type="varchar2(10)" value="RU" />
+            <column name="name"   type="varchar(20)" value="Прием"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_directions_tl">
+            <column name="code"   type="varchar2(15)" value="IN" />
+            <column name="lang"   type="varchar2(10)" value="KZ" />
+            <column name="name"   type="varchar2(100)" value="Прием" />
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_directions_tl">
+            <column name="code"   type="varchar2(15)" value="OUT" />
+            <column name="lang"   type="varchar2(10)" value="RU" />
+            <column name="name"   type="varchar(20)" value="Выдача"/>
+        </insert>
+
+        <insert schemaName="apps"  tableName="media_parameter_directions_tl">
+            <column name="code"   type="varchar2(15)"  value="OUT" />
+            <column name="lang"   type="varchar2(10)"  value="KZ" />
+            <column name="name"   type="varchar2(100)" value="Выдача" />
+        </insert>
+    </changeSet>
+
+    <changeSet id="media-rus-199" logicalFilePath="path-independent" author="rus">
+        <addColumn schemaName="apps" tableName="media_parameters">
+            <column name="direction" type="varchar2(10)" remarks="Направление">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="media-rus-200" logicalFilePath="path-independent" author="ruslan" context="dev">
+        <comment>Creating foreign constraint: media_parameters to media_parameter_directions</comment>
+        <addForeignKeyConstraint
+                baseTableSchemaName="apps"
+                baseTableName="media_parameters"
+                baseColumnNames="direction"
+                constraintName="fk_media_parameters_1"
+                deferrable="true"
+                initiallyDeferred="true"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedTableSchemaName="apps"
+                referencedTableName="media_parameter_directions"
+                referencedColumnNames="code"
+        />
+    </changeSet>
+
+    <changeSet id="media-rus-201" logicalFilePath="path-independent" author="ruslan">
+        <comment>Creating index for column source_type_id in table: media_parameters</comment>
+        <createIndex indexName="idx_media_parameters_1" schemaName="apps" tableName="media_parameters">
+            <column name="direction" type="varchar2(10)" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="media-rus-202" logicalFilePath="path-independent" author="ruslan">
+        <comment>insert data in media_parameters_tl</comment>
+        <sql dbms="postgres, oracle" endDelimiter=";" splitStatements="true" stripComments="true">
+            update apps.media_parameters
+            set direction = 'IN'
+            where code = 'A+';
+
+            update apps.media_parameters
+            set direction = 'IN'
+            where code = 'R+';
+
+            update apps.media_parameters
+            set direction = 'OUT'
+            where code = 'A-';
+
+            update apps.media_parameters
+            set direction = 'OUT'
+            where code = 'R-';
+        </sql>
+        <rollback/>
+    </changeSet>
 </databaseChangeLog>
