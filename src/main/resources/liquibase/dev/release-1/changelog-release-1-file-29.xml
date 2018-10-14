@@ -144,4 +144,12 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         />
     </changeSet>
 
+    <changeSet id="media-eug-206" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Adding column to table: media_parameters</comment>
+        <addColumn schemaName="apps" tableName="media_parameters">
+            <column name="digits_rounding" type="number" remarks="Количество знаков для округления" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
