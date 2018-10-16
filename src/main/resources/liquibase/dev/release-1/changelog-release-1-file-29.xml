@@ -152,4 +152,13 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="media-eug-207" logicalFilePath="path-independent" author="eugene" context="dev">
+        <comment>Adding column to table: calc_daily_sheet_headers</comment>
+        <addColumn schemaName="apps" tableName="calc_daily_sheet_headers">
+            <column name="is_active" type="number" remarks="Флаг - активно / неактивно" defaultValue="0">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
