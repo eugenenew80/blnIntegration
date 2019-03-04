@@ -195,6 +195,10 @@ public class AtEmcosImpGateway implements ValueGateway<AtTimeValueRaw> {
         String dateStr = attributes
             .getNamedItem("PBT")
             .getNodeValue();
+
+        if (dateStr.length() > 8)
+            return null;
+
         dateStr = dateStr.substring(0, 8);
 
         try {
